@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 from matplotlib.widgets import Slider
 import colorednoise as cn
 from fathon import fathonUtils as fu
@@ -160,13 +161,17 @@ def aizawa_x_data_y_data(dt, N):
 def erase_attractor_values(attractor, desired_number):
     attractor = list(attractor)
     cut_number = int(len(attractor)/desired_number)
-    print(cut_number)
     new_attractor = attractor[::cut_number]
 
     return new_attractor
 
-titles = ['Just a Pink Noise signal', 'Travel distance and Orientation', 'Pink Noise signal and Derivative', 'Lorenz Attractor', 'Aizawa Attractor', 'Random Signal']
+def pink_noise_x_and_y(N):
+    x_data = cn.powerlaw_psd_gaussian(1, N)
+    y_data = cn.powerlaw_psd_gaussian(1, N)
+    x_data = ratio_0_to_100(x_data)
+    y_data = ratio_0_to_100(y_data)
 
+    return x_data, y_data
 
 
 x_data_1, y_data_1 = pink_noise_x_y(75)
@@ -174,6 +179,10 @@ x_data_1, y_data_1 = pink_noise_x_y(75)
 x_data_2, y_data_2 = pink_noise_travel_distance_and_orientation(75)
 
 x_data_3, y_data_3 = pink_noise_and_derivative(75)
+# dict = {'X coordinates': x_data_3, 'Y coordinates': y_data_3}
+# df = pd.DataFrame(dict)
+# df.to_excel('Target Coordinates.xlsx')
+# print(df)
 
 x_data_4, y_data_4 = lorenz_x_data_y_data(0.01, 100000)
 x_data_4 = erase_attractor_values(x_data_4, 100)
@@ -183,8 +192,7 @@ x_data_5, y_data_5 = aizawa_x_data_y_data(0.01, 100000)
 x_data_5 = erase_attractor_values(x_data_5, 100)
 y_data_5 = erase_attractor_values(y_data_5, 100)
 
-x_data_6 = np.random.randint(0, 100, 100)
-y_data_6 = np.random.randint(0, 100, 100)
+x_data_6, y_data_6 = pink_noise_x_and_y(75)
 
 x_data_lists = [x_data_1, x_data_2, x_data_3, x_data_4, x_data_5, x_data_6]
 y_data_lists = [y_data_1, y_data_2, y_data_3, y_data_4, y_data_5, y_data_6]
