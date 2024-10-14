@@ -8,6 +8,7 @@ import fathon
 import numpy as np
 from numpy.fft import fft, fftfreq
 import colorednoise as cn
+import math
 
 def FFT(var,fs):
     dt = 1 / fs
@@ -42,10 +43,14 @@ def FFT(var,fs):
     return f[index90],f[index95],f[index99]
 
 def q_to_ypr(q):
+    """ Import q as a list of quaternion"""
     if q:
         yaw = (math.atan2(2 * q[1] * q[2] - 2 * q[0] * q[3], 2 * q[0] ** 2 + 2 * q[1] ** 2 - 1))
         roll = (-1 * math.asin(2 * q[1] * q[3] + 2 * q[0] * q[2]))
         pitch = (math.atan2(2 * q[2] * q[3] - 2 * q[0] * q[1], 2 * q[0] ** 2 + 2 * q[3] ** 2 - 1))
+        yaw = math.degrees(yaw)
+        roll = math.degrees(roll)
+        pitch = math.degrees(pitch)
         return [yaw, pitch, roll]
 
 def pyth2d(x1,y1,x2,y2):
