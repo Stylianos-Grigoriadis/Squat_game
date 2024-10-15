@@ -20,14 +20,14 @@ def DFA(variable):
     n, F = pydfa.computeFlucVec(winSizes, revSeg=revSeg, polOrd=polOrd)
 
     H, H_intercept = pydfa.fitFlucVec()
-    plt.plot(np.log(n), np.log(F), 'ro')
-    plt.plot(np.log(n), H_intercept + H * np.log(n), 'k-', label='H = {:.2f}'.format(H))
-    plt.xlabel('ln(n)', fontsize=14)
-    plt.ylabel('ln(F(n))', fontsize=14)
-    plt.title('DFA', fontsize=14)
-    plt.legend(loc=0, fontsize=14)
-    #plt.clf()
-    plt.show()
+    # plt.plot(np.log(n), np.log(F), 'ro')
+    # plt.plot(np.log(n), H_intercept + H * np.log(n), 'k-', label='H = {:.2f}'.format(H))
+    # plt.xlabel('ln(n)', fontsize=14)
+    # plt.ylabel('ln(F(n))', fontsize=14)
+    # plt.title('DFA', fontsize=14)
+    # plt.legend(loc=0, fontsize=14)
+    # #plt.clf()
+    # plt.show()
     return H
 
 def ratio_0_to_100(data_series):
@@ -70,6 +70,8 @@ def pink_noise_travel_distance_and_orientation(N):
     Orientation = cn.powerlaw_psd_gaussian(1, 1000)
     Orientation = ratio_0_to_1(Orientation)
     Orientation = Orientation * 359
+    print(f'TD: {DFA(TD)}')
+    print(f'Orientation: {DFA(Orientation)}')
     x_data = [0.5]
     y_data = [0.5]
 
@@ -185,14 +187,59 @@ x_data_3, y_data_3 = pink_noise_and_derivative(75)
 # print(df)
 
 x_data_4, y_data_4 = lorenz_x_data_y_data(0.01, 100000)
-x_data_4 = erase_attractor_values(x_data_4, 100)
-y_data_4 = erase_attractor_values(y_data_4, 100)
+x_data_4 = erase_attractor_values(x_data_4, 75)
+y_data_4 = erase_attractor_values(y_data_4, 75)
 
 x_data_5, y_data_5 = aizawa_x_data_y_data(0.01, 100000)
-x_data_5 = erase_attractor_values(x_data_5, 100)
-y_data_5 = erase_attractor_values(y_data_5, 100)
+x_data_5 = erase_attractor_values(x_data_5, 75)
+y_data_5 = erase_attractor_values(y_data_5, 75)
+# time = np.linspace(0, 100, 75)  # 75 points from 0 to 100
+# x_data_5 = np.sin(time)
+# y_data_5 = np.sin(time)
+# x_data_5 = ratio_0_to_100(x_data_5)
+# y_data_5 = ratio_0_to_100(y_data_5)
+#
+# plt.plot(x_data_5)
+# plt.show()
 
+# x_data_5 = np.tile([50, 100, 50, 0], 19)[:75]
+# y_data_5 = np.tile([100, 50, 0, 50], 19)[:75]
 x_data_6, y_data_6 = pink_noise_x_and_y(75)
+# x_data_6 = np.random.uniform(0, 100, 75)
+# y_data_6 = np.random.uniform(0, 100, 75)
+
+dfa_x_data_1 = DFA(x_data_1)
+dfa_y_data_1 = DFA(y_data_1)
+
+dfa_x_data_2 = DFA(x_data_2)
+dfa_y_data_2 = DFA(y_data_2)
+
+dfa_x_data_3 = DFA(x_data_3)
+dfa_y_data_3 = DFA(y_data_3)
+
+dfa_x_data_4 = DFA(x_data_4)
+dfa_y_data_4 = DFA(y_data_4)
+
+dfa_x_data_5 = DFA(x_data_5)
+dfa_y_data_5 = DFA(y_data_5)
+
+dfa_x_data_6 = DFA(x_data_6)
+dfa_y_data_6 = DFA(y_data_6)
+
+print(f'dfa_x_data_1: {dfa_x_data_1}')
+print(f'dfa_y_data_1: {dfa_y_data_1}')
+print(f'dfa_x_data_2: {dfa_x_data_2}')
+print(f'dfa_y_data_2: {dfa_y_data_2}')
+print(f'dfa_x_data_3: {dfa_x_data_3}')
+print(f'dfa_y_data_3: {dfa_y_data_3}')
+print(f'dfa_x_data_4: {dfa_x_data_4}')
+print(f'dfa_y_data_4: {dfa_y_data_4}')
+print(f'dfa_x_data_5: {dfa_x_data_5}')
+print(f'dfa_y_data_5: {dfa_y_data_5}')
+print(f'dfa_x_data_6: {dfa_x_data_6}')
+print(f'dfa_y_data_6: {dfa_y_data_6}')
+
+
 
 x_data_lists = [x_data_1, x_data_2, x_data_3, x_data_4, x_data_5, x_data_6]
 y_data_lists = [y_data_1, y_data_2, y_data_3, y_data_4, y_data_5, y_data_6]
@@ -204,7 +251,7 @@ fig, axs = plt.subplots(3, 2, figsize=(10, 8))
 plt.subplots_adjust(left=0.1, bottom=0.15, right=0.9, top=0.95, hspace=0.4)
 
 # Titles for each scatter plot
-titles = ['Just a Pink Noise signal', 'Travel distance and Orientation', 'Pink Noise signal and Derivative', 'Lorenz Attractor', 'Aizawa Attractor', 'Random Signal']
+titles = ['Just a Pink Noise signal', 'Travel distance and Orientation', 'Pink Noise signal and Derivative', 'Lorenz Attractor', 'Aizawa Attractor', 'Pink noise x and y']
 
 # Initialize scatter plots with independent data series (starting with the first index)
 scatters = []
@@ -247,3 +294,4 @@ for slider in sliders:
 
 # Show the plot
 plt.show()
+
