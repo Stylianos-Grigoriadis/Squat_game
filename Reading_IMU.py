@@ -110,33 +110,33 @@ for i in range(len(IMU['Q_0'])):
     pitch.append(angles[1])
     roll.append(angles[2])
 
-plt.plot(yaw, label='yaw')
-plt.plot(pitch, label='pitch')
-plt.plot(roll, label='roll')
-plt.legend()
-plt.show()
+# plt.plot(yaw, label='yaw')
+# plt.plot(pitch, label='pitch')
+# plt.plot(roll, label='roll')
+# plt.legend()
+# plt.show()
 
-plt.plot(IMU['Acc_X'], label='Acc_X')
-plt.plot(IMU['Acc_Y'], label='Acc_Y')
-plt.plot(IMU['Acc_Z'], label='Acc_Z')
-plt.legend()
-plt.show()
+# plt.plot(IMU['Acc_X'], label='Acc_X')
+# plt.plot(IMU['Acc_Y'], label='Acc_Y')
+# plt.plot(IMU['Acc_Z'], label='Acc_Z')
+# plt.legend()
+# plt.show()
 
-plt.plot(IMU['Ang_Vel_X'], label='Ang_Vel_X')
-plt.plot(IMU['Ang_Vel_Y'], label='Ang_Vel_Y')
-plt.plot(IMU['Ang_Vel_Z'], label='Ang_Vel_Z')
-plt.legend()
-plt.show()
+# plt.plot(IMU['Ang_Vel_X'], label='Ang_Vel_X')
+# plt.plot(IMU['Ang_Vel_Y'], label='Ang_Vel_Y')
+# plt.plot(IMU['Ang_Vel_Z'], label='Ang_Vel_Z')
+# plt.legend()
+# plt.show()
 
 Ang_X_1 = lib.intergral(IMU['Ang_Vel_X'], 0.005)
 Ang_Y_1 = lib.intergral(IMU['Ang_Vel_Y'], 0.005)
 Ang_Z_1 = lib.intergral(IMU['Ang_Vel_Z'], 0.005)
 
-plt.plot(Ang_X_1, label='Ang_X_1')
-plt.plot(Ang_Y_1, label='Ang_Y_1')
-plt.plot(Ang_Z_1, label='Ang_Z_1')
-plt.legend()
-plt.show()
+# plt.plot(Ang_X_1, label='Ang_X_1')
+# plt.plot(Ang_Y_1, label='Ang_Y_1')
+# plt.plot(Ang_Z_1, label='Ang_Z_1')
+# plt.legend()
+# plt.show()
 
 Ang_X_2 = []
 Ang_Y_2 = []
@@ -148,14 +148,15 @@ for i in range(len(IMU['Time'])):
 
 # plt.plot(Ang_X_2, label='Ang_X_2')
 # plt.plot(Ang_Y_2, label='Ang_Y_2')
-plt.plot(Ang_Z_2, label='Ang_Z_2')
-plt.legend()
-plt.show()
+# plt.plot(Ang_Z_2, label='Ang_Z_2')
+# plt.legend()
+# plt.show()
 
 fig, ax1 = plt.subplots()
 
 ax1.plot(pitch, 'g-', label='pitch')  # Plot on the first y-axis (left)
 ax1.set_ylabel('pitch', color='g')
+ax1.set_ylim(-180,-70)
 
 ax1.tick_params(axis='y', labelcolor='g')
 
