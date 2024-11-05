@@ -5,42 +5,67 @@ from matplotlib.widgets import Slider
 import colorednoise as cn
 from fathon import fathonUtils as fu
 import fathon
-import lib
-
-def ratio_0_to_100(data_series):
-    """ Takes a data series and converts it into values from 0 to 100"""
-    data_series = np.array(data_series)
-    data_series = (data_series - np.min(data_series)) / (np.max(data_series) - np.min(data_series))*100
-
-    return data_series
+import lib_squats as lbsq
 
 
-x_data = cn.powerlaw_psd_gaussian(1,75)
-y_data = cn.powerlaw_psd_gaussian(1,75)
-x_data = ratio_0_to_100(x_data)
-y_data = ratio_0_to_100(y_data)
+path = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Pilot Study 1\Stylianos 11.5.2024'
+squat = pd.read_csv(path+r'\Squat.csv')
+on_table = pd.read_csv(path+r'\Stable on table.csv')
+squat_0_degree = pd.read_csv(path+r'\Squat_0_degree.csv')
+squat_180_degree = pd.read_csv(path+r'\Squat_180_degree.csv')
 
+squat = lbsq.convert_KIVNENT_IMU_to_readable_file(squat)
+on_table = lbsq.convert_KIVNENT_IMU_to_readable_file(on_table)
+squat_0_degree = lbsq.convert_KIVNENT_IMU_to_readable_file(squat_0_degree)
+squat_180_degree = lbsq.convert_KIVNENT_IMU_to_readable_file(squat_180_degree)
 
-fig, ax = plt.subplots()
-plt.subplots_adjust(left=0.1, bottom=0.25)
+yaw = squat_180_degree['Yaw'].to_numpy()
+pitch = squat_180_degree['Pitch'].to_numpy()
+roll = squat_180_degree['Roll'].to_numpy()
 
+yaw = yaw
+pitch = pitch
+roll = roll
 
-scatter = ax.scatter(x_data[:1], y_data[:1], label='Scatter Points')
-ax.set_xlim(-10, 110)
-ax.set_ylim(-10, 110)
+print(squat)
+print(on_table)
+# fig, axs = plt.subplots(2, 1)
+# axs[0].plot(squat['Yaw'], color='red', label='Yaw')
+# axs[0].plot(squat['Pitch'], color='blue', label='Pitch')
+# axs[0].plot(squat['Roll'], color='green', label='Roll')
+# axs[0].set_title('Squat')
+# axs[0].legend()
+#
+#
+# axs[1].plot(on_table['Yaw'], color='red', label='Yaw')
+# axs[1].plot(on_table['Pitch'], color='blue', label='Pitch')
+# axs[1].plot(on_table['Roll'], color='green', label='Roll')
+# axs[1].set_title('On table')
+# axs[1].legend()
+#
+# plt.tight_layout()
+# plt.show()
 
+fig, axs = plt.subplots(3, 1)
+axs[0].plot(squat['Yaw'], color='red', label='squat')
+axs[0].plot(squat_0_degree['Yaw'], color='blue', label='squat_0_degree')
+axs[0].plot(yaw, color='green', label='squat_180_degree')
+axs[0].set_title('Yaw')
+axs[0].legend()
 
-ax_slider = plt.axes([0.1, 0.1, 0.8, 0.05], facecolor='lightgoldenrodyellow')
-slider = Slider(ax_slider, 'Points', 1, len(x_data), valinit=1, valstep=1)
+axs[1].plot(squat['Pitch'], color='red', label='squat')
+axs[1].plot(squat_0_degree['Pitch'], color='blue', label='squat_0_degree')
+axs[1].plot(pitch, color='green', label='squat_180_degree')
+axs[1].set_title('Pitch')
+axs[1].legend()
 
-# Update function for the slider
-def update(val):
-    num_points = int(slider.val)
-    scatter.set_offsets(np.c_[x_data[:num_points], y_data[:num_points]])
-    fig.canvas.draw_idle()
+axs[2].plot(squat['Roll'], color='red', label='squat')
+axs[2].plot(squat_0_degree['Roll'], color='blue', label='squat_0_degree')
+axs[2].plot(roll, color='green', label='squat_180_degree')
+axs[2].set_title('Roll')
+axs[2].legend()
 
-
-slider.on_changed(update)
-
-ax.legend()
+plt.tight_layout()
 plt.show()
+
+
