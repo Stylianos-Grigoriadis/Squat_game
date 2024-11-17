@@ -1,9 +1,10 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-import lib_squats as lbsq
+import Lib_squats as lbsq
 import math
 from scipy.constants import g
 import os
+from scipy import signal
 
 def convert_quaternion(quaternion):
     """
@@ -46,6 +47,13 @@ def q_to_ypr(q):
         return [yaw, pitch, roll]
 
 def convert_KIVNENT_IMU_to_readable_file(df):
+    """ Takes a dataframe of the IMU data, then converts the KINVENT data to readable data and creates 3 more columns which are the Yaw, Pitch, and Roll
+    Parametes:
+        input
+            df  :   the dataframe as taken by KINVENT without any previous analysis or correction
+        output
+            df  :   the dataframe converted to readable data and with the adittion of Yaw, Pitch, and Roll columns
+    """
     columns_IMU = ['Time', 'Q_0', 'Q_1', 'Q_2', 'Q_3', 'Acc_X', 'Acc_Y', 'Acc_Z', 'Ang_Vel_X', 'Ang_Vel_Y', 'Ang_Vel_Z',
                    'Mag_X', 'Mag_Y', 'Mag_Z']
     df = df.iloc[:, :-1] # the last column have no use so we erase it
@@ -66,10 +74,6 @@ def convert_KIVNENT_IMU_to_readable_file(df):
     df['Mag_X'] = df['Mag_X'].apply(convert_magnetic_field_density)
     df['Mag_Y'] = df['Mag_Y'].apply(convert_magnetic_field_density)
     df['Mag_Z'] = df['Mag_Z'].apply(convert_magnetic_field_density)
-    print(df['Q_0'])
-    print(df['Q_1'])
-    print(df['Q_2'])
-    print(df['Q_3'])
 
     yaw = []
     pitch = []
@@ -91,15 +95,39 @@ def convert_KIVNENT_IMU_to_readable_file(df):
 
     return df
 
-# path = r'path'
-# os.chdir(path) # determine the specific path where the file is in
+def filtering(data_series, fc, fs):
+    """
+    Parameters
+        data_series         :   the time series to be filtered
+        fc                  :   the cutoff frequency
+        fs                  :   the sampling frequency of the time series to be filtered
+
+    return
+        filtered_time_series:   the filtered time series
+
+    """
+    w = fc / (fs / 2)
+    b, a = signal.butter(2, w, 'low')
+    filtered_time_series = signal.filtfilt(b, a, data_series)
+    return filtered_time_series
+
+path = r'path'
+os.chdir(path) # determine the specific path where the file is in
 
 Squat = pd.read_csv(r'file_name.csv') # Read the file
 Squat = convert_KIVNENT_IMU_to_readable_file(Squat) # Convert the file into readable data, and calculate the Yaw, Pitch, and Roll angles
 
-plt.plot(Squat['Yaw'], label='Yaw')
-plt.plot(Squat['Pitch'], label='Pitch')
-plt.plot(Squat['Roll'], label='Roll')
+
+Yaw_filterd = filtering(Squat['Yaw'], 3, 300)
+Pitch_filterd = filtering(Squat['Pitch'], 3, 300)
+Roll_filterd = filtering(Squat['Roll'], 3, 300)
+
+plt.plot(Squat['Time'],Yaw_filterd, label='Yaw')
+plt.plot(Squat['Time'],Pitch_filterd, label='Pitch')
+plt.plot(Squat['Time'],Roll_filterd, label='Roll')
+plt.title('Squat', fontweight='bold')
+plt.ylabel('Angle (degress)')
+plt.xlabel('Time (s)')
 plt.legend()
 plt.show() # Show all angles
 
