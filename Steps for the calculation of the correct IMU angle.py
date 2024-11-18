@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-import Lib_squats as lbsq
 import math
 from scipy.constants import g
 import os
@@ -85,7 +84,7 @@ def convert_KIVNENT_IMU_to_readable_file(df):
         q.append(df['Q_2'][i])
         q.append(df['Q_3'][i])
 
-        angles = lbsq.q_to_ypr(q)
+        angles = q_to_ypr(q)
         yaw.append(angles[0])
         pitch.append(angles[1])
         roll.append(angles[2])
