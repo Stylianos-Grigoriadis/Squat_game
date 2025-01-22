@@ -10,7 +10,7 @@ import lib_squats as lbs
 
 
 
-number_of_data_points = 1000
+number_of_data_points = 30
 
 example_signal_pink = cn.powerlaw_psd_gaussian(1, number_of_data_points)
 example_signal_brown = cn.powerlaw_psd_gaussian(2, number_of_data_points)
@@ -114,4 +114,15 @@ for slider in sliders:
 
 # Show the plot
 plt.show()
+
+x_data_sine, y_data_sine = lbs.creation_rigid_signal(number_of_data_points)
+x_data_random, y_data_random = lbs.creation_white_noise(number_of_data_points)
+
+plt.scatter(x_data_sine, y_data_sine, label='sine', c='red', lw=5)
+plt.scatter(x_data_random, y_data_random, label='random', c='k')
+plt.scatter(x_data_6, y_data_6, label='pink', c='pink')
+plt.legend()
+plt.show()
+
+
 
