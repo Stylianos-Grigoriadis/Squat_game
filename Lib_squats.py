@@ -16,7 +16,7 @@ def DFA(variable):
 
     pydfa = fathon.DFA(a)
 
-    winSizes = fu.linRangeByStep(start=4, end=int(len(variable)/9))
+    winSizes = fu.linRangeByStep(start=4, end=int(len(variable)/4))
     revSeg = True
     polOrd = 1
 
@@ -48,6 +48,7 @@ def ratio_0_to_1(data_series):
     return data_series
 
 def pink_noise_x_y(N):
+    """ This function creates a pink noise signal and then appends 1 value to the x_data and 1 value to the y_data"""
     pink_noise = cn.powerlaw_psd_gaussian(1,N*2)
     pink_noise = ratio_0_to_1(pink_noise)
     x_data = []
@@ -70,7 +71,10 @@ def trigonometry(Orientation, TD):
 def pink_noise_travel_distance_and_orientation(N):
     TD = cn.powerlaw_psd_gaussian(1, N)
     TD = ratio_0_to_1(TD)
-    Orientation = cn.powerlaw_psd_gaussian(1, 1000)
+    # Oriantation random
+    Orientation = np.random.randn(1000)
+    # Orientation pink
+    # Orientation = cn.powerlaw_psd_gaussian(1, 1000)
     Orientation = ratio_0_to_1(Orientation)
     Orientation = Orientation * 359
     print(f'TD: {DFA(TD)}')
@@ -171,6 +175,7 @@ def erase_attractor_values(attractor, desired_number):
     return new_attractor
 
 def pink_noise_x_and_y(N):
+    """ This function creates 2 different and seperate pink noise signals"""
     x_data = cn.powerlaw_psd_gaussian(1, N)
     y_data = cn.powerlaw_psd_gaussian(1, N)
     x_data = ratio_0_to_100(x_data)
@@ -267,5 +272,18 @@ def convert_KIVNENT_IMU_to_readable_file(df):
 
     return df
     
+def values_during_game(df):
+    """
+    This function takes the whole data frame and returns only the rows where the target_pos_y are not None.
+    This way we only take the rows in which we have targets"""
+    df = converting_str_into_float(df, 'target_pos_y')
 
-    
+    filtered_data = df[df['target_pos_y'] != None]
+    print('Hello')
+    filtered_data = converting_str_into_float(filtered_data, 'target_pos_y')
+
+    return filtered_data
+
+def converting_str_into_float(df, column_name):
+    df["FloatColumn"] = pd.to_numeric(df[column_name], errors="coerce")  # Invalid values become NaN
+    return df

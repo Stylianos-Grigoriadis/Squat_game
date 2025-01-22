@@ -6,238 +6,58 @@ import colorednoise as cn
 from fathon import fathonUtils as fu
 import fathon
 import lib
-
-def DFA(variable):
-    a = fu.toAggregated(variable)
-        #b = fu.toAggregated(b)
-
-    pydfa = fathon.DFA(a)
-
-    winSizes = fu.linRangeByStep(start=4, end=int(len(variable)/9))
-    revSeg = True
-    polOrd = 1
-
-    n, F = pydfa.computeFlucVec(winSizes, revSeg=revSeg, polOrd=polOrd)
-
-    H, H_intercept = pydfa.fitFlucVec()
-    # plt.plot(np.log(n), np.log(F), 'ro')
-    # plt.plot(np.log(n), H_intercept + H * np.log(n), 'k-', label='H = {:.2f}'.format(H))
-    # plt.xlabel('ln(n)', fontsize=14)
-    # plt.ylabel('ln(F(n))', fontsize=14)
-    # plt.title('DFA', fontsize=14)
-    # plt.legend(loc=0, fontsize=14)
-    # #plt.clf()
-    # plt.show()
-    return H
-
-def ratio_0_to_100(data_series):
-    """ Takes a data series and converts it into values from 0 to 100"""
-    data_series = np.array(data_series)
-    data_series = (data_series - np.min(data_series)) / (np.max(data_series) - np.min(data_series))*100
-
-    return data_series
-
-def ratio_0_to_1(data_series):
-    """ Takes a data series and converts it into values from 0 to 1"""
-    data_series = np.array(data_series)
-    data_series = (data_series - np.min(data_series)) / (np.max(data_series) - np.min(data_series))
-
-    return data_series
-
-def pink_noise_x_y(N):
-    pink_noise = cn.powerlaw_psd_gaussian(1,N*2)
-    pink_noise = ratio_0_to_1(pink_noise)
-    x_data = []
-    y_data = []
-
-    for i in range(1,len(pink_noise),2):
-        y_data.append(pink_noise[i])
-    for i in range(0,len(pink_noise),2):
-        x_data.append(pink_noise[i])
-    x_data = ratio_0_to_100(x_data)
-    y_data = ratio_0_to_100(y_data)
-
-    return x_data, y_data
-
-def trigonometry(Orientation, TD):
-    y_diff = np.sin(Orientation) * TD
-    x_diff = np.cos(Orientation) * TD
-    return x_diff, y_diff
-
-def pink_noise_travel_distance_and_orientation(N):
-    TD = cn.powerlaw_psd_gaussian(1, N)
-    TD = ratio_0_to_1(TD)
-    Orientation = cn.powerlaw_psd_gaussian(1, 1000)
-    Orientation = ratio_0_to_1(Orientation)
-    Orientation = Orientation * 359
-    print(f'TD: {DFA(TD)}')
-    print(f'Orientation: {DFA(Orientation)}')
-    x_data = [0.5]
-    y_data = [0.5]
-
-    for i in range(len(TD)):
-        if Orientation[i] <= 90:
-            x_diff, y_diff = trigonometry(Orientation[i], TD[i])
-            x_data.append(x_data[-1] + x_diff)
-            y_data.append(y_data[-1] + y_diff)
-        elif (Orientation[i] <= 180 and Orientation[i] > 90):
-            x_diff, y_diff = trigonometry(Orientation[i], TD[i])
-            x_data.append(x_data[-1] - x_diff)
-            y_data.append(y_data[-1] + y_diff)
-        elif (Orientation[i] <= 270 and Orientation[i] > 180):
-            x_diff, y_diff = trigonometry(Orientation[i], TD[i])
-            x_data.append(x_data[-1] - x_diff)
-            y_data.append(y_data[-1] - y_diff)
-        elif (Orientation[i] <= 360 and Orientation[i] > 270):
-            x_diff, y_diff = trigonometry(Orientation[i], TD[i])
-            x_data.append(x_data[-1] + x_diff)
-            y_data.append(y_data[-1] - y_diff)
-
-    x_data = ratio_0_to_100(x_data)
-    y_data = ratio_0_to_100(y_data)
-
-    return x_data, y_data
-
-def pink_noise_and_derivative(N):
-    pink_signal = cn.powerlaw_psd_gaussian(1,N)
-    derivative = lib.derivative(pink_signal,1)
-    derivative = list(derivative)
-    derivative.append(derivative[-1])
-    x_data = ratio_0_to_100(pink_signal)
-    y_data = ratio_0_to_100(derivative)
-
-    return x_data, y_data
-
-def lorenz(xyz, *, s=10, r=28, b=2.667):
-    """
-    Parameters
-    ----------
-    xyz : array-like, shape (3,)
-       Point of interest in three-dimensional space.
-    s, r, b : float
-       Parameters defining the Lorenz attractor.
-
-    Returns
-    -------
-    xyz_dot : array, shape (3,)
-       Values of the Lorenz attractor's partial derivatives at *xyz*.
-    """
-    x, y, z = xyz
-    x_dot = s*(y - x)
-    y_dot = r*x - y - x*z
-    z_dot = x*y - b*z
-
-    return np.array([x_dot, y_dot, z_dot])
-
-def lorenz_x_data_y_data(dt, N):
-    xyzs = np.empty((N + 1, 3))
-    xyzs[0] = (0., 1., 1.05)
-    for i in range(N):
-        xyzs[i + 1] = xyzs[i] + lorenz(xyzs[i]) * dt
-    x, y, z = xyzs.T
-    x_data = ratio_0_to_100(x)
-    y_data = ratio_0_to_100(y)
-
-    return x_data, y_data
-
-def aizawa(state, a=0.95, b=0.7, c=0.6, d=3.5, e=0.25, f=0.1):
-    x, y, z = state
-    dx = (z - b) * x - d * y
-    dy = d * x + (z - b) * y
-    dz = c + a * z - (z ** 3) / 3 - (x ** 2 + y ** 2) * (1 + e * z) + f * z * x ** 3
-    return np.array([dx, dy, dz])
-
-def aizawa_x_data_y_data(dt, N):
-    xyzs = np.empty((N + 1, 3))
-    xyzs[0] = (0.1, 0, 0)
-
-    for i in range(N):
-        xyzs[i + 1] = xyzs[i] + aizawa(xyzs[i]) * dt
-
-    x, y, z = xyzs.T
-    x_data = ratio_0_to_100(x)
-    y_data = ratio_0_to_100(y)
-
-    return x_data, y_data
-
-def erase_attractor_values(attractor, desired_number):
-    attractor = list(attractor)
-    cut_number = int(len(attractor)/desired_number)
-    new_attractor = attractor[::cut_number]
-
-    return new_attractor
-
-def pink_noise_x_and_y(N):
-    x_data = cn.powerlaw_psd_gaussian(1, N)
-    y_data = cn.powerlaw_psd_gaussian(1, N)
-    x_data = ratio_0_to_100(x_data)
-    y_data = ratio_0_to_100(y_data)
-
-    return x_data, y_data
+import lib_squats as lbs
 
 
-x_data_1, y_data_1 = pink_noise_x_y(75)
 
-x_data_2, y_data_2 = pink_noise_travel_distance_and_orientation(75)
+number_of_data_points = 1000
 
-x_data_3, y_data_3 = pink_noise_and_derivative(75)
-# dict = {'X coordinates': x_data_3, 'Y coordinates': y_data_3}
-# df = pd.DataFrame(dict)
-# df.to_excel('Target Coordinates.xlsx')
-# print(df)
+example_signal_pink = cn.powerlaw_psd_gaussian(1, number_of_data_points)
+example_signal_brown = cn.powerlaw_psd_gaussian(2, number_of_data_points)
+print(f'example_signal_pink : {lbs.DFA(example_signal_pink)}')
+print(f'example_signal_brown : {lbs.DFA(example_signal_brown)}')
 
-x_data_4, y_data_4 = lorenz_x_data_y_data(0.01, 100000)
-x_data_4 = erase_attractor_values(x_data_4, 75)
-y_data_4 = erase_attractor_values(y_data_4, 75)
+x_data_1, y_data_1 = lbs.pink_noise_x_y(number_of_data_points)
 
-x_data_5, y_data_5 = aizawa_x_data_y_data(0.01, 100000)
-x_data_5 = erase_attractor_values(x_data_5, 75)
-y_data_5 = erase_attractor_values(y_data_5, 75)
-# time = np.linspace(0, 100, 75)  # 75 points from 0 to 100
-# x_data_5 = np.sin(time)
-# y_data_5 = np.sin(time)
-# x_data_5 = ratio_0_to_100(x_data_5)
-# y_data_5 = ratio_0_to_100(y_data_5)
-#
-# plt.plot(x_data_5)
-# plt.show()
+x_data_2, y_data_2 = lbs.pink_noise_travel_distance_and_orientation(number_of_data_points)
 
-# x_data_5 = np.tile([50, 100, 50, 0], 19)[:75]
-# y_data_5 = np.tile([100, 50, 0, 50], 19)[:75]
-x_data_6, y_data_6 = pink_noise_x_and_y(75)
-# x_data_6 = np.random.uniform(0, 100, 75)
-# y_data_6 = np.random.uniform(0, 100, 75)
+x_data_3, y_data_3 = lbs.pink_noise_and_derivative(number_of_data_points)
 
-dfa_x_data_1 = DFA(x_data_1)
-dfa_y_data_1 = DFA(y_data_1)
+x_data_4, y_data_4 = lbs.lorenz_x_data_y_data(0.01, 100000)
+x_data_4 = lbs.erase_attractor_values(x_data_4, number_of_data_points)
+y_data_4 = lbs.erase_attractor_values(y_data_4, number_of_data_points)
 
-dfa_x_data_2 = DFA(x_data_2)
-dfa_y_data_2 = DFA(y_data_2)
+x_data_5, y_data_5 = lbs.aizawa_x_data_y_data(0.01, 100000)
+x_data_5 = lbs.erase_attractor_values(x_data_5, number_of_data_points)
+y_data_5 = lbs.erase_attractor_values(y_data_5, number_of_data_points)
 
-dfa_x_data_3 = DFA(x_data_3)
-dfa_y_data_3 = DFA(y_data_3)
+x_data_6, y_data_6 = lbs.pink_noise_x_and_y(number_of_data_points)
 
-dfa_x_data_4 = DFA(x_data_4)
-dfa_y_data_4 = DFA(y_data_4)
+dfa_x_data_1 = lbs.DFA(x_data_1)
+dfa_y_data_1 = lbs.DFA(y_data_1)
+dfa_x_data_2 = lbs.DFA(x_data_2)
+dfa_y_data_2 = lbs.DFA(y_data_2)
+dfa_x_data_3 = lbs.DFA(x_data_3)
+dfa_y_data_3 = lbs.DFA(y_data_3)
+dfa_x_data_4 = lbs.DFA(x_data_4)
+dfa_y_data_4 = lbs.DFA(y_data_4)
+dfa_x_data_5 = lbs.DFA(x_data_5)
+dfa_y_data_5 = lbs.DFA(y_data_5)
+dfa_x_data_6 = lbs.DFA(x_data_6)
+dfa_y_data_6 = lbs.DFA(y_data_6)
 
-dfa_x_data_5 = DFA(x_data_5)
-dfa_y_data_5 = DFA(y_data_5)
-
-dfa_x_data_6 = DFA(x_data_6)
-dfa_y_data_6 = DFA(y_data_6)
-
-print(f'dfa_x_data_1: {dfa_x_data_1}')
-print(f'dfa_y_data_1: {dfa_y_data_1}')
-print(f'dfa_x_data_2: {dfa_x_data_2}')
-print(f'dfa_y_data_2: {dfa_y_data_2}')
-print(f'dfa_x_data_3: {dfa_x_data_3}')
-print(f'dfa_y_data_3: {dfa_y_data_3}')
-print(f'dfa_x_data_4: {dfa_x_data_4}')
-print(f'dfa_y_data_4: {dfa_y_data_4}')
-print(f'dfa_x_data_5: {dfa_x_data_5}')
-print(f'dfa_y_data_5: {dfa_y_data_5}')
-print(f'dfa_x_data_6: {dfa_x_data_6}')
-print(f'dfa_y_data_6: {dfa_y_data_6}')
+print(f'DFA for subsequent values x axis: {dfa_x_data_1}')
+print(f'DFA for subsequent values y axis: {dfa_y_data_1}')
+print(f'DFA with pink travel distance and orientation x axis: {dfa_x_data_2}')
+print(f'DFA with pink travel distance and orientation y axi: {dfa_y_data_2}')
+print(f'DFA for pink noise signal and each derivative axis x: {dfa_x_data_3}')
+print(f'DFA for pink noise signal and each derivative axis y: {dfa_y_data_3}')
+print(f'DFA lorenz attractor axis x: {dfa_x_data_4}')
+print(f'DFA lorenz attractor axis y: {dfa_y_data_4}')
+print(f'DFA aizawa attractor axis x: {dfa_x_data_5}')
+print(f'DFA aizawa attractor axis y: {dfa_y_data_5}')
+print(f'DFA for two pink noise different signals axis x: {dfa_x_data_6}')
+print(f'DFA for two pink noise different signals axis y: {dfa_y_data_6}')
 
 
 
