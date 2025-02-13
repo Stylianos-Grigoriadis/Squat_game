@@ -24,11 +24,31 @@ for file in files:
         data = pd.read_csv(rf'{ID}.txt')
 
     target_signal_x, target_signal_y = lbs.convert_excel_to_screen_size_targets(targets)
-    target_pos_x, target_pos_y, player_pos_x, player_pos_y = lbs.values_during_game(data)
-    target_pos_x, target_pos_y, player_pos_x, player_pos_y = lbs.return_the_values_before_target_change(target_pos_x, target_pos_y, player_pos_x, player_pos_y)
-    # lbs.graph_creation_target_vs_player(target_pos_x, target_pos_y, player_pos_x, player_pos_y)
+    target_pos_x, target_pos_y, player_pos_x, player_pos_y, left_plate, right_plate, pitch, yaw, roll = lbs.values_during_game(data)
 
-    lbs.graph_creation_of_spatial_error(target_pos_x, target_pos_y, player_pos_x, player_pos_y)
+    # target_pos_x, target_pos_y, player_pos_x, player_pos_y = lbs.return_the_values_before_target_change(target_pos_x, target_pos_y, player_pos_x, player_pos_y)
+    # lbs.graph_creation_target_vs_player(target_pos_x, target_pos_y, player_pos_x, player_pos_y)
+    #
+    # lbs.graph_creation_of_spatial_error(target_pos_x, target_pos_y, player_pos_x, player_pos_y)
+    print(data.columns)
+    left_plate = left_plate*(-1)
+    both_plates = right_plate + left_plate
+
+    plt.plot(yaw, linestyle='-', label='yaw')
+
+
+    # plt.scatter(target_pos_x, target_pos_y, label='targets')
+    plt.legend()
+    plt.show()
+
+
+    #
+    # plt.plot(right_plate, label='right_plate')
+    # plt.plot(left_plate, label='left_plate')
+    # plt.legend()
+    # plt.show()
+
+
 
 
 

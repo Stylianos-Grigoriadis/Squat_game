@@ -414,13 +414,27 @@ def values_during_game(df):
     target_pos_y = filtered_data['target_pos_y'].to_numpy()
     player_pos_x = filtered_data['player_pos_x'].to_numpy()
     player_pos_y = filtered_data['player_pos_y'].to_numpy()
+    left_plate = filtered_data['left plate'].to_numpy()
+    right_plate = filtered_data['right plate'].to_numpy()
+    pitch = filtered_data['pitch'].to_numpy()
+    yaw = filtered_data['yaw'].to_numpy()
+    roll = filtered_data['roll'].to_numpy()
+
+
 
     target_pos_x = converting_str_into_float(target_pos_x)
     target_pos_y = converting_str_into_float(target_pos_y)
     player_pos_x = converting_str_into_float(player_pos_x)
     player_pos_y = converting_str_into_float(player_pos_y)
+    left_plate = converting_str_into_float(left_plate)
+    right_plate = converting_str_into_float(right_plate)
+    pitch = converting_str_into_float(pitch)
+    yaw = converting_str_into_float(yaw)
+    roll = converting_str_into_float(roll)
 
-    return target_pos_x, target_pos_y, player_pos_x, player_pos_y
+
+
+    return target_pos_x, target_pos_y, player_pos_x, player_pos_y, left_plate, right_plate, pitch, yaw, roll
 
 
 def converting_str_into_float(time_series):
@@ -440,11 +454,32 @@ def return_the_values_before_target_change(target_pos_x, target_pos_y, player_po
 
 
 def find_the_last_moment_before_target_change_position(target_pos_x):
+    """ This Function returns the indices of the targets right before the targets change position.
+        First it considered the number_of_data_point before the targets changes. This is because, between
+        sets, the last target changes after the break. Thus, we consider the number_of_data_point and if
+        this number is higher than the median of the list_number_of_data_point then this index is changes as
+        the index of the previous target + the median of the list_number_of_data_point.
+        Additionally, the index of the last target is calculated as the index of the previous target + the
+        median of the list_number_of_data_point. In this way we keep the right indices of the last moment
+        of target appearance.
+        """
     indexes_before_change = []
+    number_of_data_point = 0
+    list_number_of_data_point = []
+    for i in range(len(target_pos_x) - 1):
+        if target_pos_x[i] != target_pos_x[i + 1]:
+            list_number_of_data_point.append(number_of_data_point)
+            number_of_data_point = 0
+        else:
+            number_of_data_point = number_of_data_point + 1
     for i in range(len(target_pos_x) - 1):
         if target_pos_x[i] != target_pos_x[i + 1]:
             indexes_before_change.append(i)
-    indexes_before_change.append(len(target_pos_x) - 1)
+    indexes_before_change.append(int(indexes_before_change[-1] + np.median(list_number_of_data_point)))
+
+    for i in range(len(list_number_of_data_point)):
+        if list_number_of_data_point[i] > np.median(list_number_of_data_point) + 10:
+            indexes_before_change[i] = int(indexes_before_change[i-1] + np.median(list_number_of_data_point)) # This might give us an error in the future
 
     return indexes_before_change
 
