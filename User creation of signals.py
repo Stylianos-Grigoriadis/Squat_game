@@ -3,10 +3,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib.widgets import Slider
 import colorednoise as cn
-from fathon import fathonUtils as fu
-import fathon
 import lib
-import lib_squats as lbs
+import Lib_squats as lbs
 
 
 
