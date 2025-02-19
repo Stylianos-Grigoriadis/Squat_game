@@ -16,6 +16,7 @@ for file in files:
     os.chdir(file)
     ID = os.path.basename(file)
     print(ID)
+
     if not ID[:-1] == 'static':
         targets = pd.read_excel(rf'{ID}.xlsx')
         data = pd.read_csv(rf'{ID}.txt')
@@ -25,18 +26,16 @@ for file in files:
 
     target_signal_x, target_signal_y = lbs.convert_excel_to_screen_size_targets(targets)
     data = lbs.values_during_game(data)
+    plt.plot(data['yaw'], linestyle='-', label='yaw')
+    plt.legend()
+    plt.show()
 
     data = lbs.return_the_values_before_target_change(data)
     lbs.graph_creation_target_vs_player(data['target_pos_x'], data['target_pos_y'], data['player_pos_x'], data['player_pos_y'])
-    #
+
     lbs.graph_creation_of_spatial_error(data['target_pos_x'], data['target_pos_y'], data['player_pos_x'], data['player_pos_y'])
 
-    # plt.plot(yaw, linestyle='-', label='yaw')
 
-
-    # plt.scatter(target_pos_x, target_pos_y, label='targets')
-    # plt.legend()
-    # plt.show()
 
 
     #
