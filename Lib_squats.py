@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib.widgets import Slider
 import colorednoise as cn
-
 import lib
 from scipy.constants import g
 import math
@@ -181,8 +180,6 @@ def pink_noise_travel_distance_and_orientation(N):
     # Orientation = cn.powerlaw_psd_gaussian(1, 1000)
     Orientation = ratio_0_to_1(Orientation)
     Orientation = Orientation * 359
-    print(f'TD: {DFA(TD)}')
-    print(f'Orientation: {DFA(Orientation)}')
     x_data = [0.5]
     y_data = [0.5]
 
