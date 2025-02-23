@@ -292,6 +292,7 @@ def pink_noise_x_and_y(N):
 
     return x_data, y_data
 
+
 def pink_noise_signal_creation_using_cn(N):
     pink = False
     iterations = 0
@@ -530,33 +531,41 @@ def converting_str_into_float(time_series):
 def return_the_values_before_target_change(df):
     indexes_before_change = find_the_last_moment_before_target_change_position(df['target_pos_x'])
 
-    target_pos_x = df['target_pos_x'][indexes_before_change].to_numpy()
-    target_pos_y = df['target_pos_y'][indexes_before_change].to_numpy()
-    player_pos_x = df['player_pos_x'][indexes_before_change].to_numpy()
-    player_pos_y = df['player_pos_y'][indexes_before_change].to_numpy()
-    left_plate = df['left_plate'][indexes_before_change].to_numpy()
-    right_plate = df['right_plate'][indexes_before_change].to_numpy()
-    pitch = df['pitch'][indexes_before_change].to_numpy()
-    yaw = df['yaw'][indexes_before_change].to_numpy()
-    roll = df['roll'][indexes_before_change].to_numpy()
-    min_angle = df['min_angle'][indexes_before_change].to_numpy()
-    max_angle = df['max_angle'][indexes_before_change].to_numpy()
+    data_list= []
+    for i in range(len(indexes_before_change)-1):
+        start = indexes_before_change[i]+1
+        stop = indexes_before_change[i+1]
 
-    dist = {'target_pos_x': target_pos_x,
-            'target_pos_y': target_pos_y,
-            'player_pos_x': player_pos_x,
-            'player_pos_y': player_pos_y,
-            'left_plate': left_plate,
-            'right_plate': right_plate,
-            'pitch': pitch,
-            'yaw': yaw,
-            'roll': roll,
-            'min_angle': min_angle,
-            'max_angle': max_angle
-            }
+        target_pos_x = df['target_pos_x'][start:stop].to_numpy()
+        target_pos_y = df['target_pos_y'][start:stop].to_numpy()
+        player_pos_x = df['player_pos_x'][start:stop].to_numpy()
+        player_pos_y = df['player_pos_y'][start:stop].to_numpy()
+        left_plate = df['left_plate'][start:stop].to_numpy()
+        right_plate = df['right_plate'][start:stop].to_numpy()
+        pitch = df['pitch'][start:stop].to_numpy()
+        yaw = df['yaw'][start:stop].to_numpy()
+        roll = df['roll'][start:stop].to_numpy()
+        min_angle = df['min_angle'][start:stop].to_numpy()
+        max_angle = df['max_angle'][start:stop].to_numpy()
 
-    new_df = pd.DataFrame(dist)
-    return new_df
+        dist = {'target_pos_x': target_pos_x,
+                'target_pos_y': target_pos_y,
+                'player_pos_x': player_pos_x,
+                'player_pos_y': player_pos_y,
+                'left_plate': left_plate,
+                'right_plate': right_plate,
+                'pitch': pitch,
+                'yaw': yaw,
+                'roll': roll,
+                'min_angle': min_angle,
+                'max_angle': max_angle
+                }
+
+        df_temporary = pd.DataFrame(dist)
+        data_list.append(df_temporary)
+
+    return data_list
+
 
 
 def find_the_last_moment_before_target_change_position(target_pos_x):
@@ -572,6 +581,7 @@ def find_the_last_moment_before_target_change_position(target_pos_x):
     indexes_before_change = []
     number_of_data_point = 0
     list_number_of_data_point = []
+    indexes_before_change.append(-1) # I do this so that in the return_the_values_before_target_change function I can separate each target
     for i in range(len(target_pos_x) - 1):
         if target_pos_x[i] != target_pos_x[i + 1]:
             list_number_of_data_point.append(number_of_data_point)
