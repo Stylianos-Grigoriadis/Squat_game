@@ -130,10 +130,9 @@ def creation_rigid_signal(N):
     x_data = np.tile(x_sequence, N // len(x_sequence))
     y_data = np.tile(y_sequence, N // len(y_sequence))
     more = N - len(x_data)
-    for i in range(0,more):
+    for i in range(0, more):
         x_data = np.append(x_data, x_sequence[i])
         y_data = np.append(y_data, y_sequence[i])
-
 
     return x_data, y_data
 
@@ -300,8 +299,8 @@ def pink_noise_signal_creation_using_cn(N):
 
         pink_noise = cn.powerlaw_psd_gaussian(1, N)
 
-
-        slope, positive_freqs_log, positive_magnitude_log, intercept, name, r, p, positive_freqs, positive_magnitude = quality_assessment_of_temporal_structure_FFT_method(pink_noise, 'pink_noise_z')
+        slope, positive_freqs_log, positive_magnitude_log, intercept, name, r, p, positive_freqs, positive_magnitude = quality_assessment_of_temporal_structure_FFT_method(
+            pink_noise, 'pink_noise_z')
 
         if round(slope, 2) == -0.5 and (p < 0.05) and (r <= -0.7):
             #
@@ -327,7 +326,7 @@ def pink_noise_signal_creation_using_cn(N):
             pink = True
         else:
             print('Not valid pink noise signal')
-            iterations +=1
+            iterations += 1
             print(iterations)
 
     return pink_noise
@@ -339,7 +338,7 @@ def quality_assessment_of_temporal_structure_FFT_method(signal, name):
     fft_magnitude = np.abs(fft_output)  # Magnitude of the FFT
 
     # Calculate frequency bins
-    frequencies = np.fft.fftfreq(len(signal), d=1/0.01)  # Frequency bins
+    frequencies = np.fft.fftfreq(len(signal), d=1 / 0.01)  # Frequency bins
 
     # Keep only the positive frequencies
     positive_freqs = frequencies[1:len(frequencies) // 2]  # Skip the zero frequency
@@ -481,7 +480,7 @@ def values_during_game(df):
     """
 
     filtered_data = df[df['target_pos_y'] != ' None']
-    print(filtered_data.columns)
+    # print(filtered_data.columns)
     target_pos_x = filtered_data['target_pos_x'].to_numpy()
     target_pos_y = filtered_data['target_pos_y'].to_numpy()
     player_pos_x = filtered_data['player_pos_x'].to_numpy()
@@ -493,7 +492,6 @@ def values_during_game(df):
     roll = filtered_data['roll'].to_numpy()
     min_angle = filtered_data['min_angle'].to_numpy()
     max_angle = filtered_data['max_angle '].to_numpy()
-
 
     target_pos_x = converting_str_into_float(target_pos_x)
     target_pos_y = converting_str_into_float(target_pos_y)
@@ -529,12 +527,18 @@ def converting_str_into_float(time_series):
 
 
 def return_the_values_before_target_change(df):
-    indexes_before_change = find_the_last_moment_before_target_change_position(df['target_pos_x'])
+    list_with_list_of_indices, indices_before_change = find_the_last_moment_before_target_change_position(df['target_pos_x'])
+    new_indices_before_change = []
+    for list in list_with_list_of_indices:
+        for j in range(len(list)):
+            if not j == 0:
+                new_indices_before_change.append(list[j])
 
-    data_list= []
-    for i in range(len(indexes_before_change)-1):
-        start = indexes_before_change[i]+1
-        stop = indexes_before_change[i+1]
+    data_list = []
+
+    for i in range(len(new_indices_before_change) - 1):
+        start = new_indices_before_change[i] + 1
+        stop = new_indices_before_change[i + 1]
 
         target_pos_x = df['target_pos_x'][start:stop].to_numpy()
         target_pos_y = df['target_pos_y'][start:stop].to_numpy()
@@ -567,7 +571,6 @@ def return_the_values_before_target_change(df):
     return data_list
 
 
-
 def find_the_last_moment_before_target_change_position(target_pos_x):
     """ This Function returns the indices of the targets right before the targets change position.
         First it considered the number_of_data_point before the targets changes. This is because, between
@@ -578,32 +581,61 @@ def find_the_last_moment_before_target_change_position(target_pos_x):
         median of the list_number_of_data_point. In this way we keep the right indices of the last moment
         of target appearance.
         """
-    indexes_before_change = []
+    indices_before_change = []
     number_of_data_point = 0
     list_number_of_data_point = []
-    indexes_before_change.append(-1) # I do this so that in the return_the_values_before_target_change function I can separate each target
+    list_with_list_of_indices = []
+    indices_before_change.append(-1)  # I do this so that in the return_the_values_before_target_change function I can separate each target
+
+    # We create a list "list_number_of_data_point" with the total number of the indices which have the same target
+    # (we will use this for the median number afterward
     for i in range(len(target_pos_x) - 1):
         if target_pos_x[i] != target_pos_x[i + 1]:
             list_number_of_data_point.append(number_of_data_point)
             number_of_data_point = 0
         else:
             number_of_data_point = number_of_data_point + 1
+
+    # We create a list with all the indices before the targets change
     for i in range(len(target_pos_x) - 1):
         if target_pos_x[i] != target_pos_x[i + 1]:
-            indexes_before_change.append(i)
-    indexes_before_change.append(int(indexes_before_change[-1] + np.median(list_number_of_data_point)))
+            indices_before_change.append(i)
+    indices_before_change.append(int(indices_before_change[-1] + np.median(list_number_of_data_point)))
 
-    for i in range(len(list_number_of_data_point)):
-        if list_number_of_data_point[i] > np.median(list_number_of_data_point) + 10:
-            indexes_before_change[i] = int(indexes_before_change[i-1] + np.median(list_number_of_data_point)) # This might give us an error in the future
+    # We create a list with the indices during which the set is changed
+    # CAREFUL at these indices the target changes, so we don't have the index of the end of the last target before the set changes
+    indices_to_insert = []
+    for i in range(len(indices_before_change) - 1):
+        if indices_before_change[i + 1] > indices_before_change[i] + np.median(list_number_of_data_point) + 10:
+            indices_to_insert.append(i+1)
 
-    return indexes_before_change
+    # Here we insert the index of the end of the last target before the set changes
+    for i in indices_to_insert:
+        indices_before_change.insert(i, int(indices_before_change[i - 1] + np.median(list_number_of_data_point)))  # This might give us an error in the future
+
+    # Here we create 5 lists which are consisted of the 5 sets and append the lists to another list
+    start = 0
+    for i in range(len(indices_before_change) - 1):
+        if indices_before_change[i + 1] > indices_before_change[i] + np.median(list_number_of_data_point) + 10:
+            stop = i+1
+            list_with_list_of_indices.append(indices_before_change[start:stop])
+            start = i + 1
+    list_with_list_of_indices.append(indices_before_change[start:])
+
+
+
+    return list_with_list_of_indices, indices_before_change
 
 
 def spatial_error_calculation(target_pos_x, target_pos_y, player_pos_x, player_pos_y):
     spatial_error = np.sqrt((player_pos_x - target_pos_x) ** 2 + (player_pos_y - target_pos_y) ** 2)
 
     return spatial_error
+
+def spatial_error_best_window():
+
+
+
 
 
 def create_excel_file(x_data, y_data, directory, name):
@@ -626,7 +658,8 @@ def convert_excel_to_screen_size_targets(excel, x_screen_size=1920, y_screen_siz
     return target_singal_x, target_singal_y
 
 
-def graph_creation_target_vs_player(target_pos_x, target_pos_y, player_pos_x, player_pos_y, x_screen_size=1920, y_screen_size=1080):
+def graph_creation_target_vs_player(target_pos_x, target_pos_y, player_pos_x, player_pos_y, x_screen_size=1920,
+                                    y_screen_size=1080):
     """ This function creates a graph with a slider to visualize better the position of target vs
     player position"""
     initial_points = 1
@@ -672,6 +705,6 @@ def graph_creation_of_spatial_error(target_pos_x, target_pos_y, player_pos_x, pl
 
     plt.axvline(x=v_lines[-1], label='Sets', color='red', linestyle='--', linewidth=2, alpha=0.7)
 
-    plt.ylim(0,1000)
+    plt.ylim(0, 1000)
     plt.legend()
     plt.show()
