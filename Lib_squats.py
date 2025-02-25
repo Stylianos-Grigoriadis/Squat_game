@@ -480,7 +480,8 @@ def values_during_game(df):
     """
 
     filtered_data = df[df['target_pos_y'] != ' None']
-    # print(filtered_data.columns)
+
+    timestamp = filtered_data['timestamp'].to_numpy()
     target_pos_x = filtered_data['target_pos_x'].to_numpy()
     target_pos_y = filtered_data['target_pos_y'].to_numpy()
     player_pos_x = filtered_data['player_pos_x'].to_numpy()
@@ -493,6 +494,7 @@ def values_during_game(df):
     min_angle = filtered_data['min_angle'].to_numpy()
     max_angle = filtered_data['max_angle '].to_numpy()
 
+    timestamp = converting_str_into_float(timestamp)
     target_pos_x = converting_str_into_float(target_pos_x)
     target_pos_y = converting_str_into_float(target_pos_y)
     player_pos_x = converting_str_into_float(player_pos_x)
@@ -505,7 +507,8 @@ def values_during_game(df):
     min_angle = converting_str_into_float(min_angle)
     max_angle = converting_str_into_float(max_angle)
 
-    dist = {'target_pos_x': target_pos_x,
+    dist = {'timestamp': timestamp,
+            'target_pos_x': target_pos_x,
             'target_pos_y': target_pos_y,
             'player_pos_x': player_pos_x,
             'player_pos_y': player_pos_y,
@@ -526,50 +529,73 @@ def converting_str_into_float(time_series):
     return time_series
 
 
-def return_the_values_before_target_change(df):
+def return_the_df_of_each_target_separated_by_set(df):
+    """ This function returns the dataframe of each target separated and for each set. It returns a list
+    with 5 sublists which include 30 dataframes each in respect to the 30 targets each set has"""
+
     list_with_list_of_indices, indices_before_change = find_the_last_moment_before_target_change_position(df['target_pos_x'])
-    new_indices_before_change = []
+
+    list_with_all_df_separated_by_set = []
     for list in list_with_list_of_indices:
-        for j in range(len(list)):
-            if not j == 0:
-                new_indices_before_change.append(list[j])
+        list_of_each_set = []
+        for i in range(len(list)-1):
+            start = list[i] + 1
+            stop = list[i + 1] + 1
 
-    data_list = []
+            timestamp = df['timestamp'][start:stop].to_numpy()
+            target_pos_x = df['target_pos_x'][start:stop].to_numpy()
+            target_pos_y = df['target_pos_y'][start:stop].to_numpy()
+            player_pos_x = df['player_pos_x'][start:stop].to_numpy()
+            player_pos_y = df['player_pos_y'][start:stop].to_numpy()
+            left_plate = df['left_plate'][start:stop].to_numpy()
+            right_plate = df['right_plate'][start:stop].to_numpy()
+            pitch = df['pitch'][start:stop].to_numpy()
+            yaw = df['yaw'][start:stop].to_numpy()
+            roll = df['roll'][start:stop].to_numpy()
+            min_angle = df['min_angle'][start:stop].to_numpy()
+            max_angle = df['max_angle'][start:stop].to_numpy()
 
-    for i in range(len(new_indices_before_change) - 1):
-        start = new_indices_before_change[i] + 1
-        stop = new_indices_before_change[i + 1]
+            dist = {'timestamp': timestamp,
+                    'target_pos_x': target_pos_x,
+                    'target_pos_y': target_pos_y,
+                    'player_pos_x': player_pos_x,
+                    'player_pos_y': player_pos_y,
+                    'left_plate': left_plate,
+                    'right_plate': right_plate,
+                    'pitch': pitch,
+                    'yaw': yaw,
+                    'roll': roll,
+                    'min_angle': min_angle,
+                    'max_angle': max_angle
+                    }
+            df_temporary = pd.DataFrame(dist)
+            list_of_each_set.append(df_temporary)
+        list_with_all_df_separated_by_set.append(list_of_each_set)
 
-        target_pos_x = df['target_pos_x'][start:stop].to_numpy()
-        target_pos_y = df['target_pos_y'][start:stop].to_numpy()
-        player_pos_x = df['player_pos_x'][start:stop].to_numpy()
-        player_pos_y = df['player_pos_y'][start:stop].to_numpy()
-        left_plate = df['left_plate'][start:stop].to_numpy()
-        right_plate = df['right_plate'][start:stop].to_numpy()
-        pitch = df['pitch'][start:stop].to_numpy()
-        yaw = df['yaw'][start:stop].to_numpy()
-        roll = df['roll'][start:stop].to_numpy()
-        min_angle = df['min_angle'][start:stop].to_numpy()
-        max_angle = df['max_angle'][start:stop].to_numpy()
+    return list_with_all_df_separated_by_set
 
-        dist = {'target_pos_x': target_pos_x,
-                'target_pos_y': target_pos_y,
-                'player_pos_x': player_pos_x,
-                'player_pos_y': player_pos_y,
-                'left_plate': left_plate,
-                'right_plate': right_plate,
-                'pitch': pitch,
-                'yaw': yaw,
-                'roll': roll,
-                'min_angle': min_angle,
-                'max_angle': max_angle
-                }
 
-        df_temporary = pd.DataFrame(dist)
-        data_list.append(df_temporary)
+def simple_graph(list_of_all_data, *column_to_plot):
 
-    return data_list
+    list_of_set_positions = []
+    list_of_set_positions.append(0)
+    concatenated_df_list = []
+    current_index = 0
+    for dataframe_list in list_of_all_data:
+        concatenated_df = pd.concat(dataframe_list, ignore_index=True)
+        concatenated_df_list.append(concatenated_df)
+        current_index = current_index + len(concatenated_df)
+        list_of_set_positions.append(current_index)
+    all_data = pd.concat(concatenated_df_list, ignore_index=True)
 
+    for column in column_to_plot:
+        plt.plot(all_data[column], label=column)
+
+    for i in range(len(list_of_set_positions)-1):
+        plt.axvline(x=list_of_set_positions[i], linestyle='--', c='k')
+    plt.axvline(x=list_of_set_positions[-1], linestyle='--', c='k', label='set')
+    plt.legend()
+    plt.show()
 
 def find_the_last_moment_before_target_change_position(target_pos_x):
     """ This Function returns the indices of the targets right before the targets change position.
@@ -632,7 +658,22 @@ def spatial_error_calculation(target_pos_x, target_pos_y, player_pos_x, player_p
 
     return spatial_error
 
-def spatial_error_best_window():
+def spatial_error_best_window(list_with_all_df_separated_by_set, factor):
+    # pd.set_option('display.float_format', '{:.0f}'.format)
+    list_spatial_error_all_separated_by_set = []
+    for dataframe_list in list_with_all_df_separated_by_set:
+        list_spatial_error_each_set = []
+        for df in dataframe_list:
+            timestamp_list = []
+            for i in range(len(df['timestamp'])-1):
+                timestamp_list.append(df['timestamp'][i+1] - df['timestamp'][i])
+        # print(df)
+
+        # plt.plot(timestamp_list)
+        # plt.show()
+
+
+
 
 
 
@@ -658,15 +699,28 @@ def convert_excel_to_screen_size_targets(excel, x_screen_size=1920, y_screen_siz
     return target_singal_x, target_singal_y
 
 
-def graph_creation_target_vs_player(target_pos_x, target_pos_y, player_pos_x, player_pos_y, x_screen_size=1920,
-                                    y_screen_size=1080):
+def graph_creation_target_vs_player(list_with_all_df_separated_by_set, x_screen_size=1920, y_screen_size=1080):
     """ This function creates a graph with a slider to visualize better the position of target vs
     player position"""
+
+    concatenated_df_list = []
+    for dataframe_list in list_with_all_df_separated_by_set:
+        concatenated_df = pd.concat(dataframe_list, ignore_index=True)
+        concatenated_df_list.append(concatenated_df)
+    all_data = pd.concat(concatenated_df_list, ignore_index=True)
+
+    target_pos_x = all_data['target_pos_x'].to_numpy()
+    target_pos_y = all_data['target_pos_y'].to_numpy()
+    player_pos_x = all_data['player_pos_x'].to_numpy()
+    player_pos_y = all_data['player_pos_y'].to_numpy()
+
+
     initial_points = 1
 
     fig, ax = plt.subplots()
     plt.subplots_adjust(bottom=0.25)
 
+    # Plot initial points
     sc_player = ax.scatter(player_pos_x[:initial_points], player_pos_y[:initial_points], label='Player', color='blue')
     sc_target = ax.scatter(target_pos_x[:initial_points], target_pos_y[:initial_points], label='Signal', color='red')
 
@@ -674,18 +728,21 @@ def graph_creation_target_vs_player(target_pos_x, target_pos_y, player_pos_x, pl
     ax.set_ylim(-50, y_screen_size + 50)
     ax.legend()
 
+    # Create a slider
     ax_slider = plt.axes([0.2, 0.1, 0.65, 0.03])
     slider = Slider(ax_slider, 'Data Points', 1, len(player_pos_x), valinit=initial_points, valstep=1)
 
+    # Update function
     def update(val):
-        num_points = int(slider.val)
+        num_points = int(slider.val)  # Get current slider value
 
+        # Update scatter plot data
         sc_player.set_offsets(np.column_stack((player_pos_x[:num_points], player_pos_y[:num_points])))
         sc_target.set_offsets(np.column_stack((target_pos_x[:num_points], target_pos_y[:num_points])))
 
-        fig.canvas.draw_idle()
+        fig.canvas.draw_idle()  # Refresh the figure
 
-    slider.on_changed(update)
+    slider.on_changed(update)  # Connect slider to update function
 
     plt.show()
 

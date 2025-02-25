@@ -6,7 +6,7 @@ import colorednoise as cn
 from fathon import fathonUtils as fu
 import fathon
 import lib
-import lib_squats as lbs
+import Lib_squats as lbs
 
 
 

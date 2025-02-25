@@ -28,32 +28,19 @@ for file in files:
 
     # Extract the
     data = lbs.values_during_game(data)
-    # lbs.graph_creation_target_vs_player(data['target_pos_x'], data['target_pos_y'], data['player_pos_x'], data['player_pos_y'])
-    # plt.plot(data['yaw'], linestyle='-', label='yaw')
-    # plt.legend()
-    # plt.show()
+    print(data.columns)
 
-    data_list = lbs.return_the_values_before_target_change(data)
-    # print(data_list)
 
+    # Create a list with 5 sublists which contain 30 dataframes, each dataframe contains all data of each target
+    list_with_all_df_separated_by_set = lbs.return_the_df_of_each_target_separated_by_set(data)
+    # print(list_with_all_df_separated_by_set[3])
 
 
 
+    # Create a simple graph with all the columns you need to plot
+    # lbs.simple_graph(list_with_all_df_separated_by_set, 'pitch', 'yaw', 'roll')
 
-    # lbs.graph_creation_of_spatial_error(data['target_pos_x'], data['target_pos_y'], data['player_pos_x'], data['player_pos_y'])
+    # Create a scatter with a slider for visualization of target position vs player position
+    # lbs.graph_creation_target_vs_player(list_with_all_df_separated_by_set)
 
-
-
-
-    #
-    # plt.plot(right_plate, label='right_plate')
-    # plt.plot(left_plate, label='left_plate')
-    # plt.legend()
-    # plt.show()
-
-
-
-
-
-
-
+    lbs.spatial_error_best_window(list_with_all_df_separated_by_set, 4)
