@@ -660,19 +660,93 @@ def spatial_error_calculation(target_pos_x, target_pos_y, player_pos_x, player_p
 
     return spatial_error
 
-def spatial_error_best_window(list_with_all_df_separated_by_set, factor):
-    pd.set_option('display.float_format', '{:.0f}'.format)
+def spatial_error_average_for_each_target(df, time_window=400, time_between_each_sample=25):
+    """
+    This function calculates the average spatial error for overlapping windows with length equal to time_window. Then it returns the minimum of those averages.
+    We consider that this minimum is the best performance of the participant for this target.
+    Parameter:
+        df                          :   the df with the stored data of each target
+        factor                      :   this is the time in milliseconds of the window length for the calculation of the average spatial error
+        time_between_each_sample    :   this is the standard time between each measurement.
+                                    *** CAREFUL ***
+        The first 6 lines is a check of the assumption that the time_between_each_sample is equal to 25 (from 23 up to 27).
+        If this is not the case you need to calculate it and change it
+        """
+    # Here we check if the sampling frequency is close to 40. Basically we check if between each measurement the time is 25 milliseconds
+    list_difference_between_time_points = []
+    for i in range(len(df['timestamp'])-1):
+        list_difference_between_time_points.append(df['timestamp'][i+1]-df['timestamp'][i])
+    if (np.median(list_difference_between_time_points) > time_between_each_sample + 2) or (np.median(list_difference_between_time_points) < time_between_each_sample - 2):
+        raise ValueError(f'The time between each consecutive observation is not near {time_between_each_sample}, which means that we dont calculate the windows with the factor {time_window} correct')
+    # End of the check
+
+    # Here we calculate the sampling frequency
+    sampling_frequency = 1000/time_between_each_sample
+
+    # Here we calculate the window length for the calculation of the average spatial error
+    window_length = int((time_window/1000)*sampling_frequency)
+
+    # Here we calculate the average of spatial error of each window and then the min of those averages.
+    # We consider that this min is the best performance for this window. We probably need to play with the factor.
+    list_of_average_spatial_error = []
+
+    for i in range(len(df['target_pos_x']) - window_length):
+
+        target_pos_x = df['target_pos_x'][i: i + window_length].to_numpy()
+        target_pos_y = df['target_pos_y'][i: i + window_length].to_numpy()
+        player_pos_x = df['player_pos_x'][i: i + window_length].to_numpy()
+        player_pos_y = df['player_pos_y'][i: i + window_length].to_numpy()
+
+        spatial_error_of_window = spatial_error_calculation(target_pos_x, target_pos_y, player_pos_x, player_pos_y)
+        average_spatial_error_of_window = np.mean(spatial_error_of_window)
+
+        # Next step was done because without it, it returns values with np.float64 type
+        average_spatial_error_of_window = float(average_spatial_error_of_window)
+
+        list_of_average_spatial_error.append(average_spatial_error_of_window)
+
+    min_of_average_spatial_error = np.min(list_of_average_spatial_error)
+
+    return min_of_average_spatial_error
+
+def spatial_error_best_window(list_with_all_df_separated_by_set, plot=False, time_window=400, time_between_each_sample=25):
+    # pd.set_option('display.float_format', '{:.0f}'.format)
     list_spatial_error_all_separated_by_set = []
     for dataframe_list in list_with_all_df_separated_by_set:
         list_spatial_error_each_set = []
-        for df,j in zip(dataframe_list, range(len(dataframe_list))):
-            timestamp_list = []
-            for i in range(len(df['timestamp'])-1):
-                timestamp_list.append(df['timestamp'][i+1] - df['timestamp'][i])
-        # print(df)
-            print(f'{j}=={len(df) / 40}')
-        # plt.plot(timestamp_list)
-        # plt.show()
+        for df in dataframe_list:
+            min_spatial_error = spatial_error_average_for_each_target(df, time_window, time_between_each_sample)
+            list_spatial_error_each_set.append(min_spatial_error)
+        list_spatial_error_all_separated_by_set.append(list_spatial_error_each_set)
+
+    if plot:
+        list_of_set_positions = []
+        list_of_set_positions.append(0)
+        list_of_all_spatial_errors =[]
+        current_index = 0
+
+
+        for list_of_each_set in list_spatial_error_all_separated_by_set:
+            for i in list_of_each_set:
+                list_of_all_spatial_errors.append(i)
+            current_index = current_index + len(list_of_each_set)
+            list_of_set_positions.append(current_index)
+
+        # list_of_all_spatial_errors = np.array(list_of_all_spatial_errors)
+        # list_of_all_spatial_errors = list_of_all_spatial_errors - np.mean(list_of_all_spatial_errors)
+        # list_of_all_spatial_errors = np.cumsum(list_of_all_spatial_errors)
+
+        plt.plot(list_of_all_spatial_errors, c='red', label='Min Spatial Error')
+        for i in range(len(list_of_set_positions) - 1):
+            plt.axvline(x=list_of_set_positions[i], linestyle='--', c='k')
+        plt.axvline(x=list_of_set_positions[-1], linestyle='--', c='k', label='set')
+        plt.ylim(0,1200)
+        plt.legend()
+        plt.show()
+
+
+    return(list_spatial_error_all_separated_by_set)
+
 
 
 

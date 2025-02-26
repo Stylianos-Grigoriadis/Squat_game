@@ -43,4 +43,5 @@ for file in files:
     # Create a scatter with a slider for visualization of target position vs player position
     # lbs.graph_creation_target_vs_player(list_with_all_df_separated_by_set)
 
-    lbs.spatial_error_best_window(list_with_all_df_separated_by_set, 4)
+    spatial_error = lbs.spatial_error_best_window(list_with_all_df_separated_by_set, plot=True, time_window=300)
+
