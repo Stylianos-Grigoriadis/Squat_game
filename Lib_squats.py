@@ -621,6 +621,7 @@ def find_the_last_moment_before_target_change_position(target_pos_x):
             number_of_data_point = 0
         else:
             number_of_data_point = number_of_data_point + 1
+    # Here we are good!!!!!!!!!!!!!!!!!!!!!!!
 
     # We create a list with all the indices before the targets change
     for i in range(len(target_pos_x) - 1):
@@ -628,12 +629,15 @@ def find_the_last_moment_before_target_change_position(target_pos_x):
             indices_before_change.append(i)
     indices_before_change.append(int(indices_before_change[-1] + np.median(list_number_of_data_point)))
 
+
     # We create a list with the indices during which the set is changed
     # CAREFUL at these indices the target changes, so we don't have the index of the end of the last target before the set changes
     indices_to_insert = []
+    j=0 # we use this factor do the insert function we have later
     for i in range(len(indices_before_change) - 1):
         if indices_before_change[i + 1] > indices_before_change[i] + np.median(list_number_of_data_point) + 10:
-            indices_to_insert.append(i+1)
+            indices_to_insert.append(i+1+j)
+            j=j+1
 
     # Here we insert the index of the end of the last target before the set changes
     for i in indices_to_insert:
@@ -648,8 +652,6 @@ def find_the_last_moment_before_target_change_position(target_pos_x):
             start = i + 1
     list_with_list_of_indices.append(indices_before_change[start:])
 
-
-
     return list_with_list_of_indices, indices_before_change
 
 
@@ -659,21 +661,18 @@ def spatial_error_calculation(target_pos_x, target_pos_y, player_pos_x, player_p
     return spatial_error
 
 def spatial_error_best_window(list_with_all_df_separated_by_set, factor):
-    # pd.set_option('display.float_format', '{:.0f}'.format)
+    pd.set_option('display.float_format', '{:.0f}'.format)
     list_spatial_error_all_separated_by_set = []
     for dataframe_list in list_with_all_df_separated_by_set:
         list_spatial_error_each_set = []
-        for df in dataframe_list:
+        for df,j in zip(dataframe_list, range(len(dataframe_list))):
             timestamp_list = []
             for i in range(len(df['timestamp'])-1):
                 timestamp_list.append(df['timestamp'][i+1] - df['timestamp'][i])
         # print(df)
-
+            print(f'{j}=={len(df) / 40}')
         # plt.plot(timestamp_list)
         # plt.show()
-
-
-
 
 
 
