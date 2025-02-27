@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib.widgets import Slider
+from matplotlib.widgets import Button
 import colorednoise as cn
 import lib
 from scipy.constants import g
@@ -597,6 +598,7 @@ def simple_graph(list_of_all_data, *column_to_plot):
     plt.legend()
     plt.show()
 
+
 def find_the_last_moment_before_target_change_position(target_pos_x):
     """ This Function returns the indices of the targets right before the targets change position.
         First it considered the number_of_data_point before the targets changes. This is because, between
@@ -660,6 +662,7 @@ def spatial_error_calculation(target_pos_x, target_pos_y, player_pos_x, player_p
 
     return spatial_error
 
+
 def spatial_error_average_for_each_target(df, time_window=400, time_between_each_sample=25):
     """
     This function calculates the average spatial error for overlapping windows with length equal to time_window. Then it returns the minimum of those averages.
@@ -709,6 +712,7 @@ def spatial_error_average_for_each_target(df, time_window=400, time_between_each
 
     return min_of_average_spatial_error
 
+
 def spatial_error_best_window(list_with_all_df_separated_by_set, plot=False, time_window=400, time_between_each_sample=25):
     # pd.set_option('display.float_format', '{:.0f}'.format)
     list_spatial_error_all_separated_by_set = []
@@ -735,8 +739,10 @@ def spatial_error_best_window(list_with_all_df_separated_by_set, plot=False, tim
         # list_of_all_spatial_errors = np.array(list_of_all_spatial_errors)
         # list_of_all_spatial_errors = list_of_all_spatial_errors - np.mean(list_of_all_spatial_errors)
         # list_of_all_spatial_errors = np.cumsum(list_of_all_spatial_errors)
+        time = np.linspace(0,150,150)
+        # plt.plot(list_of_all_spatial_errors, c='red', label='Min Spatial Error')
+        plt.scatter(time, list_of_all_spatial_errors, c='red', label='Min Spatial Error')
 
-        plt.plot(list_of_all_spatial_errors, c='red', label='Min Spatial Error')
         for i in range(len(list_of_set_positions) - 1):
             plt.axvline(x=list_of_set_positions[i], linestyle='--', c='k')
         plt.axvline(x=list_of_set_positions[-1], linestyle='--', c='k', label='set')
@@ -746,10 +752,6 @@ def spatial_error_best_window(list_with_all_df_separated_by_set, plot=False, tim
 
 
     return(list_spatial_error_all_separated_by_set)
-
-
-
-
 
 
 def create_excel_file(x_data, y_data, directory, name):
@@ -818,6 +820,159 @@ def graph_creation_target_vs_player(list_with_all_df_separated_by_set, x_screen_
     slider.on_changed(update)  # Connect slider to update function
 
     plt.show()
+
+def graph_creation_target_vs_player_with_data(list_with_all_df_separated_by_set, x_screen_size=1920, y_screen_size=1080, update_target=5):
+    """ This function creates a graph with a slider to visualize better the position of target vs
+    player position"""
+
+    concatenated_df_list = []
+    current_index = 0
+    list_of_set_positions = []
+    list_of_set_positions.append(current_index)
+    list_of_length_of_each_target = []
+    for dataframe_list in list_with_all_df_separated_by_set:
+        for df in dataframe_list:
+            list_of_length_of_each_target.append(len(df))
+
+        concatenated_df = pd.concat(dataframe_list, ignore_index=True)
+        concatenated_df_list.append(concatenated_df)
+        current_index = current_index + len(concatenated_df)
+        list_of_set_positions.append(current_index)
+
+    all_data = pd.concat(concatenated_df_list, ignore_index=True)
+
+
+    target_pos_x = all_data['target_pos_x'].to_numpy()
+    target_pos_y = all_data['target_pos_y'].to_numpy()
+    player_pos_x = all_data['player_pos_x'].to_numpy()
+    player_pos_y = all_data['player_pos_y'].to_numpy()
+    IMU_yaw = all_data['yaw'].to_numpy()
+    left_plate = all_data['left_plate'].to_numpy()
+    right_plate = all_data['right_plate'].to_numpy()
+
+    # Initial points
+    initial_points = 1
+
+    # Create a figure and two subplots (vertical layout)
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6))  # Two subplots vertically
+    fig = plt.gcf()
+    print(f"Current bottom: {fig.subplotpars.bottom}, Current top: {fig.subplotpars.top}")
+    plt.subplots_adjust(top=0.99)
+    plt.subplots_adjust(bottom=0.15)  # Increase the space at the bottom (higher value gives more space)
+
+    # Plot initial points in the first subplot (ax1)
+    sc_player1 = ax1.scatter(player_pos_x[:initial_points], player_pos_y[:initial_points], label='Player', color='blue')
+    sc_target1 = ax1.scatter(target_pos_x[:initial_points], target_pos_y[:initial_points], label='Signal', color='red')
+
+    ax1.set_xlim(-50, x_screen_size + 50)
+    ax1.set_ylim(-50, y_screen_size + 50)
+    ax1.legend()
+
+    ax2_right = ax2.twinx()  # This creates a new y-axis on the right side of ax2
+
+    # Plot initial points in the second subplot (ax2)
+    line2, = ax2.plot(IMU_yaw[:initial_points], label='IMU Yaw', color='green')
+    line3, = ax2_right.plot(left_plate[:initial_points], label='Left Plate', color='blue', lw=0.3)
+    line4, = ax2_right.plot(right_plate[:initial_points], label='Right Plate', color='red', lw=0.3)
+
+    ax2.set_xlim(0, len(IMU_yaw))  # Full x-axis range for IMU_yaw
+    ax2.set_ylim(np.min(IMU_yaw), np.max(IMU_yaw))  # Dynamic y-axis range for IMU_yaw (left side)
+
+    ax2_right.set_ylim(np.min([left_plate, right_plate]), np.max(
+        [left_plate, right_plate]))  # Dynamic y-axis range for left_plate and right_plate (right side)
+
+    ax2.legend()
+
+    # Create a slider
+    ax_slider = plt.axes([0.05, 0.001, 0.9, 0.03])  # Lower the slider's position (reduce 'bottom')
+    slider = Slider(ax_slider, 'Time', 1, len(player_pos_x), valinit=initial_points, valstep=1)
+
+    step = 0.15
+    # Define button positions
+    ax_button_forward_one = plt.axes([0.1 + 3*step, 0.05, 0.08, 0.05])  # Right-bottom corner
+    ax_button_backward_one = plt.axes([0.1 + 2*step, 0.05, 0.08, 0.05])  # Left of the forward button
+    ax_button_forward_ten = plt.axes([0.1 + 4*step, 0.05, 0.08, 0.05])  # Right-bottom corner
+    ax_button_backward_ten = plt.axes([0.1 + step, 0.05, 0.08, 0.05])  # Left of the forward button
+    ax_button_forward_one_target = plt.axes([0.1 + 5*step, 0.05, 0.08, 0.05])  # Right-bottom corner
+    ax_button_backward_one_target = plt.axes([0.1, 0.05, 0.08, 0.05])  # Left of the forward button
+
+    # Create buttons
+    button_forward_one = Button(ax_button_forward_one, '+1')
+    button_backward_one = Button(ax_button_backward_one, '-1')
+    button_forward_ten = Button(ax_button_forward_ten, '+10')
+    button_backward_ten = Button(ax_button_backward_ten, '-10')
+    button_forward_one_target = Button(ax_button_forward_one_target, '+1 target')
+    button_backward_one_target = Button(ax_button_backward_one_target, '-1 target')
+
+    for i in range(len(list_of_set_positions) - 1):
+        ax2.axvline(x=list_of_set_positions[i], linestyle='--', c='k')  # Draw on ax2
+    ax2.axvline(x=list_of_set_positions[-1], linestyle='--', c='k', label='set')
+    erase_rate = []
+    erase_rate = [sum(list_of_length_of_each_target[i:i+update_target]) for i in range(0, len(list_of_length_of_each_target), update_target)]
+    median_length_of_each_targe = np.median(list_of_length_of_each_target)
+
+    # Update function
+    def update(val):
+        num_points = int(slider.val)  # Get current slider value
+        erase_rate_index = min(num_points // erase_rate[0], len(erase_rate) - 1)  # Choose the appropriate step
+        current_erase_rate = erase_rate[erase_rate_index]
+
+        start_idx = (num_points // current_erase_rate) * current_erase_rate  # Compute the start index dynamically
+        # Update scatter plot data for ax1 (show points only within the moving 100-value window)
+        sc_player1.set_offsets(
+            np.column_stack((player_pos_x[start_idx:num_points], player_pos_y[start_idx:num_points])))
+        sc_target1.set_offsets(
+            np.column_stack((target_pos_x[start_idx:num_points], target_pos_y[start_idx:num_points])))
+
+        # Update the line plot data for ax2 (progressively display IMU_yaw, left_plate, and right_plate)
+        line2.set_data(np.arange(num_points), IMU_yaw[:num_points])
+        line3.set_data(np.arange(num_points), left_plate[:num_points])
+        line4.set_data(np.arange(num_points), right_plate[:num_points])
+
+        fig.canvas.draw_idle()  # Refresh the figure
+
+    def move_forward_one(event):
+        new_val = min(slider.val + 1, slider.valmax)  # Move forward
+        slider.set_val(new_val)
+
+    def move_backward_one(event):
+        new_val = max(slider.val - 1, slider.valmin)  # Move backward
+        slider.set_val(new_val)
+
+    def move_forward_ten(event):
+        new_val = min(slider.val + 10, slider.valmax)  # Move forward
+        slider.set_val(new_val)
+
+    def move_backward_ten(event):
+        new_val = max(slider.val - 10, slider.valmin)  # Move backward
+        slider.set_val(new_val)
+
+    def move_forward_one_target(event):
+        new_val = min(slider.val + median_length_of_each_targe, slider.valmax)  # Move forward
+        slider.set_val(new_val)
+
+    def move_backward_one_target(event):
+        new_val = max(slider.val - median_length_of_each_targe, slider.valmin)  # Move backward
+        slider.set_val(new_val)
+
+    slider.on_changed(update)
+    # Connect buttons to functions
+    button_forward_one.on_clicked(move_forward_one)
+    button_backward_one.on_clicked(move_backward_one)
+    button_forward_ten.on_clicked(move_forward_ten)
+    button_backward_ten.on_clicked(move_backward_ten)
+    button_forward_one_target.on_clicked(move_forward_one_target)
+    button_backward_one_target.on_clicked(move_backward_one_target)
+    # plt.tight_layout()
+    plt.show()
+
+
+
+
+
+
+
+
 
 
 def graph_creation_of_spatial_error(target_pos_x, target_pos_y, player_pos_x, player_pos_y):
