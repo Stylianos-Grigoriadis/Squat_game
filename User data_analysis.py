@@ -42,7 +42,6 @@ for file in files:
 
     # Create a scatter with a slider for visualization of target position vs player position
     # lbs.graph_creation_target_vs_player(list_with_all_df_separated_by_set)
-
     lbs.graph_creation_target_vs_player_with_data(list_with_all_df_separated_by_set)
 
 

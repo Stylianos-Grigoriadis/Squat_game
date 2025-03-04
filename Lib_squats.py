@@ -856,7 +856,6 @@ def graph_creation_target_vs_player_with_data(list_with_all_df_separated_by_set,
     # Create a figure and two subplots (vertical layout)
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6))  # Two subplots vertically
     fig = plt.gcf()
-    print(f"Current bottom: {fig.subplotpars.bottom}, Current top: {fig.subplotpars.top}")
     plt.subplots_adjust(top=0.99)
     plt.subplots_adjust(bottom=0.15)  # Increase the space at the bottom (higher value gives more space)
 
@@ -871,17 +870,21 @@ def graph_creation_target_vs_player_with_data(list_with_all_df_separated_by_set,
     ax2_right = ax2.twinx()  # This creates a new y-axis on the right side of ax2
 
     # Plot initial points in the second subplot (ax2)
-    line2, = ax2.plot(IMU_yaw[:initial_points], label='IMU Yaw', color='green')
-    line3, = ax2_right.plot(left_plate[:initial_points], label='Left Plate', color='blue', lw=0.3)
-    line4, = ax2_right.plot(right_plate[:initial_points], label='Right Plate', color='red', lw=0.3)
+    line2, = ax2.plot(IMU_yaw[:initial_points], color='green')
+    line3, = ax2_right.plot(left_plate[:initial_points], color='red', lw=0.3)
+    line4, = ax2_right.plot(right_plate[:initial_points], color='blue', lw=0.3)
 
     ax2.set_xlim(0, len(IMU_yaw))  # Full x-axis range for IMU_yaw
     ax2.set_ylim(np.min(IMU_yaw), np.max(IMU_yaw))  # Dynamic y-axis range for IMU_yaw (left side)
 
     ax2_right.set_ylim(np.min([left_plate, right_plate]), np.max(
         [left_plate, right_plate]))  # Dynamic y-axis range for left_plate and right_plate (right side)
+    # ax2_legend = ax2.legend([line2], ['IMU Yaw'], loc='upper left', fontsize=10, frameon=True)
 
-    ax2.legend()
+    # Custom legend for ax2_right (Left & Right Plate)
+    ax2_right_legend = ax2_right.legend([line2, line3, line4], ['IMU Yaw', 'Left Plate', 'Right Plate'], loc='upper right', fontsize=10,
+                                        frameon=True)
+
 
     # Create a slider
     ax_slider = plt.axes([0.05, 0.001, 0.9, 0.03])  # Lower the slider's position (reduce 'bottom')
@@ -964,6 +967,8 @@ def graph_creation_target_vs_player_with_data(list_with_all_df_separated_by_set,
     button_forward_one_target.on_clicked(move_forward_one_target)
     button_backward_one_target.on_clicked(move_backward_one_target)
     # plt.tight_layout()
+
+
     plt.show()
 
 
