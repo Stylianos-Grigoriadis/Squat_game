@@ -529,8 +529,24 @@ def converting_str_into_float(time_series):
     time_series = time_series.astype(float)
     return time_series
 
+def convert_target_position_X_if_old_data(signal):
+    for i in range(len(signal)):
+        if signal[i] < 128:
+            signal[i]= 128
+        if signal[i] > 1920 - 128:
+            signal[i] = 1920 - 128
+    return signal
 
-def return_the_df_of_each_target_separated_by_set(df):
+def convert_target_position_Y_if_old_data(signal):
+    for i in range(len(signal)):
+        if signal[i] < 128:
+            signal[i] = 128
+        if signal[i] > 1080 - 128:
+            signal[i] = 1080 - 128
+    return signal
+
+
+def return_the_df_of_each_target_separated_by_set(df, old_data):
     """ This function returns the dataframe of each target separated and for each set. It returns a list
     with 5 sublists which include 30 dataframes each in respect to the 30 targets each set has"""
 
@@ -555,6 +571,11 @@ def return_the_df_of_each_target_separated_by_set(df):
             roll = df['roll'][start:stop].to_numpy()
             min_angle = df['min_angle'][start:stop].to_numpy()
             max_angle = df['max_angle'][start:stop].to_numpy()
+
+            if old_data == True:
+                target_pos_x = convert_target_position_X_if_old_data(target_pos_x)
+                target_pos_y = convert_target_position_Y_if_old_data(target_pos_y)
+
 
             dist = {'timestamp': timestamp,
                     'target_pos_x': target_pos_x,
@@ -739,7 +760,7 @@ def spatial_error_best_window(list_with_all_df_separated_by_set, plot=False, tim
         # list_of_all_spatial_errors = np.array(list_of_all_spatial_errors)
         # list_of_all_spatial_errors = list_of_all_spatial_errors - np.mean(list_of_all_spatial_errors)
         # list_of_all_spatial_errors = np.cumsum(list_of_all_spatial_errors)
-        time = np.linspace(0,150,150)
+        time = np.linspace(0,len(list_of_all_spatial_errors),len(list_of_all_spatial_errors))
         # plt.plot(list_of_all_spatial_errors, c='red', label='Min Spatial Error')
         plt.scatter(time, list_of_all_spatial_errors, c='red', label='Min Spatial Error')
 
@@ -762,14 +783,33 @@ def create_excel_file(x_data, y_data, directory, name):
     excel.to_excel(fr'{directory}\{name}.xlsx')
 
 
-def convert_excel_to_screen_size_targets(excel, x_screen_size=1920, y_screen_size=1080):
+def convert_excel_to_screen_size_targets(excel, old_data, x_screen_size=1920, y_screen_size=1080):
     """ This function takes the Excel file with the targets from 0-100 and returns
     as they appear on the screen """
+
+    if old_data == False:
+        x_screen_size = x_screen_size - 2 * 128
+        y_screen_size = y_screen_size - 2 * 128
+
+
     target_singal_x = excel['X coordinates'].to_numpy()
     target_singal_y = excel['Y coordinates'].to_numpy()
 
     target_singal_x = target_singal_x * x_screen_size / 100
     target_singal_y = target_singal_y * y_screen_size / 100
+
+    if old_data == False:
+        target_singal_x = target_singal_x + 128
+        target_singal_y = target_singal_y + 128
+
+
+    if old_data == True:
+        target_singal_x = convert_target_position_X_if_old_data(target_singal_x)
+        target_singal_y = convert_target_position_Y_if_old_data(target_singal_y)
+
+    target_singal_x = np.round(target_singal_x, decimals=0)
+    target_singal_y = np.round(target_singal_y, decimals=0)
+
 
     return target_singal_x, target_singal_y
 
@@ -820,6 +860,7 @@ def graph_creation_target_vs_player(list_with_all_df_separated_by_set, x_screen_
     slider.on_changed(update)  # Connect slider to update function
 
     plt.show()
+
 
 def graph_creation_target_vs_player_with_data(list_with_all_df_separated_by_set, x_screen_size=1920, y_screen_size=1080, update_target=5):
     """ This function creates a graph with a slider to visualize better the position of target vs
@@ -970,14 +1011,6 @@ def graph_creation_target_vs_player_with_data(list_with_all_df_separated_by_set,
 
 
     plt.show()
-
-
-
-
-
-
-
-
 
 
 def graph_creation_of_spatial_error(target_pos_x, target_pos_y, player_pos_x, player_pos_y):
