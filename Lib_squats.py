@@ -9,6 +9,7 @@ from scipy.constants import g
 import math
 from scipy import stats
 from scipy.stats import pearsonr
+import itertools
 
 
 def DFA_NONAN(data, scales, order=1, plot=True):
@@ -1031,3 +1032,15 @@ def graph_creation_of_spatial_error(target_pos_x, target_pos_y, player_pos_x, pl
     plt.ylim(0, 1000)
     plt.legend()
     plt.show()
+
+def list_of_five_list_flatten_list(nested_list):
+    """ This function takes a nested list with 5 sublists and returns one flaten list with the indexes where those lists change to the next list
+    CAUTION! this works only for nested lists which have sublists with data points and not dataframes"""
+    flattened_list = list(itertools.chain(*nested_list))
+    list_indices = [0]
+    index = 0
+    for sublist in nested_list:
+        index = index + len(sublist)
+        list_indices.append(index)
+
+    return flattened_list, list_indices
