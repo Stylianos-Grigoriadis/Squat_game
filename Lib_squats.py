@@ -10,6 +10,7 @@ import math
 from scipy import stats
 from scipy.stats import pearsonr
 import itertools
+import time
 
 
 def DFA_NONAN(data, scales, order=1, plot=True):
@@ -722,8 +723,8 @@ def spatial_error_average_for_each_target(df, time_window=500, time_between_each
         target_pos_y = df['target_pos_y'][i: i + window_length].to_numpy()
         player_pos_x = df['player_pos_x'][i: i + window_length].to_numpy()
         player_pos_y = df['player_pos_y'][i: i + window_length].to_numpy()
-        time = df['timestamp'][i: i + window_length].to_numpy()
-        print(time)
+        df_time = df['timestamp'][i: i + window_length].to_numpy()
+
 
         # calculate and append the average spatial error of each window
         spatial_error_of_window = spatial_error_calculation(target_pos_x, target_pos_y, player_pos_x, player_pos_y)
@@ -731,7 +732,7 @@ def spatial_error_average_for_each_target(df, time_window=500, time_between_each
         list_of_average_spatial_error.append(average_spatial_error_of_window)
 
         # calculate and append the middle time point of each window
-        time_stamp = ((time[-1] - time[0])/2) + time[0]
+        time_stamp = ((df_time[-1] - df_time[0])/2) + df_time[0]
         list_of_time_stamp.append(time_stamp)
 
     # Here I calculate the min of the spatial errors and find its index to find when did this happen
