@@ -102,4 +102,3 @@ for file in files:
     # Calculate and print the spatial error for each target
     plt.title(ID)
     spatial_error = lbs.spatial_error_best_window(list_with_all_df_separated_by_set, plot=True, time_window=300)
-
