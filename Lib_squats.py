@@ -685,7 +685,7 @@ def spatial_error_calculation(target_pos_x, target_pos_y, player_pos_x, player_p
     return spatial_error
 
 
-def spatial_error_average_for_each_target(df, time_window=400, time_between_each_sample=25):
+def spatial_error_average_for_each_target(df, time_window=500, time_between_each_sample=25):
     """
     This function calculates the average spatial error for overlapping windows with length equal to time_window. Then it returns the minimum of those averages.
     We consider that this minimum is the best performance of the participant for this target.
@@ -707,6 +707,7 @@ def spatial_error_average_for_each_target(df, time_window=400, time_between_each
 
     # Here we calculate the sampling frequency
     sampling_frequency = 1000/time_between_each_sample
+    print(sampling_frequency)
 
     # Here we calculate the window length for the calculation of the average spatial error
     window_length = int((time_window/1000)*sampling_frequency)
@@ -714,36 +715,46 @@ def spatial_error_average_for_each_target(df, time_window=400, time_between_each
     # Here we calculate the average of spatial error of each window and then the min of those averages.
     # We consider that this min is the best performance for this window. We probably need to play with the factor.
     list_of_average_spatial_error = []
+    list_of_time_stamp = []
 
     for i in range(len(df['target_pos_x']) - window_length):
-
         target_pos_x = df['target_pos_x'][i: i + window_length].to_numpy()
         target_pos_y = df['target_pos_y'][i: i + window_length].to_numpy()
         player_pos_x = df['player_pos_x'][i: i + window_length].to_numpy()
         player_pos_y = df['player_pos_y'][i: i + window_length].to_numpy()
+        time = df['timestamp'][i: i + window_length].to_numpy()
+        print(time)
 
+        # calculate and append the average spatial error of each window
         spatial_error_of_window = spatial_error_calculation(target_pos_x, target_pos_y, player_pos_x, player_pos_y)
         average_spatial_error_of_window = np.mean(spatial_error_of_window)
-
-        # Next step was done because without it, it returns values with np.float64 type
-        average_spatial_error_of_window = float(average_spatial_error_of_window)
-
         list_of_average_spatial_error.append(average_spatial_error_of_window)
 
-    min_of_average_spatial_error = np.min(list_of_average_spatial_error)
+        # calculate and append the middle time point of each window
+        time_stamp = ((time[-1] - time[0])/2) + time[0]
+        list_of_time_stamp.append(time_stamp)
 
-    return min_of_average_spatial_error
+    # Here I calculate the min of the spatial errors and find its index to find when did this happen
+    min_of_average_spatial_error = np.min(list_of_average_spatial_error)
+    min_index = list_of_average_spatial_error.index(min(list_of_average_spatial_error))
+    time_stamp_of_min_spatial_error = list_of_time_stamp[min_index]
+
+    return min_of_average_spatial_error, time_stamp_of_min_spatial_error
 
 
 def spatial_error_best_window(list_with_all_df_separated_by_set, plot=False, time_window=400, time_between_each_sample=25):
     # pd.set_option('display.float_format', '{:.0f}'.format)
     list_spatial_error_all_separated_by_set = []
+    list_time_stamp_of_min_spatial_error_separated_by_set = []
     for dataframe_list in list_with_all_df_separated_by_set:
         list_spatial_error_each_set = []
+        list_time_stamp_of_min_spatial_error = []
         for df in dataframe_list:
-            min_spatial_error = spatial_error_average_for_each_target(df, time_window, time_between_each_sample)
+            min_spatial_error, time_stamp_of_min_spatial_error = spatial_error_average_for_each_target(df, time_window, time_between_each_sample)
             list_spatial_error_each_set.append(min_spatial_error)
+            list_time_stamp_of_min_spatial_error.append(time_stamp_of_min_spatial_error)
         list_spatial_error_all_separated_by_set.append(list_spatial_error_each_set)
+        list_time_stamp_of_min_spatial_error_separated_by_set.append(list_time_stamp_of_min_spatial_error)
 
     if plot:
         list_of_set_positions = []
@@ -773,7 +784,7 @@ def spatial_error_best_window(list_with_all_df_separated_by_set, plot=False, tim
         plt.show()
 
 
-    return(list_spatial_error_all_separated_by_set)
+    return list_spatial_error_all_separated_by_set, list_time_stamp_of_min_spatial_error_separated_by_set
 
 
 def create_excel_file(x_data, y_data, directory, name):
@@ -1042,5 +1053,7 @@ def list_of_five_list_flatten_list(nested_list):
     for sublist in nested_list:
         index = index + len(sublist)
         list_indices.append(index)
+    flattened_list = np.array(flattened_list)
+    list_indices = np.array(list_indices)
 
     return flattened_list, list_indices
