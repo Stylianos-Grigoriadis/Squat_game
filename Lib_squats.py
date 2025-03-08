@@ -524,7 +524,9 @@ def values_during_game(df):
             'max_angle': max_angle
             }
     new_df = pd.DataFrame(dist)
-    return new_df
+
+    new_df_2 = Unix_to_start_from_zero_time(new_df)
+    return new_df_2
 
 
 def converting_str_into_float(time_series):
@@ -708,7 +710,6 @@ def spatial_error_average_for_each_target(df, time_window=500, time_between_each
 
     # Here we calculate the sampling frequency
     sampling_frequency = 1000/time_between_each_sample
-    print(sampling_frequency)
 
     # Here we calculate the window length for the calculation of the average spatial error
     window_length = int((time_window/1000)*sampling_frequency)
@@ -1058,3 +1059,9 @@ def list_of_five_list_flatten_list(nested_list):
     list_indices = np.array(list_indices)
 
     return flattened_list, list_indices
+
+def Unix_to_start_from_zero_time(df):
+    first_time_point = df['timestamp'][0]
+    df['timestamp'] = df['timestamp'] - first_time_point
+
+    return df
