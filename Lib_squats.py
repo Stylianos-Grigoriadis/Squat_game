@@ -1046,7 +1046,8 @@ def graph_creation_of_spatial_error(target_pos_x, target_pos_y, player_pos_x, pl
     plt.legend()
     plt.show()
 
-def list_of_five_list_flatten_list(nested_list):
+
+def list_of_five_lists_flatten_list(nested_list):
     """ This function takes a nested list with 5 sublists and returns one flaten list with the indexes where those lists change to the next list
     CAUTION! this works only for nested lists which have sublists with data points and not dataframes"""
     flattened_list = list(itertools.chain(*nested_list))
@@ -1059,6 +1060,7 @@ def list_of_five_list_flatten_list(nested_list):
     list_indices = np.array(list_indices)
 
     return flattened_list, list_indices
+
 
 def Unix_to_start_from_zero_time(df):
     first_time_point = df['timestamp'][0]
