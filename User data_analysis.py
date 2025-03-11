@@ -7,6 +7,7 @@ from matplotlib.widgets import Slider
 import glob
 import seaborn as sns
 import pwlf
+import piecewise_regression
 
 
 pd.set_option("display.max_rows", None)
@@ -113,122 +114,118 @@ for file in files:
     plt.ylabel('Spatial Error')
     plt.show()
 
-    # Calculate the segmented linear regression
-    estimate_target_where_the_change_would_happen = 75
-    targets_before_and_after = 30
-    low_limit = estimate_target_where_the_change_would_happen - targets_before_and_after
-    upper_limit = estimate_target_where_the_change_would_happen + targets_before_and_after
-    Average_residuals_before = []
-    Average_residuals_after = []
-    spatial_error_before_list = []
-    spatial_error_after_list = []
-    time_stamps_without_between_set_space_before_list = []
-    time_stamps_without_between_set_space_after_list = []
-    fit_before_list = []
-    fit_after_list = []
-    slope_before_list = []
-    slope_after_list = []
-    intercept_before_list = []
-    intercept_after_list = []
-
-
-    for i in range(low_limit, upper_limit + 1):
-
-        spatial_error_before = spatial_error[0:i]
-        time_stamps_without_between_set_space_before = time_stamps_without_between_set_space[0:i]
-        spatial_error_after = spatial_error[i:]
-        time_stamps_without_between_set_space_after = time_stamps_without_between_set_space[i:]
-
-        slope_before, intercept_before = np.polyfit(time_stamps_without_between_set_space_before, spatial_error_before, 1)
-        fit_before = slope_before * time_stamps_without_between_set_space_before + intercept_before
-        slope_after, intercept_after = np.polyfit(time_stamps_without_between_set_space_after, spatial_error_after, 1)
-        fit_after = slope_after * time_stamps_without_between_set_space_after + intercept_after
-
-        residuals_before = spatial_error_before - fit_before
-        MSE_before = np.mean(residuals_before ** 2)
-        RMSE_before = np.sqrt(MSE_before)
-
-        residuals_after = spatial_error_after - fit_after
-        MSE_after = np.mean(residuals_after ** 2)
-        RMSE_after = np.sqrt(MSE_after)
-
-        Average_residuals_before.append(RMSE_before)
-        Average_residuals_after.append(RMSE_after)
-        spatial_error_before_list.append(spatial_error_before)
-        spatial_error_after_list.append(spatial_error_after)
-        time_stamps_without_between_set_space_before_list.append(time_stamps_without_between_set_space_before)
-        time_stamps_without_between_set_space_after_list.append(time_stamps_without_between_set_space_after)
-        fit_before_list.append(fit_before)
-        fit_after_list.append(fit_after)
-        slope_before_list.append(slope_before)
-        slope_after_list.append(slope_after)
-        intercept_before_list.append(intercept_before)
-        intercept_after_list.append(intercept_after)
-    min = Average_residuals_before[0]+Average_residuals_after[0]
-    best_Average_residuals_before = Average_residuals_before[0]
-    best_Average_residuals_after = Average_residuals_after[0]
-    best_spatial_error_before = spatial_error_before_list[0]
-    best_spatial_error_after = spatial_error_after_list[0]
-    best_time_stamps_without_between_set_space_before = time_stamps_without_between_set_space_before_list[0]
-    best_time_stamps_without_between_set_space_after = time_stamps_without_between_set_space_after_list[0]
-    best_fit_before = fit_before_list[0]
-    best_fit_after = fit_after_list[0]
-    best_slope_before = slope_before_list[0]
-    best_slope_after = slope_after_list[0]
-    best_intercept_before = intercept_before_list[0]
-    best_intercept_after = intercept_after_list[0]
-    for i in range(len(Average_residuals_before)):
-        sum = Average_residuals_before[i]+Average_residuals_after[i]
-        if sum < min:
-            best_Average_residuals_before = Average_residuals_before[i]
-            best_Average_residuals_after = Average_residuals_after[i]
-            best_spatial_error_before = spatial_error_before_list[i]
-            best_spatial_error_after = spatial_error_after_list[i]
-            best_time_stamps_without_between_set_space_before = time_stamps_without_between_set_space_before_list[i]
-            best_time_stamps_without_between_set_space_after = time_stamps_without_between_set_space_after_list[i]
-            best_fit_before = fit_before_list[i]
-            best_fit_after = fit_after_list[i]
-            best_slope_before = slope_before_list[i]
-            best_slope_after = slope_after_list[i]
-            best_intercept_before = intercept_before_list[i]
-            best_intercept_after = intercept_after_list[i]
-
-    plt.scatter(best_time_stamps_without_between_set_space_before, best_spatial_error_before, c='red', marker='x', label='before')
-    plt.plot(best_time_stamps_without_between_set_space_before, best_fit_before, c='red', label="Best Fit Line before")
-    plt.scatter(best_time_stamps_without_between_set_space_after, best_spatial_error_after, c='blue', marker='x', label='after')
-    plt.plot(best_time_stamps_without_between_set_space_after, best_fit_after, c='blue', label="Best Fit Line after")
-    set_time_stamps = []
-    for i in [0, 29, 59, 89, 119, 149]:
-        set_time_stamps.append(time_stamps_without_between_set_space[i])
-    for i in set_time_stamps:
-        plt.axvline(x=i, linestyle='--', c='k')
-    plt.legend()
-    plt.ylim(0, 800)
-    plt.title(f'{ID}\nslope= {slope}')
-    plt.ylabel('Spatial Error')
-    plt.show()
+    # # Calculate the segmented linear regression
+    # estimate_target_where_the_change_would_happen = 75
+    # targets_before_and_after = 70
+    # low_limit = estimate_target_where_the_change_would_happen - targets_before_and_after
+    # upper_limit = estimate_target_where_the_change_would_happen + targets_before_and_after
+    # Average_residuals_before = []
+    # Average_residuals_after = []
+    # spatial_error_before_list = []
+    # spatial_error_after_list = []
+    # time_stamps_without_between_set_space_before_list = []
+    # time_stamps_without_between_set_space_after_list = []
+    # fit_before_list = []
+    # fit_after_list = []
+    # slope_before_list = []
+    # slope_after_list = []
+    # intercept_before_list = []
+    # intercept_after_list = []
+    #
+    #
+    # for i in range(low_limit, upper_limit + 1):
+    #
+    #     spatial_error_before = spatial_error[0:i]
+    #     time_stamps_without_between_set_space_before = time_stamps_without_between_set_space[0:i]
+    #     spatial_error_after = spatial_error[i:]
+    #     time_stamps_without_between_set_space_after = time_stamps_without_between_set_space[i:]
+    #
+    #     slope_before, intercept_before = np.polyfit(time_stamps_without_between_set_space_before, spatial_error_before, 1)
+    #     fit_before = slope_before * time_stamps_without_between_set_space_before + intercept_before
+    #     slope_after, intercept_after = np.polyfit(time_stamps_without_between_set_space_after, spatial_error_after, 1)
+    #     fit_after = slope_after * time_stamps_without_between_set_space_after + intercept_after
+    #
+    #     residuals_before = spatial_error_before - fit_before
+    #     MSE_before = np.mean(residuals_before ** 2)
+    #     RMSE_before = np.sqrt(MSE_before)
+    #
+    #     residuals_after = spatial_error_after - fit_after
+    #     MSE_after = np.mean(residuals_after ** 2)
+    #     RMSE_after = np.sqrt(MSE_after)
+    #
+    #     Average_residuals_before.append(RMSE_before)
+    #     Average_residuals_after.append(RMSE_after)
+    #     spatial_error_before_list.append(spatial_error_before)
+    #     spatial_error_after_list.append(spatial_error_after)
+    #     time_stamps_without_between_set_space_before_list.append(time_stamps_without_between_set_space_before)
+    #     time_stamps_without_between_set_space_after_list.append(time_stamps_without_between_set_space_after)
+    #     fit_before_list.append(fit_before)
+    #     fit_after_list.append(fit_after)
+    #     slope_before_list.append(slope_before)
+    #     slope_after_list.append(slope_after)
+    #     intercept_before_list.append(intercept_before)
+    #     intercept_after_list.append(intercept_after)
+    #
+    # sum_Average_residuals_before_after = []
+    #
+    #
+    # for i in range(len(Average_residuals_before)):
+    #
+    #     sum = Average_residuals_before[i]+Average_residuals_after[i]
+    #     sum_Average_residuals_before_after.append(sum)
+    #
+    # index_min_sum_Average_residuals_before_after = sum_Average_residuals_before_after.index(min(sum_Average_residuals_before_after))
+    #
+    # best_Average_residuals_before = Average_residuals_before[index_min_sum_Average_residuals_before_after]
+    # best_Average_residuals_after = Average_residuals_after[index_min_sum_Average_residuals_before_after]
+    # best_spatial_error_before = spatial_error_before_list[index_min_sum_Average_residuals_before_after]
+    # best_spatial_error_after = spatial_error_after_list[index_min_sum_Average_residuals_before_after]
+    # best_time_stamps_without_between_set_space_before = time_stamps_without_between_set_space_before_list[index_min_sum_Average_residuals_before_after]
+    # best_time_stamps_without_between_set_space_after = time_stamps_without_between_set_space_after_list[index_min_sum_Average_residuals_before_after]
+    # best_fit_before = fit_before_list[index_min_sum_Average_residuals_before_after]
+    # best_fit_after = fit_after_list[index_min_sum_Average_residuals_before_after]
+    # best_slope_before = slope_before_list[index_min_sum_Average_residuals_before_after]
+    # best_slope_after = slope_after_list[index_min_sum_Average_residuals_before_after]
+    # best_intercept_before = intercept_before_list[index_min_sum_Average_residuals_before_after]
+    # best_intercept_after = intercept_after_list[index_min_sum_Average_residuals_before_after]
+    #
+    # plt.plot(sum_Average_residuals_before_after)
+    # plt.show()
+    #
+    # plt.scatter(best_time_stamps_without_between_set_space_before, best_spatial_error_before, c='red', marker='x', label='before')
+    # plt.plot(best_time_stamps_without_between_set_space_before, best_fit_before, c='red', label="Best Fit Line before")
+    # plt.scatter(best_time_stamps_without_between_set_space_after, best_spatial_error_after, c='blue', marker='x', label='after')
+    # plt.plot(best_time_stamps_without_between_set_space_after, best_fit_after, c='blue', label="Best Fit Line after")
+    # set_time_stamps = []
+    # for i in [0, 29, 59, 89, 119, 149]:
+    #     set_time_stamps.append(time_stamps_without_between_set_space[i])
+    # for i in set_time_stamps:
+    #     plt.axvline(x=i, linestyle='--', c='k')
+    # plt.legend()
+    # plt.ylim(0, 800)
+    # plt.title(f'{ID}\nslope= {slope}')
+    # plt.ylabel('Spatial Error')
+    # plt.show()
 
 
 
     # # Calculate the segmented linear regression
-    # model = pwlf.PiecewiseLinFit(time_stamps_without_between_set_space, spatial_error)
-    # breakpoints = model.fit(2)  # Fit model with 2 line segments
-    #
-    # y_pred = model.predict(time_stamps_without_between_set_space) # Predict values
-    #
-    # # Plot the result
-    # plt.scatter(time_stamps_without_between_set_space, spatial_error, label="Data", alpha=0.5)
-    # plt.plot(time_stamps_without_between_set_space, y_pred, 'r-', label="Piecewise Fit")
-    # for i in set_time_stamps:
-    #     plt.axvline(x=i, linestyle='--', c='k')
-    # plt.scatter(breakpoints, model.predict(breakpoints), color='black', label="Breakpoints", zorder=3)
-    # plt.legend()
-    # plt.ylim(0, 800)
-    #
-    # plt.show()
+    pw_fit = piecewise_regression.Fit(time_stamps_without_between_set_space, spatial_error, max_iterations=500, min_distance_to_edge=0.1, n_breakpoints=1, n_boot=1000)
+    pw_fit.summary()
 
-    # Print estimated breakpoints
-    # print("Estimated Breakpoints:", breakpoints)
+    # Plot the data, fit, breakpoints and confidence intervals
+    pw_fit.plot_data(color="grey", s=20)
+    # Pass in standard matplotlib keywords to control any of the plots
+    pw_fit.plot_fit(color="red", linewidth=4)
+    pw_fit.plot_breakpoints()
+    pw_fit.plot_breakpoint_confidence_intervals()
+    plt.xlabel("x")
+    plt.ylabel("y")
+    plt.show()
+    plt.close()
+
+
+
 
     # Append values to create the df after with the results
     residuals = spatial_error - fit
