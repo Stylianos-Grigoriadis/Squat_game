@@ -100,18 +100,18 @@ for file in files:
     fit = slope * time_stamps_without_between_set_space + intercept
 
     # Plot Spatial Error with the best linear fit line
-    plt.scatter(time_stamps_without_between_set_space, spatial_error, c='red', marker='x', label='500')
-    plt.plot(time_stamps_without_between_set_space, fit, c='red', label="Best Fit Line 500")
-    set_time_stamps = []
-    for i in [0, 29, 59, 89, 119, 149]:
-        set_time_stamps.append(time_stamps_without_between_set_space[i])
-    for i in set_time_stamps:
-        plt.axvline(x=i, linestyle='--', c='k')
-    plt.legend()
-    plt.ylim(0, 800)
-    plt.title(f'{ID}\nslope= {slope}')
-    plt.ylabel('Spatial Error')
-    plt.show()
+    # plt.scatter(time_stamps_without_between_set_space, spatial_error, c='red', marker='x', label='500')
+    # plt.plot(time_stamps_without_between_set_space, fit, c='red', label="Best Fit Line 500")
+    # set_time_stamps = []
+    # for i in [0, 29, 59, 89, 119, 149]:
+    #     set_time_stamps.append(time_stamps_without_between_set_space[i])
+    # for i in set_time_stamps:
+    #     plt.axvline(x=i, linestyle='--', c='k')
+    # plt.legend()
+    # plt.ylim(0, 800)
+    # plt.title(f'{ID}\nslope= {slope}')
+    # plt.ylabel('Spatial Error')
+    # plt.show()
 
     # # Calculate the segmented linear regression
     # estimate_target_where_the_change_would_happen = 75
@@ -209,19 +209,19 @@ for file in files:
 
 
     # # Calculate the segmented linear regression
-    pw_fit = piecewise_regression.Fit(time_stamps_without_between_set_space, spatial_error, max_iterations=500, min_distance_to_edge=0.1, n_breakpoints=1, n_boot=1000)
-    pw_fit.summary()
-
-    # Plot the data, fit, breakpoints and confidence intervals
-    pw_fit.plot_data(color="grey", s=20)
-    # Pass in standard matplotlib keywords to control any of the plots
-    pw_fit.plot_fit(color="red", linewidth=4)
-    pw_fit.plot_breakpoints()
-    pw_fit.plot_breakpoint_confidence_intervals()
-    plt.xlabel("x")
-    plt.ylabel("y")
-    plt.show()
-    plt.close()
+    # pw_fit = piecewise_regression.Fit(time_stamps_without_between_set_space, spatial_error, max_iterations=500, min_distance_to_edge=0.1, n_breakpoints=1, n_boot=1000)
+    # pw_fit.summary()
+    #
+    # # Plot the data, fit, breakpoints and confidence intervals
+    # pw_fit.plot_data(color="grey", s=20)
+    # # Pass in standard matplotlib keywords to control any of the plots
+    # pw_fit.plot_fit(color="red", linewidth=4)
+    # pw_fit.plot_breakpoints()
+    # pw_fit.plot_breakpoint_confidence_intervals()
+    # plt.xlabel("x")
+    # plt.ylabel("y")
+    # plt.show()
+    # plt.close()
 
 
 
