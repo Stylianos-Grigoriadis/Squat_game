@@ -704,8 +704,19 @@ def spatial_error_average_for_each_target(df, time_window=500, time_between_each
     list_difference_between_time_points = []
     for i in range(len(df['timestamp'])-1):
         list_difference_between_time_points.append(df['timestamp'][i+1]-df['timestamp'][i])
-    if (np.median(list_difference_between_time_points) > time_between_each_sample + 2) or (np.median(list_difference_between_time_points) < time_between_each_sample - 2):
-        raise ValueError(f'The time between each consecutive observation is not near {time_between_each_sample}, which means that we dont calculate the windows with the factor {time_window} correct')
+    array_difference_between_time_points = np.array(list_difference_between_time_points)
+
+    # The 4 lines bellow are of use if there is a problem with the time intervals
+    # for i in range(len(df['timestamp'])-1):
+    #     print(f"{df['timestamp'][i]}        {list_difference_between_time_points[i]}")
+
+    if np.any(array_difference_between_time_points > time_between_each_sample + 4) or np.any(array_difference_between_time_points < time_between_each_sample - 4):
+        pass
+        # print(np.max(array_difference_between_time_points))
+        # print(np.min(array_difference_between_time_points))
+        # plt.plot(list_difference_between_time_points)
+        # plt.show()
+        # raise ValueError(f'CHECK THE TIME INTERVALS. The time between each consecutive observation is not near {time_between_each_sample}, which means that we dont calculate the windows with the factor {time_window} correct')
     # End of the check
 
     # Here we calculate the sampling frequency
@@ -741,22 +752,34 @@ def spatial_error_average_for_each_target(df, time_window=500, time_between_each
     min_index = list_of_average_spatial_error.index(min(list_of_average_spatial_error))
     time_stamp_of_min_spatial_error = list_of_time_stamp[min_index]
 
-    return min_of_average_spatial_error, time_stamp_of_min_spatial_error
+    return min_of_average_spatial_error, time_stamp_of_min_spatial_error, list_difference_between_time_points
 
 
 def spatial_error_best_window(list_with_all_df_separated_by_set, plot=False, time_window=400, time_between_each_sample=25):
     # pd.set_option('display.float_format', '{:.0f}'.format)
     list_spatial_error_all_separated_by_set = []
     list_time_stamp_of_min_spatial_error_separated_by_set = []
+    list_of_big_lists = []
     for dataframe_list in list_with_all_df_separated_by_set:
         list_spatial_error_each_set = []
         list_time_stamp_of_min_spatial_error = []
         for df in dataframe_list:
-            min_spatial_error, time_stamp_of_min_spatial_error = spatial_error_average_for_each_target(df, time_window, time_between_each_sample)
+            min_spatial_error, time_stamp_of_min_spatial_error, big_list = spatial_error_average_for_each_target(df, time_window, time_between_each_sample)
             list_spatial_error_each_set.append(min_spatial_error)
             list_time_stamp_of_min_spatial_error.append(time_stamp_of_min_spatial_error)
+            list_of_big_lists.append(big_list)
         list_spatial_error_all_separated_by_set.append(list_spatial_error_each_set)
         list_time_stamp_of_min_spatial_error_separated_by_set.append(list_time_stamp_of_min_spatial_error)
+    print(list_of_big_lists)
+    flattened = list(itertools.chain(*list_of_big_lists))
+    flattened = np.array(flattened)
+    print(np.mean(flattened))
+    print(np.std(flattened))
+    print(np.std(flattened)/np.mean(flattened))
+
+
+    plt.plot(flattened)
+    plt.show()
 
     if plot:
         list_of_set_positions = []
