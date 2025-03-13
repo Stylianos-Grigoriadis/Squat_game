@@ -536,7 +536,7 @@ def converting_str_into_float(time_series):
 def convert_target_position_X_if_old_data(signal):
     for i in range(len(signal)):
         if signal[i] < 128:
-            signal[i]= 128
+            signal[i] = 128
         if signal[i] > 1920 - 128:
             signal[i] = 1920 - 128
     return signal
