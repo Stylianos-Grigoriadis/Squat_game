@@ -22,6 +22,9 @@ list_slope = []
 list_ID = []
 list_average_spatial_error = []
 list_sd_spatial_error = []
+list_breakpoints = []
+list_slope_before_change = []
+list_slope_after_change = []
 
 
 for file in files:
@@ -237,11 +240,16 @@ for file in files:
 
     # Corrected bounds format: list of tuples [(min, max)]
     breakpoint = model.fit(2, bounds=[(x_min, x_max)])  # Ensure bounds are properly formatted
-
+    print(breakpoint)
+    breakpoint_index = np.where(time_stamps_without_between_set_space == breakpoint[1])[0]  # np.where() returns a tuple, so we take [0]
+    breakpoint_index = breakpoint_index + 1
     # Calculate the slopes
     slopes = model.slopes
     slope_before = slopes[0]
     slope_after = slopes[1]
+    list_breakpoints.append(breakpoint_index)
+    list_slope_before_change.append(slope_before)
+    list_slope_after_change.append(slope_after)
 
     # Predict fitted values
     y_pred = model.predict(time_stamps_without_between_set_space)
@@ -249,7 +257,7 @@ for file in files:
     # Plot results
     plt.scatter(time_stamps_without_between_set_space, spatial_error, label="Data", color='gray', alpha=0.5)
     plt.plot(time_stamps_without_between_set_space, y_pred, 'r-', label="Segmented Fit", linewidth=2)
-    plt.axvline(breakpoint[1], color='blue', linestyle='--', label=f'Breakpoint at x={breakpoint[1]:.2f}')
+    plt.axvline(breakpoint[1], color='blue', linestyle='--', label=f'Breakpoint at x={breakpoint_index}')
     plt.legend()
     plt.xlabel("X")
     plt.ylabel("Y")
@@ -257,7 +265,7 @@ for file in files:
     plt.show()
 
     # Print breakpoint position
-    print("Breakpoint found at x =", breakpoint[1])
+    print("Breakpoint found at x =", breakpoint_index)
 
 
 
@@ -279,7 +287,10 @@ dist = {'ID': list_ID,
         'slope': list_slope,
         'RMSE': list_RMSE,
         'Average': list_average_spatial_error,
-        'Sd': list_sd_spatial_error
+        'Sd': list_sd_spatial_error,
+        'Breakpoints': list_breakpoints,
+        'Slope before': list_slope_before_change,
+        'Slope after': list_slope_after_change
         }
 df = pd.DataFrame(dist)
 # directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Data collection\Results'
@@ -322,6 +333,33 @@ sns.boxplot(data=df, x='ID', y='Sd', color='lightgreen')
 plt.title('Box Plot of Sd by ID')
 plt.xlabel('ID')
 plt.ylabel('RMSE')
+
+# Show the plot
+plt.tight_layout()
+plt.show()
+
+plt.figure(figsize=(12, 6))
+
+# Box plot for Breakpoints
+plt.subplot(1, 3, 1)
+sns.boxplot(data=df, x='ID', y='Breakpoints', color='lightblue')
+plt.title('Box Plot of Average by ID')
+plt.xlabel('ID')
+plt.ylabel('Breakpoints')
+
+# Box plot for Slope before
+plt.subplot(1, 3, 2)
+sns.boxplot(data=df, x='ID', y='Slope before', color='lightgreen')
+plt.title('Slope before')
+plt.xlabel('ID')
+plt.ylabel('Slope')
+
+# Box plot for Slope after
+plt.subplot(1, 3, 3)
+sns.boxplot(data=df, x='ID', y='Slope after', color='lightgreen')
+plt.title('Slope after')
+plt.xlabel('ID')
+plt.ylabel('Slope')
 
 # Show the plot
 plt.tight_layout()
