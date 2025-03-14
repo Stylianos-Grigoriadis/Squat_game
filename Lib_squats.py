@@ -691,14 +691,12 @@ def spatial_error_calculation(target_pos_x, target_pos_y, player_pos_x, player_p
 def spatial_error_average_for_each_target(df, time_window=500, time_between_each_sample=25):
     """
     This function calculates the average spatial error for overlapping windows with length equal to time_window. Then it returns the minimum of those averages.
-    We consider that this minimum is the best performance of the participant for this target.
+    We consider that this minimum is the best performance of the participant for this target. Also, we consider that time_between_each_sample is equal to 25, however this is
+    just a standard number. In another function we calculate this number.
     Parameter:
         df                          :   the df with the stored data of each target
         factor                      :   this is the time in milliseconds of the window length for the calculation of the average spatial error
         time_between_each_sample    :   this is the standard time between each measurement.
-                                    *** CAREFUL ***
-        The first 6 lines is a check of the assumption that the time_between_each_sample is equal to 25 (from 23 up to 27).
-        If this is not the case you need to calculate it and change it
         """
     # Here we check if the sampling frequency is close to 40. Basically we check if between each measurement the time is 25 milliseconds
     list_difference_between_time_points = []
@@ -752,7 +750,7 @@ def spatial_error_average_for_each_target(df, time_window=500, time_between_each
     min_index = list_of_average_spatial_error.index(min(list_of_average_spatial_error))
     time_stamp_of_min_spatial_error = list_of_time_stamp[min_index]
 
-    return min_of_average_spatial_error, time_stamp_of_min_spatial_error, list_difference_between_time_points
+    return min_of_average_spatial_error, time_stamp_of_min_spatial_error
 
 
 def spatial_error_best_window(list_with_all_df_separated_by_set, plot=False, time_window=400, time_between_each_sample=25):
@@ -764,22 +762,12 @@ def spatial_error_best_window(list_with_all_df_separated_by_set, plot=False, tim
         list_spatial_error_each_set = []
         list_time_stamp_of_min_spatial_error = []
         for df in dataframe_list:
-            min_spatial_error, time_stamp_of_min_spatial_error, big_list = spatial_error_average_for_each_target(df, time_window, time_between_each_sample)
+            min_spatial_error, time_stamp_of_min_spatial_error = spatial_error_average_for_each_target(df, time_window, time_between_each_sample)
             list_spatial_error_each_set.append(min_spatial_error)
             list_time_stamp_of_min_spatial_error.append(time_stamp_of_min_spatial_error)
-            list_of_big_lists.append(big_list)
+
         list_spatial_error_all_separated_by_set.append(list_spatial_error_each_set)
         list_time_stamp_of_min_spatial_error_separated_by_set.append(list_time_stamp_of_min_spatial_error)
-    print(list_of_big_lists)
-    flattened = list(itertools.chain(*list_of_big_lists))
-    flattened = np.array(flattened)
-    print(np.mean(flattened))
-    print(np.std(flattened))
-    print(np.std(flattened)/np.mean(flattened))
-
-
-    plt.plot(flattened)
-    plt.show()
 
     if plot:
         list_of_set_positions = []
@@ -1090,3 +1078,23 @@ def Unix_to_start_from_zero_time(df):
     df['timestamp'] = df['timestamp'] - first_time_point
 
     return df
+
+def calculation_of_time_between_each_consecutive_data_point(list_with_all_df_separated_by_set, plot=True):
+    all_list = []
+    for list_ in list_with_all_df_separated_by_set:
+        for df in list_:
+            list_difference_between_time_points = []
+            for i in range(len(df['timestamp']) - 1):
+                list_difference_between_time_points.append(df['timestamp'][i + 1] - df['timestamp'][i])
+            all_list.append(list_difference_between_time_points)
+    flattened_list = list(itertools.chain(*all_list))
+    max = np.max(flattened_list)
+    min = np.min(flattened_list)
+    mean = np.mean(flattened_list)
+    std = np.std(flattened_list)
+    CV = (std/mean)*100
+
+    if plot == True:
+        plt.plot(flattened_list)
+        plt.show()
+    return max, min, mean, std, CV

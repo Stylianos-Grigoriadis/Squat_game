@@ -52,7 +52,7 @@ for file in files:
     target_signal_x, target_signal_y = lbs.convert_excel_to_screen_size_targets(targets, old_data)
 
 
-    # Extract the
+    # Extract the data during game
     data = lbs.values_during_game(data)
 
 
@@ -222,6 +222,42 @@ for file in files:
     # plt.ylabel("y")
     # plt.show()
     # plt.close()
+
+
+
+    # Initialize piecewise linear fit
+    model = pwlf.PiecewiseLinFit(time_stamps_without_between_set_space, spatial_error)
+
+    # Constraint: The breakpoint must allow at least 15 data points in each segment
+    index_duration = 10
+    min_index = index_duration  # At least index_duration points in the first segment
+    max_index = len(time_stamps_without_between_set_space) - index_duration  # At least index_duration points in the second segment
+
+    x_min, x_max = time_stamps_without_between_set_space[min_index], time_stamps_without_between_set_space[max_index]
+
+    # Corrected bounds format: list of tuples [(min, max)]
+    breakpoint = model.fit(2, bounds=[(x_min, x_max)])  # Ensure bounds are properly formatted
+
+    # Calculate the slopes
+    slopes = model.slopes
+    slope_before = slopes[0]
+    slope_after = slopes[1]
+
+    # Predict fitted values
+    y_pred = model.predict(time_stamps_without_between_set_space)
+
+    # Plot results
+    plt.scatter(time_stamps_without_between_set_space, spatial_error, label="Data", color='gray', alpha=0.5)
+    plt.plot(time_stamps_without_between_set_space, y_pred, 'r-', label="Segmented Fit", linewidth=2)
+    plt.axvline(breakpoint[1], color='blue', linestyle='--', label=f'Breakpoint at x={breakpoint[1]:.2f}')
+    plt.legend()
+    plt.xlabel("X")
+    plt.ylabel("Y")
+    plt.title(f"Piecewise Linear Regression with 1 Breakpoint\nslope before = {round(slope_before, 4)}\nslope after = {round(slope_after, 4)}")
+    plt.show()
+
+    # Print breakpoint position
+    print("Breakpoint found at x =", breakpoint[1])
 
 
 

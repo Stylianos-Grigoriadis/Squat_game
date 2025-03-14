@@ -15,6 +15,14 @@ directory_path = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Παν
 files = glob.glob(os.path.join(directory_path, "*"))
 
 list_ID = []
+list_exact_ID = []
+max_list = []
+min_list = []
+mean_list = []
+std_list = []
+CV_list = []
+mean_frequency = []
+
 
 for file in files:
     os.chdir(file)
@@ -43,13 +51,24 @@ for file in files:
     # Extract Excel file and convert them into real data
     target_signal_x, target_signal_y = lbs.convert_excel_to_screen_size_targets(targets, old_data)
 
-    # Extract the
+    # Extract the data during the game
     data = lbs.values_during_game(data)
 
 
     # Create a list with 5 sublists which contain 30 dataframes, each dataframe contains all data of each target
     list_with_all_df_separated_by_set = lbs.return_the_df_of_each_target_separated_by_set(data, old_data)
 
+
+    # Check the sampling frequency
+    max, min, mean, std, CV = lbs.calculation_of_time_between_each_consecutive_data_point(list_with_all_df_separated_by_set, plot=False)
+
+    list_exact_ID.append(ID)
+    max_list.append(float(max))
+    min_list.append(float(min))
+    mean_list.append(float(mean))
+    std_list.append(float(std))
+    CV_list.append(float(CV))
+    mean_frequency.append(float(1000/mean))
 
     # Create a simple graph with all the columns you need to plot
     # lbs.simple_graph(list_with_all_df_separated_by_set, 'pitch', 'yaw', 'roll')
@@ -62,3 +81,18 @@ for file in files:
     # Calculate and print the spatial error for each target
     spatial_error, list_time_stamp_of_min_spatial_error_separated_by_set = lbs.spatial_error_best_window(
         list_with_all_df_separated_by_set, plot=False, time_window=500)
+
+
+# Export the frequency results
+dist = {'ID':list_exact_ID,
+'max':max_list,
+'min':min_list,
+'mean':mean_list,
+'std':std_list,
+'CV':CV_list,
+'Mean Frequency': mean_frequency
+}
+df_result_frequency = pd.DataFrame(dist)
+directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Data collection\Results'
+os.chdir(directory)
+df_result_frequency.to_excel('Results Frequency.xlsx')
