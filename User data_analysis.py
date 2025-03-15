@@ -10,6 +10,7 @@ import pwlf
 import piecewise_regression
 
 
+
 pd.set_option("display.max_rows", None)
 
 participants_before_change = ['pink1', 'pink10', 'pink11', 'pink12', 'pink13', 'pink14','pink15', 'pink2', 'pink3', 'pink4', 'pink5', 'pink6', 'pink7', 'pink8', 'pink9', 'static1', 'static10', 'static11', 'static12', 'static13', 'static2', 'static3', 'static4', 'static5', 'static6', 'static7', 'static8', 'static9', 'white1', 'white10', 'white11', 'white12', 'white13', 'white14', 'white2', 'white3', 'white4', 'white5', 'white6', 'white7', 'white8', 'white9']
@@ -229,43 +230,150 @@ for file in files:
 
 
     # Initialize piecewise linear fit
-    model = pwlf.PiecewiseLinFit(time_stamps_without_between_set_space, spatial_error)
+    # model = pwlf.PiecewiseLinFit(time_stamps_without_between_set_space, spatial_error)
+    #
+    # # Constraint: The breakpoint must allow at least 15 data points in each segment
+    # index_duration = 10
+    # min_index = index_duration  # At least index_duration points in the first segment
+    # max_index = len(time_stamps_without_between_set_space) - index_duration  # At least index_duration points in the second segment
+    #
+    # x_min, x_max = time_stamps_without_between_set_space[min_index], time_stamps_without_between_set_space[max_index]
+    #
+    # # Corrected bounds format: list of tuples [(min, max)]
+    # breakpoint = model.fit(3, bounds=[(x_min, x_max)])  # Ensure bounds are properly formatted
+    # print(breakpoint)
+    # breakpoint = float(breakpoint[1])
+    #
+    # print(breakpoint)
+    # print(time_stamps_without_between_set_space)
+    # breakpoint_index = np.argmin(np.abs(time_stamps_without_between_set_space - breakpoint)) + 1
+    # true_breakpoint = time_stamps_without_between_set_space[breakpoint_index]
+    #
+    # # breakpoint_index = breakpoint_index + 1
+    # print(breakpoint_index)
+    # print(true_breakpoint)
+    # # Calculate the slopes
+    # slopes = model.slopes
+    # slope_before = slopes[0]
+    # slope_after = slopes[1]
+    # list_breakpoints.append(breakpoint_index)
+    # list_slope_before_change.append(slope_before)
+    # list_slope_after_change.append(slope_after)
+    #
+    # # Predict fitted values
+    # y_pred = model.predict(time_stamps_without_between_set_space)
+    #
+    # # Plot results
+    # plt.scatter(time_stamps_without_between_set_space, spatial_error, label="Data", color='gray', alpha=0.5)
+    # plt.plot(time_stamps_without_between_set_space, y_pred, 'r-', label="Segmented Fit", linewidth=2)
+    # plt.axvline(breakpoint, color='blue', linestyle='--', label=f'Breakpoint at x={breakpoint_index}')
+    # plt.legend()
+    # plt.xlabel("X")
+    # plt.ylabel("Y")
+    # plt.title(f"Piecewise Linear Regression with 1 Breakpoint\nslope before = {round(slope_before, 4)}\nslope after = {round(slope_after, 4)}")
+    # plt.show()
+    #
+    # # Print breakpoint position
+    # print("Breakpoint found at x =", breakpoint_index)
 
-    # Constraint: The breakpoint must allow at least 15 data points in each segment
-    index_duration = 10
+    # Second try of segmented regression
+    # Initialize piecewise linear fit
+    # Fit model for different breakpoints and calculate AIC/BIC
+
+    # Step 1: Calculate BIC for different numbers of breakpoints
+    bic_values = []
+    num_breakpoints = list(range(1, 3))  # Test 1 to 2 breakpoints (you can adjust this range)
+
+    for n in num_breakpoints:
+        model = pwlf.PiecewiseLinFit(time_stamps_without_between_set_space, spatial_error)
+        index_duration = 15
+        min_index = index_duration  # At least index_duration points in the first segment
+        max_index = len(time_stamps_without_between_set_space) - index_duration  # At least index_duration points in the second segment
+
+        x_min, x_max = time_stamps_without_between_set_space[min_index], time_stamps_without_between_set_space[max_index]
+
+        # Corrected bounds format: list of tuples [(min, max)]
+        breakpoint = model.fit(n+1, bounds=[(x_min, x_max)])  # Ensure bounds are properly formatted
+
+        residuals = spatial_error - model.predict(time_stamps_without_between_set_space)
+        rss = np.sum(residuals ** 2)  # Residual sum of squares
+        n_params = n + 2  # Number of parameters: breakpoints + 2 (slope and intercept)
+
+        # Compute BIC
+        n_data = len(time_stamps_without_between_set_space)
+        bic = n_params * np.log(n_data) + n_data * np.log(rss / n_data)
+
+        bic_values.append(bic)
+
+    # Step 2: Find the optimal number of breakpoints based on BIC
+    optimal_bic_n = num_breakpoints[np.argmin(bic_values)]
+    print(f"Optimal number of breakpoints (BIC): {optimal_bic_n}")
+
+    # Step 3: Fit the model with the optimal number of breakpoints
+    model = pwlf.PiecewiseLinFit(time_stamps_without_between_set_space, spatial_error)
     min_index = index_duration  # At least index_duration points in the first segment
-    max_index = len(time_stamps_without_between_set_space) - index_duration  # At least index_duration points in the second segment
+    max_index = len(
+        time_stamps_without_between_set_space) - index_duration  # At least index_duration points in the second segment
 
     x_min, x_max = time_stamps_without_between_set_space[min_index], time_stamps_without_between_set_space[max_index]
 
     # Corrected bounds format: list of tuples [(min, max)]
-    breakpoint = model.fit(2, bounds=[(x_min, x_max)])  # Ensure bounds are properly formatted
-    print(breakpoint)
-    breakpoint_index = np.where(time_stamps_without_between_set_space == breakpoint[1])[0]  # np.where() returns a tuple, so we take [0]
-    breakpoint_index = breakpoint_index + 1
-    # Calculate the slopes
-    slopes = model.slopes
-    slope_before = slopes[0]
-    slope_after = slopes[1]
-    list_breakpoints.append(breakpoint_index)
-    list_slope_before_change.append(slope_before)
-    list_slope_after_change.append(slope_after)
+    breakpoints = model.fit(optimal_bic_n+1, bounds=[(x_min, x_max)])
 
-    # Predict fitted values
+    # Step 4: Get the predicted values and plot the results
     y_pred = model.predict(time_stamps_without_between_set_space)
 
-    # Plot results
+
+    # Plot original data and the segmented fit
     plt.scatter(time_stamps_without_between_set_space, spatial_error, label="Data", color='gray', alpha=0.5)
     plt.plot(time_stamps_without_between_set_space, y_pred, 'r-', label="Segmented Fit", linewidth=2)
-    plt.axvline(breakpoint[1], color='blue', linestyle='--', label=f'Breakpoint at x={breakpoint_index}')
+
+    # Plot vertical blue dashed lines for breakpoints
+    for breakpoint in breakpoints:
+        plt.axvline(x=breakpoint, color='blue', linestyle='--', label="Breakpoint")
+
+    plt.xlabel("Time Stamps")
+    plt.ylabel("Spatial Error")
+    plt.title(f"Segmented Linear Fit with {optimal_bic_n} Breakpoint(s)")
     plt.legend()
-    plt.xlabel("X")
-    plt.ylabel("Y")
-    plt.title(f"Piecewise Linear Regression with 1 Breakpoint\nslope before = {round(slope_before, 4)}\nslope after = {round(slope_after, 4)}")
     plt.show()
 
-    # Print breakpoint position
-    print("Breakpoint found at x =", breakpoint_index)
+    # for n in num_breakpoints:
+    #     model.fit(n + 1)  # No bounds specified; let pwlf decide
+    #     aic_values.append(model.aic())
+    #     bic_values.append(model.bic())
+    #
+    # # Select the optimal number of breakpoints (min AIC)
+    # optimal_n = num_breakpoints[np.argmin(aic_values)]
+    # print(f"Optimal number of breakpoints: {optimal_n}")
+    #
+    # # Fit model with the best number of breakpoints
+    # breakpoints = model.fit(optimal_n + 1)  # No constraints on breakpoints
+    #
+    # # Convert breakpoints to indices
+    # breakpoint_indices = [np.argmin(np.abs(time_stamps_without_between_set_space - bp)) for bp in breakpoints[1:-1]]
+    # true_breakpoints = [time_stamps_without_between_set_space[idx] for idx in breakpoint_indices]
+    #
+    # # Predict fitted values
+    # y_pred = model.predict(time_stamps_without_between_set_space)
+    #
+    # # Plot results
+    # plt.scatter(time_stamps_without_between_set_space, spatial_error, label="Data", color='gray', alpha=0.5)
+    # plt.plot(time_stamps_without_between_set_space, y_pred, 'r-', label="Segmented Fit", linewidth=2)
+    #
+    # # Mark breakpoints
+    # for bp in true_breakpoints:
+    #     plt.axvline(bp, color='blue', linestyle='--', label=f'Breakpoint at x={bp}')
+    #
+    # plt.legend()
+    # plt.xlabel("X")
+    # plt.ylabel("Y")
+    # plt.title(f"Piecewise Linear Regression with {optimal_n} Breakpoints")
+    # plt.show()
+    #
+    # # Print results
+    # print(f"Breakpoints found at: {true_breakpoints}")
+    # print(f"Slopes: {model.slopes}")
 
 
 
