@@ -11,6 +11,9 @@ from scipy import stats
 from scipy.stats import pearsonr
 import itertools
 import time
+from scipy.stats import linregress
+import pwlf
+
 
 
 def DFA_NONAN(data, scales, order=1, plot=True):
@@ -1079,6 +1082,7 @@ def Unix_to_start_from_zero_time(df):
 
     return df
 
+
 def calculation_of_time_between_each_consecutive_data_point(list_with_all_df_separated_by_set, plot=True):
     all_list = []
     for list_ in list_with_all_df_separated_by_set:
@@ -1098,3 +1102,161 @@ def calculation_of_time_between_each_consecutive_data_point(list_with_all_df_sep
         plt.plot(flattened_list)
         plt.show()
     return max, min, mean, std, CV
+
+
+def creation_pf_timestamps_without_space_between_sets(list_time_stamp_of_min_spatial_error_separated_by_set):
+    differences_in_time_between_targets = []
+    for time_list in list_time_stamp_of_min_spatial_error_separated_by_set:
+        time_list = np.array(time_list)
+        differences = np.diff(time_list)
+        differences_in_time_between_targets.append(differences)
+    differences_in_time_between_targets, _ = list_of_five_lists_flatten_list(differences_in_time_between_targets)
+    differences_in_time_between_targets = np.array(differences_in_time_between_targets)
+    average_difference = np.mean(differences_in_time_between_targets)
+    time_stamps_without_between_set_space = []
+    last_time_stamp = 0
+    for time_list in list_time_stamp_of_min_spatial_error_separated_by_set:
+        initial_time = time_list[0]
+        for time_stamp in time_list:
+            time_stamp = time_stamp - initial_time + last_time_stamp
+            time_stamps_without_between_set_space.append(time_stamp)
+        last_time_stamp = time_stamp + average_difference
+    time_stamps_without_between_set_space = np.array(time_stamps_without_between_set_space)
+
+    return time_stamps_without_between_set_space
+
+
+def simple_linear_regression(time_stamps_without_between_set_space, spatial_error, plot=False):
+    slope, intercept, r_value, p_value, std_err = linregress(time_stamps_without_between_set_space, spatial_error)
+    predicted_values = intercept + slope * np.array(time_stamps_without_between_set_space)
+
+    rmse = np.sqrt(np.mean((spatial_error - predicted_values) ** 2))
+    # Plot the original data
+
+    if plot == True:
+        plt.scatter(time_stamps_without_between_set_space, spatial_error, label="Original Data", color='blue', alpha=0.6)
+        plt.plot(time_stamps_without_between_set_space, predicted_values, label="Segmented Fit", linewidth=2, c='red')
+        set_time_stamps = []
+        for i in [0, 29, 59, 89, 119, 149]:
+            set_time_stamps.append(time_stamps_without_between_set_space[i])
+        for i in set_time_stamps:
+            plt.axvline(x=i, linestyle='--', c='k')
+        plt.xlabel("Time Stamps")
+        plt.ylabel("Spatial Error")
+        plt.legend()
+        plt.ylim(0, 800)
+        plt.title(f'Linear Regression\nRMSE = {rmse}')
+        plt.show()
+
+    return slope, intercept, rmse
+
+
+def segmented_linear_regression(time_stamps_without_between_set_space, spatial_error, number_of_breakpoints = 1, index_duration=15, plot=False):
+    model = pwlf.PiecewiseLinFit(time_stamps_without_between_set_space, spatial_error)
+    min_index = index_duration
+    max_index = len(time_stamps_without_between_set_space) - index_duration
+
+    x_min, x_max = time_stamps_without_between_set_space[min_index], time_stamps_without_between_set_space[max_index]
+
+    breakpoints = model.fit(number_of_breakpoints + 1, bounds=[(x_min, x_max)])
+
+    y_pred = model.predict(time_stamps_without_between_set_space)
+
+    slopes = model.slopes
+    intercepts = model.intercepts
+
+    # Calculate R^2
+    residuals = spatial_error - y_pred
+    ss_residual = np.sum(residuals ** 2)
+    ss_total = np.sum((spatial_error - np.mean(spatial_error)) ** 2)
+    r_squared = 1 - (ss_residual / ss_total)
+
+    # Calculate Adjusted R-squared
+    n = len(spatial_error)
+    p = len(breakpoints) + 1
+    adjusted_r_squared = 1 - ((1 - r_squared) * (n - 1)) / (n - p - 1)
+
+    # Calculate RMSE
+    rmse = np.sqrt(np.mean(residuals ** 2))
+
+    if plot == True:
+        plt.scatter(time_stamps_without_between_set_space, spatial_error, label="Original Data", color='blue', alpha=0.6)
+        plt.plot(time_stamps_without_between_set_space, y_pred, c='red', label="Segmented Fit", linewidth=2)
+
+        # Plot vertical blue dashed lines for breakpoints
+
+        plt.axvline(x=breakpoints[1], color='orange', linestyle='--', label="Breakpoint",lw=2)
+
+        set_time_stamps = []
+        for i in [29, 59, 89, 119, 149]:
+            set_time_stamps.append(time_stamps_without_between_set_space[i])
+        for i in set_time_stamps:
+            plt.axvline(x=i, linestyle='--', c='k', lw=0.7)
+        plt.axvline(x=0, linestyle='--', c='k', label='Set', lw=0.7)
+
+        plt.xlabel("Time Stamps")
+        plt.ylabel("Spatial Error")
+        plt.title(f"Segmented Linear Regression\nRMSE = {rmse}")
+        plt.ylim(0, 800)
+        plt.legend()
+        plt.show()
+
+    return slopes, intercepts, rmse
+
+
+def determine_the_number_of_breakpoints(time_stamps_without_between_set_space, spatial_error, max_number_of_breakpoints_to_check=15, index_duration=15):
+    """
+    Thus function determines the optimal number of breakpoints for the segmented regression model.
+    The two main parameter of the model which will be affected by the number of breakpoints is the Goodness and Complexity of the model.
+    There are two main methodologies to access the number of breakpoints, the Akaike Information Criterion (AIC) and the
+    Bayesian Information Criterion (BIC). There main differences is that BIC applies stronger penalty to complexity, thus favouring more simple (with fewer breakpoints) models.
+
+    This function returns the proposed number of breakpoints based on both AIC and BIC.
+    """
+    aic_values = []
+    bic_values = []
+    num_breakpoints = list(range(1, max_number_of_breakpoints_to_check))  # Test 1 to 2 breakpoints (you can adjust this range)
+
+    for n in num_breakpoints:
+        model = pwlf.PiecewiseLinFit(time_stamps_without_between_set_space, spatial_error)
+        min_index = index_duration
+        max_index = len(time_stamps_without_between_set_space) - index_duration
+
+        x_min, x_max = time_stamps_without_between_set_space[min_index], time_stamps_without_between_set_space[max_index]
+
+        # Corrected bounds format: list of tuples [(min, max)]
+        breakpoint = model.fit(n + 1, bounds=[(x_min, x_max)])
+
+        residuals = spatial_error - model.predict(time_stamps_without_between_set_space)
+        rss = np.sum(residuals ** 2)  # Residual sum of squares
+        n_params = 2 * n + 2  # Number of parameters: breakpoints + 2 (slope and intercept)
+
+        # Compute AIC and BIC
+        n_data = len(time_stamps_without_between_set_space)
+        aic = 2 * n_params + n_data * np.log(rss / n_data)
+        bic = n_params * np.log(n_data) + n_data * np.log(rss / n_data)
+
+        aic_values.append(aic)
+        bic_values.append(bic)
+
+    optimal_aic_n = num_breakpoints[np.argmin(aic_values)]
+    optimal_bic_n = num_breakpoints[np.argmin(bic_values)]
+
+    print(f"Optimal number of breakpoints (AIC): {optimal_aic_n}")
+    print(f"Optimal number of breakpoints (BIC): {optimal_bic_n}")
+
+    return optimal_aic_n, optimal_bic_n
+
+
+
+
+
+
+
+
+
+
+
+
+
+
