@@ -1209,7 +1209,7 @@ def determine_the_number_of_breakpoints(time_stamps_without_between_set_space, s
     Thus function determines the optimal number of breakpoints for the segmented regression model.
     The two main parameter of the model which will be affected by the number of breakpoints is the Goodness and Complexity of the model.
     There are two main methodologies to access the number of breakpoints, the Akaike Information Criterion (AIC) and the
-    Bayesian Information Criterion (BIC). There main differences is that BIC applies stronger penalty to complexity, thus favouring more simple (with fewer breakpoints) models.
+    Bayesian Information Criterion (BIC). There main differences is that BIC applies stronger penalty to complexity, thus favoring more simple (with fewer breakpoints) models.
 
     This function returns the proposed number of breakpoints based on both AIC and BIC.
     """

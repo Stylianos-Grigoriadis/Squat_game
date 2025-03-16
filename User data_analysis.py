@@ -94,14 +94,14 @@ for file in files:
     time_stamps_without_between_set_space = lbs.creation_pf_timestamps_without_space_between_sets(list_time_stamp_of_min_spatial_error_separated_by_set)
 
     # Calculate the simple regression line
-    simple_slope,  simple_intercept,  simple_rmse = lbs.simple_linear_regression(time_stamps_without_between_set_space, spatial_error, plot=False)
+    simple_slope,  simple_intercept,  simple_rmse = lbs.simple_linear_regression(time_stamps_without_between_set_space, spatial_error, plot=True)
 
     # Calculate the optimal number of breakpoints for Segmented regression
     # optimal_aic_n, optimal_bic_n = lbs.determine_the_number_of_breakpoints(time_stamps_without_between_set_space, spatial_error, max_number_of_breakpoints_to_check=15, index_duration=15)
 
     # Calculate the segmented regression line
     segmented_slopes, segmented_intercepts, segmented_rmse = lbs.segmented_linear_regression(time_stamps_without_between_set_space, spatial_error,
-                                                               number_of_breakpoints=1, index_duration=15, plot=False)
+                                                               number_of_breakpoints=1, index_duration=15, plot=True)
     # print(f'segemnted_slopes={segmented_slopes}')
     # print(f'segemnted_intercepts={segmented_intercepts}')
     # print(f'segmented_rmse={segmented_rmse}')
