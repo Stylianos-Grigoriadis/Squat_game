@@ -11,7 +11,7 @@ pd.set_option("display.max_rows", None)
 
 participants_before_change = ['pink1', 'pink10', 'pink11', 'pink12', 'pink13', 'pink14','pink15', 'pink2', 'pink3', 'pink4', 'pink5', 'pink6', 'pink7', 'pink8', 'pink9', 'static1', 'static10', 'static11', 'static12', 'static13', 'static2', 'static3', 'static4', 'static5', 'static6', 'static7', 'static8', 'static9', 'white1', 'white10', 'white11', 'white12', 'white13', 'white14', 'white2', 'white3', 'white4', 'white5', 'white6', 'white7', 'white8', 'white9']
 
-directory_path = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Data collection\Data'
+directory_path = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Data collection\To check'
 files = glob.glob(os.path.join(directory_path, "*"))
 
 list_ID = []
@@ -70,6 +70,7 @@ for file in files:
     CV_list.append(float(CV))
     mean_frequency.append(float(1000/mean))
 
+    print()
     # Create a simple graph with all the columns you need to plot
     # lbs.simple_graph(list_with_all_df_separated_by_set, 'pitch', 'yaw', 'roll')
 
@@ -93,6 +94,7 @@ dist = {'ID':list_exact_ID,
 'Mean Frequency': mean_frequency
 }
 df_result_frequency = pd.DataFrame(dist)
-directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Data collection\Results'
-os.chdir(directory)
-df_result_frequency.to_excel('Results Frequency.xlsx')
+print(df_result_frequency)
+# directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Data collection\Results'
+# os.chdir(directory)
+# df_result_frequency.to_excel('Results Frequency.xlsx')
