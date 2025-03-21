@@ -38,6 +38,19 @@ list_breakpoints = []
 list_slope_before_change = []
 list_slope_after_change = []
 
+list_spatial_error_set_1_average = []
+list_spatial_error_set_2_average = []
+list_spatial_error_set_3_average = []
+list_spatial_error_set_4_average = []
+list_spatial_error_set_5_average = []
+
+list_spatial_error_set_1_sd = []
+list_spatial_error_set_2_sd = []
+list_spatial_error_set_3_sd = []
+list_spatial_error_set_4_sd = []
+list_spatial_error_set_5_sd = []
+
+
 
 for file in files:
     os.chdir(file)
@@ -82,8 +95,19 @@ for file in files:
     # Create a scatter with a slider for visualization of target position vs player position
     # lbs.graph_creation_target_vs_player_with_data(list_with_all_df_separated_by_set)
 
-    # Calculate and print the spatial error for each target
+    # Calculate and show the spatial error for each target
     spatial_error, list_time_stamp_of_min_spatial_error_separated_by_set = lbs.spatial_error_best_window(list_with_all_df_separated_by_set, plot=False, time_window=500)
+
+    spatial_error_set_1_average = np.mean(spatial_error[0])
+    spatial_error_set_2_average = np.mean(spatial_error[1])
+    spatial_error_set_3_average = np.mean(spatial_error[2])
+    spatial_error_set_4_average = np.mean(spatial_error[3])
+    spatial_error_set_5_average = np.mean(spatial_error[4])
+    spatial_error_set_1_sd = np.std(spatial_error[0])
+    spatial_error_set_2_sd = np.std(spatial_error[1])
+    spatial_error_set_3_sd = np.std(spatial_error[2])
+    spatial_error_set_4_sd = np.std(spatial_error[3])
+    spatial_error_set_5_sd = np.std(spatial_error[4])
 
 
     # Flatten the list with the spatial errors
@@ -94,14 +118,14 @@ for file in files:
     time_stamps_without_between_set_space = lbs.creation_pf_timestamps_without_space_between_sets(list_time_stamp_of_min_spatial_error_separated_by_set)
 
     # Calculate the simple regression line
-    simple_slope,  simple_intercept,  simple_rmse = lbs.simple_linear_regression(time_stamps_without_between_set_space, spatial_error, plot=True)
+    simple_slope,  simple_intercept,  simple_rmse = lbs.simple_linear_regression(time_stamps_without_between_set_space, spatial_error, plot=False)
 
     # Calculate the optimal number of breakpoints for Segmented regression
     # optimal_aic_n, optimal_bic_n = lbs.determine_the_number_of_breakpoints(time_stamps_without_between_set_space, spatial_error, max_number_of_breakpoints_to_check=15, index_duration=15)
 
     # Calculate the segmented regression line
     segmented_slopes, segmented_intercepts, segmented_rmse = lbs.segmented_linear_regression(time_stamps_without_between_set_space, spatial_error,
-                                                               number_of_breakpoints=1, index_duration=15, plot=True)
+                                                               number_of_breakpoints=1, index_duration=15, plot=False)
     # print(f'segemnted_slopes={segmented_slopes}')
     # print(f'segemnted_intercepts={segmented_intercepts}')
     # print(f'segmented_rmse={segmented_rmse}')
@@ -121,11 +145,21 @@ for file in files:
     list_segmented_slope_after.append(segmented_slopes[1])
     list_segmented_intercept_after.append(segmented_intercepts[1])
 
-
     average_spatial_error = np.mean(spatial_error)
     list_average_spatial_error.append(average_spatial_error)
     sd_spatial_error = np.std(spatial_error)
     list_sd_spatial_error.append(sd_spatial_error)
+
+    list_spatial_error_set_1_average.append(spatial_error_set_1_average)
+    list_spatial_error_set_2_average.append(spatial_error_set_2_average)
+    list_spatial_error_set_3_average.append(spatial_error_set_3_average)
+    list_spatial_error_set_4_average.append(spatial_error_set_4_average)
+    list_spatial_error_set_5_average.append(spatial_error_set_5_average)
+    list_spatial_error_set_1_sd.append(spatial_error_set_1_sd)
+    list_spatial_error_set_2_sd.append(spatial_error_set_2_sd)
+    list_spatial_error_set_3_sd.append(spatial_error_set_3_sd)
+    list_spatial_error_set_4_sd.append(spatial_error_set_4_sd)
+    list_spatial_error_set_5_sd.append(spatial_error_set_5_sd)
 
 
 
@@ -139,15 +173,51 @@ dist = {'ID': list_ID,
         'Segmented Regression Slope after': list_segmented_slope_after,
         'Segmented Regression Intercept after': list_segmented_intercept_after,
         'Segmented Regression RMSE': list_segmented_rmse,
-        'Average Spatial Error': list_average_spatial_error,
-        'Sd Spatial Error': list_sd_spatial_error,
+        'Average Spatial Error all sets': list_average_spatial_error,
+        'Sd Spatial Error all sets': list_sd_spatial_error,
+        'Average Spatial error set 1': list_spatial_error_set_1_average,
+        'Average Spatial error set 2': list_spatial_error_set_2_average,
+        'Average Spatial error set 3': list_spatial_error_set_3_average,
+        'Average Spatial error set 4': list_spatial_error_set_4_average,
+        'Average Spatial error set 5': list_spatial_error_set_5_average,
+        'Sd Spatial error set 1': list_spatial_error_set_1_sd,
+        'Sd Spatial error set 2': list_spatial_error_set_2_sd,
+        'Sd Spatial error set 3': list_spatial_error_set_3_sd,
+        'Sd Spatial error set 4': list_spatial_error_set_4_sd,
+        'Sd Spatial error set 5': list_spatial_error_set_5_sd,
         }
 df = pd.DataFrame(dist)
-# directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Data collection\Results'
-# os.chdir(directory)
-# df.to_excel('Results.xlsx')
+directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Data collection\Results'
+os.chdir(directory)
+df.to_excel('Results.xlsx')
 
 
+df_long = df.melt(id_vars=['ID'],
+                  value_vars=['Average Spatial error set 1', 'Average Spatial error set 2',
+                              'Average Spatial error set 3', 'Average Spatial error set 4',
+                              'Average Spatial error set 5'],
+                  var_name='Set', value_name='Average Spatial Error')  # Ensure correct name
+
+# Rename set names for readability
+df_long['Set'] = df_long['Set'].str.replace('Average Spatial error set ', 'Set ')
+
+# Create boxplot
+custom_palette = {
+    "pink": "#FFC0CB",      # Soft pink
+    "static": "#4F4F4F",    # Dark gray
+    "white": "#D3D3D3"      # Light gray
+}
+plt.figure(figsize=(12, 6))
+sns.boxplot(x='Set', y='Average Spatial Error', hue='ID', data=df_long, palette=custom_palette)  # Use correct column name
+
+# Customize plot
+plt.title('Comparison of Spatial Error Across Sets and ID Groups')
+plt.xlabel('Set')
+plt.ylabel('Average Spatial Error')
+plt.legend(title='ID')
+
+# Show plot
+plt.show()
 
 # Plot Slopes
 df_melted_Slope = df.melt(id_vars=['ID'], value_vars=[
@@ -216,7 +286,7 @@ plt.show()
 # Plot Average Spatial Error
 plt.figure(figsize=(10, 6))
 colors = ['lightblue', 'lightgreen', 'lightcoral']  # Adjust colors as needed
-sns.boxplot(data=df, x='ID', y='Average Spatial Error', hue='ID', palette=colors, legend=False)
+sns.boxplot(data=df, x='ID', y='Average Spatial Error all sets', hue='ID', palette=colors, legend=False)
 plt.title('Average Spatial Error by ID')
 plt.xlabel('ID')
 plt.ylabel('Average Spatial Error')
@@ -227,8 +297,11 @@ plt.show()
 # Plot Sd Spatial Error
 plt.figure(figsize=(10, 6))
 colors = ['lightblue', 'lightgreen', 'lightcoral']  # Adjust colors as needed
-sns.boxplot(data=df, x='ID', y='Sd Spatial Error', palette=colors)
+sns.boxplot(data=df, x='ID', y='Sd Spatial Error all sets', palette=colors)
 plt.title('Sd Spatial Error by ID')
 plt.xlabel('ID')
 plt.ylabel('Sd Spatial Error')
 plt.show()
+
+
+
