@@ -18,7 +18,7 @@ pd.set_option("display.max_rows", None)
 participants_before_change = ['pink1', 'pink10', 'pink11', 'pink12', 'pink13', 'pink14','pink15', 'pink2', 'pink3', 'pink4', 'pink5', 'pink6', 'pink7', 'pink8', 'pink9', 'static1', 'static10', 'static11', 'static12', 'static13', 'static2', 'static3', 'static4', 'static5', 'static6', 'static7', 'static8', 'static9', 'white1', 'white10', 'white11', 'white12', 'white13', 'white14', 'white2', 'white3', 'white4', 'white5', 'white6', 'white7', 'white8', 'white9']
 
 
-directory_path = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Data collection\Data'
+directory_path = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Data\Valid Data'
 files = glob.glob(os.path.join(directory_path, "*"))
 
 list_simple_rmse = []
@@ -32,6 +32,7 @@ list_segmented_slope_after = []
 list_segmented_intercept_after = []
 
 list_ID = []
+list_exact_ID = []
 list_average_spatial_error = []
 list_sd_spatial_error = []
 list_breakpoints = []
@@ -55,6 +56,7 @@ list_spatial_error_set_5_sd = []
 for file in files:
     os.chdir(file)
     ID = os.path.basename(file)
+    list_exact_ID.append(ID)
     print(ID)
     if ID in participants_before_change:
         old_data = True
@@ -165,6 +167,7 @@ for file in files:
 
 # Calculate slopes, error, Average Spatial error, and sd spatial error at 500 for everyone
 dist = {'ID': list_ID,
+        'Exact ID': list_exact_ID,
         'Simple Regression Slope': list_simple_slope,
         'Simple Regression Intercept': list_simple_intercept,
         'Simple Regression RMSE': list_simple_rmse,
@@ -187,9 +190,9 @@ dist = {'ID': list_ID,
         'Sd Spatial error set 5': list_spatial_error_set_5_sd,
         }
 df = pd.DataFrame(dist)
-directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Data collection\Results'
-os.chdir(directory)
-df.to_excel('Results.xlsx')
+# directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Results'
+# os.chdir(directory)
+# df.to_excel('Results 2.xlsx')
 
 
 df_long = df.melt(id_vars=['ID'],
@@ -208,7 +211,7 @@ custom_palette = {
     "white": "#D3D3D3"      # Light gray
 }
 plt.figure(figsize=(12, 6))
-sns.boxplot(x='Set', y='Average Spatial Error', hue='ID', data=df_long, palette=custom_palette)  # Use correct column name
+sns.boxplot(x='Set', y='Average Spatial Error', hue='ID', data=df_long, palette=custom_palette, showfliers=False)  # Use correct column name
 
 # Customize plot
 plt.title('Comparison of Spatial Error Across Sets and ID Groups')
