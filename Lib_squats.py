@@ -13,6 +13,7 @@ import itertools
 import time
 from scipy.stats import linregress
 import pwlf
+import ruptures as rpt
 
 
 
@@ -1248,8 +1249,18 @@ def determine_the_number_of_breakpoints(time_stamps_without_between_set_space, s
     return optimal_aic_n, optimal_bic_n
 
 
+def determine_change_points_using_PELT(spatial_error, plot=False):
 
+    algo = rpt.Pelt(model="rbf").fit(spatial_error)
+    change_points = algo.predict(pen=1.5)  # Adjust penalty for sensitivity
 
+    if plot == True:
+        plt.plot(spatial_error, label="Spatial Error")
+        for cp in change_points[:-1]:  # Ignore last point (end of series)
+            plt.axvline(cp, color="red", linestyle="--", label="Change Point")
+        plt.legend()
+        plt.show()
+    return change_points
 
 
 

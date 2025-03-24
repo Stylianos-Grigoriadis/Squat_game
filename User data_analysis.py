@@ -9,6 +9,7 @@ import seaborn as sns
 import pwlf
 import piecewise_regression
 from scipy.stats import linregress
+from scipy.optimize import curve_fit
 
 
 
@@ -120,20 +121,69 @@ for file in files:
     time_stamps_without_between_set_space = lbs.creation_pf_timestamps_without_space_between_sets(list_time_stamp_of_min_spatial_error_separated_by_set)
 
     # Calculate the simple regression line
-    simple_slope,  simple_intercept,  simple_rmse = lbs.simple_linear_regression(time_stamps_without_between_set_space, spatial_error, plot=False)
+    simple_slope,  simple_intercept,  simple_rmse = lbs.simple_linear_regression(time_stamps_without_between_set_space, spatial_error, plot=True)
 
     # Calculate the optimal number of breakpoints for Segmented regression
     # optimal_aic_n, optimal_bic_n = lbs.determine_the_number_of_breakpoints(time_stamps_without_between_set_space, spatial_error, max_number_of_breakpoints_to_check=15, index_duration=15)
 
     # Calculate the segmented regression line
     segmented_slopes, segmented_intercepts, segmented_rmse = lbs.segmented_linear_regression(time_stamps_without_between_set_space, spatial_error,
-                                                               number_of_breakpoints=1, index_duration=15, plot=False)
+                                                               number_of_breakpoints=1, index_duration=15, plot=True)
+
+    #
     # print(f'segemnted_slopes={segmented_slopes}')
     # print(f'segemnted_intercepts={segmented_intercepts}')
     # print(f'segmented_rmse={segmented_rmse}')
     # print(f'simple_slope={simple_slope}')
     # print(f'simple_intercept={simple_intercept}')
     # print(f'simple_rmse={simple_rmse}')
+
+    # change_points = lbs.determine_change_points_using_PELT(spatial_error, plot=True)
+
+    # cumsum = np.cumsum(spatial_error)
+    # # plt.plot(cumsum)
+    # # plt.show()
+    #
+    # slope, intercept, _, _, _ = linregress(time_stamps_without_between_set_space, spatial_error)
+    # linear_trend = slope * time_stamps_without_between_set_space + intercept
+    #
+    # # Detrend by subtracting the linear trend
+    # detrended_data = spatial_error - linear_trend
+    #
+    # # Plot results
+    # plt.figure(figsize=(10, 5))
+    # plt.subplot(2, 1, 1)
+    # plt.plot(time_stamps_without_between_set_space, spatial_error, label="Original Data")
+    # plt.plot(time_stamps_without_between_set_space, linear_trend, color='red', linestyle="dashed", label="Linear Trend")
+    # plt.legend()
+    # plt.title("Original Time Series with Linear Trend")
+    #
+    # plt.subplot(2, 1, 2)
+    # plt.plot(time_stamps_without_between_set_space, detrended_data, label="Detrended Data", color="green")
+    # plt.axhline(0, color="black", linestyle="--")
+    # plt.legend()
+    # plt.title("Detrended Time Series")
+    #
+    # plt.tight_layout()
+    # plt.show()
+    #
+    # cumsum_detrended = np.cumsum(detrended_data)
+    #
+    # average = np.mean(spatial_error)
+    # spatial_error_minus_average = spatial_error-average
+    # cumsum_spatial_error_minus_average = np.cumsum(spatial_error_minus_average)
+    # # plt.plot(cumsum, label='cumsum')
+    # plt.plot(cumsum_detrended, label='cumsum_detrended')
+    # # plt.plot(spatial_error_minus_average, label='spatial_error_minus_average')
+    #
+    # plt.legend()
+    # plt.show()
+
+
+
+
+
+
 
 
     # Append values to create the df after with the results
