@@ -14,6 +14,7 @@ import time
 from scipy.stats import linregress
 import pwlf
 import ruptures as rpt
+from scipy.optimize import curve_fit
 
 
 
@@ -1136,16 +1137,18 @@ def simple_linear_regression(time_stamps_without_between_set_space, spatial_erro
 
     if plot == True:
         plt.scatter(time_stamps_without_between_set_space, spatial_error, label="Original Data", color='blue', alpha=0.6)
+        plt.plot(time_stamps_without_between_set_space, spatial_error, color='blue', alpha=0.6)
+
         plt.plot(time_stamps_without_between_set_space, predicted_values, label="Segmented Fit", linewidth=2, c='red')
         set_time_stamps = []
-        for i in [0, 29, 59, 89, 119, 149]:
+        for i in [0, 29, 59, 89, 119, 148]:
             set_time_stamps.append(time_stamps_without_between_set_space[i])
         for i in set_time_stamps:
             plt.axvline(x=i, linestyle='--', c='k')
         plt.xlabel("Time Stamps")
         plt.ylabel("Spatial Error")
         plt.legend()
-        plt.ylim(0, 800)
+        # plt.ylim(0, 800)
         plt.title(f'Linear Regression\nRMSE = {rmse}')
         plt.show()
 
@@ -1263,11 +1266,35 @@ def determine_change_points_using_PELT(spatial_error, plot=False):
     return change_points
 
 
+def asymptotes(spatial_error):
+
+    def f(x, b, c):
+        return spatial_error[0] * np.exp(-b * x) + c
+
+    t = np.arange(len(spatial_error))
+    popt, _ = curve_fit(f, t, spatial_error, bounds=([0, -1e10], [1, 1e10]), maxfev=30000)
+    b, c = popt
+    print(f'y = * {b}**x + {c}')
+    x_line = np.arange(0, len(t), 1)
+    y_line = f(x_line, b, c)
+
+    plt.plot(x_line, y_line, '--', color='green', label='fit')
+    plt.axhline(y=c, c='k', label='Asymptote')
+    plt.scatter(t,spatial_error)
+    plt.legend()
+    plt.show()
 
 
+def custom_segmented_regression(time_stamps_without_between_set_space, spatial_error, minimum_targets):
 
-
-
+    for i in range(minimum_targets, len(spatial_error) - minimum_targets):
+        print(i)
+        # part_1 = spatial_error[:i]
+        # part_2 = spatial_error[i:]
+        # print(len(spatial_error))
+        # print(len(part_1))
+        # print(len(part_2))
+        print('aaaaaaa')
 
 
 
