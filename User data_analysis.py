@@ -128,11 +128,11 @@ for file in files:
 
     # Calculate the segmented regression line
     segmented_slopes, segmented_intercepts, segmented_rmse = lbs.segmented_linear_regression(time_stamps_without_between_set_space, spatial_error,
-                                                               number_of_breakpoints=1, index_duration=15, plot=False)
+                                                               number_of_breakpoints=1, index_duration=15, plot=True)
 
     # learning_target = lbs.asymptotes(spatial_error)
 
-    lbs.custom_segmented_regression(time_stamps_without_between_set_space, spatial_error, 15)
+    lbs.custom_segmented_regression(time_stamps_without_between_set_space, spatial_error, minimum_targets=15, plot=True)
 
 
 

@@ -13,7 +13,6 @@ import itertools
 import time
 from scipy.stats import linregress
 import pwlf
-import ruptures as rpt
 from scipy.optimize import curve_fit
 
 
@@ -1252,20 +1251,6 @@ def determine_the_number_of_breakpoints(time_stamps_without_between_set_space, s
     return optimal_aic_n, optimal_bic_n
 
 
-def determine_change_points_using_PELT(spatial_error, plot=False):
-
-    algo = rpt.Pelt(model="rbf").fit(spatial_error)
-    change_points = algo.predict(pen=1.5)  # Adjust penalty for sensitivity
-
-    if plot == True:
-        plt.plot(spatial_error, label="Spatial Error")
-        for cp in change_points[:-1]:  # Ignore last point (end of series)
-            plt.axvline(cp, color="red", linestyle="--", label="Change Point")
-        plt.legend()
-        plt.show()
-    return change_points
-
-
 def asymptotes(spatial_error):
 
     def f(x, b, c):
@@ -1285,16 +1270,139 @@ def asymptotes(spatial_error):
     plt.show()
 
 
-def custom_segmented_regression(time_stamps_without_between_set_space, spatial_error, minimum_targets):
+def custom_segmented_regression(time_stamps_without_between_set_space, spatial_error, minimum_targets, plot=False):
+    rmse_list = []
+    sse_list = []
+    braekpoint_list = []
+    part_1_list = []
+    part_2_list = []
+    time_part_1_list = []
+    time_part_2_list = []
+    predicted_values_part_1_list = []
+    predicted_values_part_2_list = []
+    slope_part_1_list = []
+    intercept_part_1_list = []
+    r_value_part_1_list = []
+    p_value_part_1_list = []
+    std_err_part_1_list = []
+    rmse_part_1_list = []
+    sse_part_1_list = []
+    slope_part_2_list = []
+    intercept_part_2_list = []
+    r_value_part_2_list = []
+    p_value_part_2_list = []
+    std_err_part_2_list = []
+    rmse_part_2_list = []
+    sse_part_2_list = []
 
+    
     for i in range(minimum_targets, len(spatial_error) - minimum_targets):
+        part_1 = spatial_error[:i]
+        part_2 = spatial_error[i:]
+        time_part_1 = time_stamps_without_between_set_space[:i]
+        time_part_2 = time_stamps_without_between_set_space[i:]
+        
+        slope_part_1 , intercept_part_1, r_value_part_1, p_value_part_1, std_err_part_1 = linregress(time_part_1, part_1)
+        predicted_values_part_1 = intercept_part_1 + slope_part_1 * np.array(time_part_1)
+        residuals_part_1 = part_1 - predicted_values_part_1
+        sse_part_1 = np.sum(residuals_part_1 ** 2)
+        rmse_part_1 = np.sqrt(np.mean((part_1 - predicted_values_part_1) ** 2))
+
+
+
+        slope_part_2, intercept_part_2, r_value_part_2, p_value_part_2, std_err_part_2 = linregress(time_part_2, part_2)
+        predicted_values_part_2 = intercept_part_2 + slope_part_2 * np.array(time_part_2)
+        residuals_part_2 = part_2 - predicted_values_part_2
+        sse_part_2 = np.sum(residuals_part_2 ** 2)
+        rmse_part_2 = np.sqrt(np.mean((part_2 - predicted_values_part_2) ** 2))
+
+        sse_total = sse_part_1 + sse_part_2
+        rmse_total = rmse_part_1 + rmse_part_2
+
+        part_1_list.append(part_1)
+        part_2_list.append(part_2)
+        time_part_1_list.append(time_part_1)
+        time_part_2_list.append(time_part_2)
+        predicted_values_part_1_list.append(predicted_values_part_1)
+        predicted_values_part_2_list.append(predicted_values_part_2)
+        braekpoint_list.append(i)
+        sse_list.append(sse_total)
+        rmse_list.append(rmse_total)
+        slope_part_1_list.append(slope_part_1)
+        intercept_part_1_list.append(intercept_part_1)
+        r_value_part_1_list.append(r_value_part_1)
+        p_value_part_1_list.append(p_value_part_1)
+        std_err_part_1_list.append(std_err_part_1)
+        rmse_part_1_list.append(rmse_part_1)
+        sse_part_1_list.append(sse_part_1)
+        slope_part_2_list.append(slope_part_2)
+        intercept_part_2_list.append(intercept_part_2)
+        r_value_part_2_list.append(r_value_part_2)
+        p_value_part_2_list.append(p_value_part_2)
+        std_err_part_2_list.append(std_err_part_2)
+        rmse_part_2_list.append(rmse_part_2)
+        sse_part_2_list.append(sse_part_2)
+
+
+    for i in rmse_list:
         print(i)
-        # part_1 = spatial_error[:i]
-        # part_2 = spatial_error[i:]
-        # print(len(spatial_error))
-        # print(len(part_1))
-        # print(len(part_2))
-        print('aaaaaaa')
+    min_sse = min(sse_list)
+    min_sse_index = sse_list.index(min_sse)
+
+
+    # min_rmse = min(rmse_list)
+    # min_rmse_index = rmse_list.index(min_rmse)
+
+    rmse = rmse_list[min_sse_index]
+    part_1 = part_1_list[min_sse_index]
+    part_2 = part_2_list[min_sse_index]
+    time_part_1 = time_part_1_list[min_sse_index]
+    time_part_2 = time_part_2_list[min_sse_index]
+    predicted_values_part_1 = predicted_values_part_1_list[min_sse_index]
+    predicted_values_part_2 = predicted_values_part_2_list[min_sse_index]
+    breakpoint = braekpoint_list[min_sse_index]
+    slope_part_1 = slope_part_1_list[min_sse_index]
+    intercept_part_1 = intercept_part_1_list[min_sse_index]
+    r_value_part_1 = r_value_part_1_list[min_sse_index]
+    p_value_part_1 = p_value_part_1_list[min_sse_index]
+    std_err_part_1 = std_err_part_1_list[min_sse_index]
+    rmse_part_1 = rmse_part_1_list[min_sse_index]
+    slope_part_2 = slope_part_2_list[min_sse_index]
+    intercept_part_2 = intercept_part_2_list[min_sse_index]
+    r_value_part_2 = r_value_part_2_list[min_sse_index]
+    p_value_part_2 = p_value_part_2_list[min_sse_index]
+    std_err_part_2 = std_err_part_2_list[min_sse_index]
+    rmse_part_2 = rmse_part_2_list[min_sse_index]
+
+
+    if plot == True:
+        plt.scatter(time_stamps_without_between_set_space, spatial_error, label="Original Data", color='blue', alpha=0.6)
+        plt.plot(time_part_1, predicted_values_part_1, c='red', label="Segmented Fit", linewidth=2)
+        plt.plot(time_part_2, predicted_values_part_2, c='red', linewidth=2)
+
+        # Plot vertical blue dashed lines for breakpoints
+
+        plt.axvline(x=time_stamps_without_between_set_space[breakpoint], color='orange', linestyle='--', label="Breakpoint",lw=2)
+
+        set_time_stamps = []
+        for i in [29, 59, 89, 119, 149]:
+            set_time_stamps.append(time_stamps_without_between_set_space[i])
+        for i in set_time_stamps:
+            plt.axvline(x=i, linestyle='--', c='k', lw=0.7)
+        plt.axvline(x=0, linestyle='--', c='k', label='Set', lw=0.7)
+
+        plt.xlabel("Time Stamps")
+        plt.ylabel("Spatial Error")
+        plt.title(f"Segmented Linear Regression\nRMSE = {rmse}")
+        plt.ylim(0, 800)
+        plt.legend()
+        plt.show()
+
+
+
+
+
+
 
 
 
