@@ -1180,7 +1180,7 @@ def segmented_linear_regression(time_stamps_without_between_set_space, spatial_e
     adjusted_r_squared = 1 - ((1 - r_squared) * (n - 1)) / (n - p - 1)
 
     # Calculate RMSE
-    rmse = np.sqrt(np.mean(residuals ** 2))
+    rmse = np.sqrt(np.sum((y_pred - spatial_error) ** 2) / len(spatial_error))
 
     if plot == True:
         plt.scatter(time_stamps_without_between_set_space, spatial_error, label="Original Data", color='blue', alpha=0.6)
@@ -1191,7 +1191,7 @@ def segmented_linear_regression(time_stamps_without_between_set_space, spatial_e
         plt.axvline(x=breakpoints[1], color='orange', linestyle='--', label="Breakpoint",lw=2)
 
         set_time_stamps = []
-        for i in [29, 59, 89, 119, 149]:
+        for i in [29, 59, 89, 119, 148]:
             set_time_stamps.append(time_stamps_without_between_set_space[i])
         for i in set_time_stamps:
             plt.axvline(x=i, linestyle='--', c='k', lw=0.7)
@@ -1251,21 +1251,21 @@ def determine_the_number_of_breakpoints(time_stamps_without_between_set_space, s
     return optimal_aic_n, optimal_bic_n
 
 
-def asymptotes(spatial_error):
+def asymptotes(time_stamps_without_between_set_space, spatial_error):
+    A_ = np.max(spatial_error)
+    C_ = np.mean(spatial_error[:-15])
+    def f(x, A, B, C):
+        return A * np.exp(-B * x) + C
+    params, _ = curve_fit(f, time_stamps_without_between_set_space, spatial_error, p0=[A_, 0.00000001, C_], maxfev=300000)
+    A, B, C = params
+    print(B)
+    print(type(B))
+    print(f'y = {A}* {B}^x + {C}')
+    y_line = f(time_stamps_without_between_set_space, A, B, C)
 
-    def f(x, b, c):
-        return spatial_error[0] * np.exp(-b * x) + c
-
-    t = np.arange(len(spatial_error))
-    popt, _ = curve_fit(f, t, spatial_error, bounds=([0, -1e10], [1, 1e10]), maxfev=30000)
-    b, c = popt
-    print(f'y = * {b}**x + {c}')
-    x_line = np.arange(0, len(t), 1)
-    y_line = f(x_line, b, c)
-
-    plt.plot(x_line, y_line, '--', color='green', label='fit')
-    plt.axhline(y=c, c='k', label='Asymptote')
-    plt.scatter(t,spatial_error)
+    plt.plot(time_stamps_without_between_set_space, y_line, '--', color='green', label='fit', lw=3)
+    plt.axhline(y=C, c='k', label='Asymptote')
+    plt.scatter(time_stamps_without_between_set_space, spatial_error)
     plt.legend()
     plt.show()
 
@@ -1295,18 +1295,19 @@ def custom_segmented_regression(time_stamps_without_between_set_space, spatial_e
     rmse_part_2_list = []
     sse_part_2_list = []
 
-    
+
     for i in range(minimum_targets, len(spatial_error) - minimum_targets):
         part_1 = spatial_error[:i]
         part_2 = spatial_error[i:]
         time_part_1 = time_stamps_without_between_set_space[:i]
         time_part_2 = time_stamps_without_between_set_space[i:]
-        
+
         slope_part_1 , intercept_part_1, r_value_part_1, p_value_part_1, std_err_part_1 = linregress(time_part_1, part_1)
         predicted_values_part_1 = intercept_part_1 + slope_part_1 * np.array(time_part_1)
         residuals_part_1 = part_1 - predicted_values_part_1
         sse_part_1 = np.sum(residuals_part_1 ** 2)
-        rmse_part_1 = np.sqrt(np.mean((part_1 - predicted_values_part_1) ** 2))
+        rmse_part_1 = np.sqrt(np.sum((predicted_values_part_1 - part_1) ** 2) / len(part_1))
+
 
 
 
@@ -1314,10 +1315,12 @@ def custom_segmented_regression(time_stamps_without_between_set_space, spatial_e
         predicted_values_part_2 = intercept_part_2 + slope_part_2 * np.array(time_part_2)
         residuals_part_2 = part_2 - predicted_values_part_2
         sse_part_2 = np.sum(residuals_part_2 ** 2)
-        rmse_part_2 = np.sqrt(np.mean((part_2 - predicted_values_part_2) ** 2))
+        rmse_part_2 = np.sqrt(np.sum((predicted_values_part_2 - part_2) ** 2) / len(part_2))
 
-        sse_total = sse_part_1 + sse_part_2
-        rmse_total = rmse_part_1 + rmse_part_2
+        predictive_total_line = np.concatenate((predicted_values_part_1, predicted_values_part_2))
+        total_residuals = spatial_error - predictive_total_line
+        sse_total = np.sum(total_residuals ** 2)
+        rmse_total = np.sqrt(np.sum((predictive_total_line - spatial_error) ** 2) / len(spatial_error))
 
         part_1_list.append(part_1)
         part_2_list.append(part_2)
@@ -1344,8 +1347,7 @@ def custom_segmented_regression(time_stamps_without_between_set_space, spatial_e
         sse_part_2_list.append(sse_part_2)
 
 
-    for i in rmse_list:
-        print(i)
+
     min_sse = min(sse_list)
     min_sse_index = sse_list.index(min_sse)
 
@@ -1393,7 +1395,7 @@ def custom_segmented_regression(time_stamps_without_between_set_space, spatial_e
 
         plt.xlabel("Time Stamps")
         plt.ylabel("Spatial Error")
-        plt.title(f"Segmented Linear Regression\nRMSE = {rmse}")
+        plt.title(f"Custom Segmented Linear Regression\nRMSE = {rmse}")
         plt.ylim(0, 800)
         plt.legend()
         plt.show()

@@ -19,7 +19,7 @@ pd.set_option("display.max_rows", None)
 participants_before_change = ['pink1', 'pink10', 'pink11', 'pink12', 'pink13', 'pink14','pink15', 'pink2', 'pink3', 'pink4', 'pink5', 'pink6', 'pink7', 'pink8', 'pink9', 'static1', 'static10', 'static11', 'static12', 'static13', 'static2', 'static3', 'static4', 'static5', 'static6', 'static7', 'static8', 'static9', 'white1', 'white10', 'white11', 'white12', 'white13', 'white14', 'white2', 'white3', 'white4', 'white5', 'white6', 'white7', 'white8', 'white9']
 
 
-directory_path = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Data\Just messing arround'
+directory_path = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Data\Valid Data'
 files = glob.glob(os.path.join(directory_path, "*"))
 
 list_simple_rmse = []
@@ -121,18 +121,18 @@ for file in files:
     time_stamps_without_between_set_space = lbs.creation_pf_timestamps_without_space_between_sets(list_time_stamp_of_min_spatial_error_separated_by_set)
 
     # Calculate the simple regression line
-    simple_slope,  simple_intercept,  simple_rmse = lbs.simple_linear_regression(time_stamps_without_between_set_space, spatial_error, plot=False)
+    simple_slope,  simple_intercept,  simple_rmse = lbs.simple_linear_regression(time_stamps_without_between_set_space, spatial_error, plot=True)
 
     # Calculate the optimal number of breakpoints for Segmented regression
     # optimal_aic_n, optimal_bic_n = lbs.determine_the_number_of_breakpoints(time_stamps_without_between_set_space, spatial_error, max_number_of_breakpoints_to_check=15, index_duration=15)
 
     # Calculate the segmented regression line
     segmented_slopes, segmented_intercepts, segmented_rmse = lbs.segmented_linear_regression(time_stamps_without_between_set_space, spatial_error,
-                                                               number_of_breakpoints=1, index_duration=15, plot=True)
+                                                               number_of_breakpoints=1, index_duration=15, plot=False)
 
-    # learning_target = lbs.asymptotes(spatial_error)
+    learning_target = lbs.asymptotes(time_stamps_without_between_set_space, spatial_error)
 
-    lbs.custom_segmented_regression(time_stamps_without_between_set_space, spatial_error, minimum_targets=15, plot=True)
+    lbs.custom_segmented_regression(time_stamps_without_between_set_space, spatial_error, minimum_targets=15, plot=False)
 
 
 
