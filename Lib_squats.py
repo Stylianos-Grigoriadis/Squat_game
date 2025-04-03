@@ -1252,14 +1252,42 @@ def determine_the_number_of_breakpoints(time_stamps_without_between_set_space, s
 
 
 def asymptotes(time_stamps_without_between_set_space, spatial_error):
-    A_ = np.max(spatial_error)
-    C_ = np.mean(spatial_error[:-15])
-    def f(x, A, B, C):
-        return A * np.exp(-B * x) + C
-    params, _ = curve_fit(f, time_stamps_without_between_set_space, spatial_error, p0=[A_, 0.00000001, C_], maxfev=300000)
+    A_ = spatial_error[0]
+    C_ = np.min(spatial_error)
+    print(C_)
+    print(A_)
+    # p0=[A_, 0.00000001, C_]
+    def f(x, a, b, c):
+        return a * (b ** x) + c
+
+    def estimate_B_all(time_stamps_without_between_set_space, spatial_error, C):
+        x_data = time_stamps_without_between_set_space
+        y_data = spatial_error
+        B_values = []
+        for i in range(len(x_data) - 1):  # Loop through consecutive pairs
+            x1, x2 = x_data[i], x_data[i + 1]
+            y1, y2 = y_data[i], y_data[i + 1]
+
+            # Ensure valid log computation (y - C must be positive)
+            if y1 > C and y2 > C:
+                B_i = (np.log(y1 - C) - np.log(y2 - C)) / (x2 - x1)
+                B_values.append(B_i)
+        print(np.mean(B_values))
+        print(np.mean(np.abs(B_values)))
+        t = np.arange(0,len(B_values),1)
+        plt.plot(B_values)
+        plt.scatter(t,B_values)
+
+        plt.show()
+        print(np.mean(B_values))
+        return np.mean(B_values), np.std(B_values) if B_values else None  # Return average or None if no valid B
+
+    B_init, B_sd = estimate_B_all(time_stamps_without_between_set_space, spatial_error, C_)
+    print(f'B_init = {B_init} +- {B_sd}')
+    print(np.abs(B_init))
+    bounds = ([np.min(spatial_error) - 100, np.abs(B_init)/10, np.min(spatial_error) - 100], [np.max(spatial_error) + 100, np.abs(B_init)*10, np.max(spatial_error) + 100])
+    params, _ = curve_fit(f, time_stamps_without_between_set_space, spatial_error, check_finite=True, p0=[np.mean(spatial_error), B_init, np.mean(spatial_error)], bounds=bounds)
     A, B, C = params
-    print(B)
-    print(type(B))
     print(f'y = {A}* {B}^x + {C}')
     y_line = f(time_stamps_without_between_set_space, A, B, C)
 
@@ -1401,9 +1429,22 @@ def custom_segmented_regression(time_stamps_without_between_set_space, spatial_e
         plt.show()
 
 
+def asymptotes_2(time_stamps_without_between_set_space, spatial_error):
+    def f(x, a, b, c, d):
+        return a * (b ** (-d*x)) + c
+
+    popt, _ = curve_fit(f, time_stamps_without_between_set_space, spatial_error, bounds=((0, 0.01, -np.inf, 0), (np.inf, np.inf, np.inf, 1)), maxfev=30000)
+    a, b, c, d = popt
+    x_line = time_stamps_without_between_set_space
+    y_line = f(time_stamps_without_between_set_space, a, b, c, d)
 
 
+    plt.plot(x_line, y_line, '--', color='green', label='fit')
+    plt.axhline(y=c, c='k', label='Asymptote')
 
+    plt.scatter(time_stamps_without_between_set_space, spatial_error)
+    plt.legend()
+    plt.show()
 
 
 

@@ -7,31 +7,80 @@ from matplotlib.widgets import Slider
 import glob
 import pwlf
 
-# Generate synthetic data
-np.random.seed(42)
-x = np.linspace(0, 10, 100)
-y = np.piecewise(x, [x < 4, (x >= 4) & (x < 7), x >= 7],
-                 [lambda x: 2*x + np.random.normal(0, 1, len(x)),
-                  lambda x: 3*x - 4 + np.random.normal(0, 1, len(x)),
-                  lambda x: -x + 20 + np.random.normal(0, 1, len(x))])
 
-# Fit piecewise linear regression
-model = pwlf.PiecewiseLinFit(x, y)
-breakpoints = model.fit(2)  # Fit model with 3 line segments
+# Define the function
+def f(x, a, b, c):
+    return a * np.exp(-b * x) + c
 
-# Predict values
-x_pred = np.linspace(0, 10, 100)
-y_pred = model.predict(x_pred)
+# Generate x values (30,000 points)
+x = np.linspace(0, 30000, 30000)
 
-# Plot results
-plt.scatter(x, y, label="Data", alpha=0.5)
-plt.plot(x_pred, y_pred, 'r-', label="Piecewise Fit")
-plt.scatter(breakpoints, model.predict(breakpoints), color='black', label="Breakpoints", zorder=3)
-plt.legend()
+# Initial parameter values
+a_init, b_init, c_init = 365, 0.5, 465
+
+# Create the figure and axis
+fig, ax = plt.subplots()
+plt.subplots_adjust(left=0.1, bottom=0.35)  # Adjust layout for sliders
+
+# Initial plot
+y = f(x, a_init, b_init, c_init)
+line, = ax.plot(x, y, lw=2, color='blue')
+
+# Add labels
+ax.set_xlabel("x")
+ax.set_ylabel("f(x)")
+ax.set_title("Interactive Exponential Function")
+
+# Define slider positions
+ax_a = plt.axes([0.1, 0.25, 0.8, 0.03])  # a slider
+ax_b = plt.axes([0.1, 0.15, 0.8, 0.03])  # b slider
+ax_c = plt.axes([0.1, 0.05, 0.8, 0.03])  # c slider
+
+# Create sliders
+slider_a = Slider(ax_a, "a", 100, 1000, valinit=a_init)
+slider_b = Slider(ax_b, "b", 0.000001, 0.0001, valinit=b_init)
+slider_c = Slider(ax_c, "c", 100, 1000, valinit=c_init)
+
+# Update function for sliders
+def update(val):
+    a = slider_a.val
+    b = slider_b.val
+    c = slider_c.val
+    line.set_ydata(f(x, a, b, c))  # Update y values
+    fig.canvas.draw_idle()  # Redraw plot
+
+# Connect sliders to update function
+slider_a.on_changed(update)
+slider_b.on_changed(update)
+slider_c.on_changed(update)
+
 plt.show()
 
-# Print estimated breakpoints
-print("Estimated Breakpoints:", breakpoints)
+# # Generate synthetic data
+# np.random.seed(42)
+# x = np.linspace(0, 10, 100)
+# y = np.piecewise(x, [x < 4, (x >= 4) & (x < 7), x >= 7],
+#                  [lambda x: 2*x + np.random.normal(0, 1, len(x)),
+#                   lambda x: 3*x - 4 + np.random.normal(0, 1, len(x)),
+#                   lambda x: -x + 20 + np.random.normal(0, 1, len(x))])
+#
+# # Fit piecewise linear regression
+# model = pwlf.PiecewiseLinFit(x, y)
+# breakpoints = model.fit(2)  # Fit model with 3 line segments
+#
+# # Predict values
+# x_pred = np.linspace(0, 10, 100)
+# y_pred = model.predict(x_pred)
+#
+# # Plot results
+# plt.scatter(x, y, label="Data", alpha=0.5)
+# plt.plot(x_pred, y_pred, 'r-', label="Piecewise Fit")
+# plt.scatter(breakpoints, model.predict(breakpoints), color='black', label="Breakpoints", zorder=3)
+# plt.legend()
+# plt.show()
+#
+# # Print estimated breakpoints
+# print("Estimated Breakpoints:", breakpoints)
 
 
 #
