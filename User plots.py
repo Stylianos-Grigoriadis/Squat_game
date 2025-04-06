@@ -11,6 +11,9 @@ import piecewise_regression
 from scipy.stats import linregress
 from scipy.optimize import curve_fit
 
+plt.rcParams['font.family'] = 'serif'
+plt.rcParams['font.size'] = 16
+
 directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Results'
 os.chdir(directory)
 df = pd.read_excel(r'Results after exclusion of outliers.xlsx')
@@ -44,10 +47,11 @@ plt.figure(figsize=(12, 6))
 sns.boxplot(x='Set', y='Average Spatial Error', hue='ID', data=df_long, palette=custom_palette, showfliers=False)
 
 # Customize plot
-plt.title('Comparison of Spatial Error Across Sets and ID Groups')
-plt.xlabel('Set')
+plt.title('Spatial Error Across Sets and Groups')
 plt.ylabel('Average Spatial Error')
-plt.legend(title='ID')
+plt.xlabel('')
+plt.legend()
+plt.ylim(0,400)
 
 # Show plot
 plt.show()

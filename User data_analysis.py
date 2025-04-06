@@ -130,9 +130,9 @@ for file in files:
     segmented_slopes, segmented_intercepts, segmented_rmse = lbs.segmented_linear_regression(time_stamps_without_between_set_space, spatial_error,
                                                                number_of_breakpoints=1, index_duration=15, plot=False)
 
-    learning_target = lbs.asymptotes_2(time_stamps_without_between_set_space, spatial_error)
+    # learning_target = lbs.asymptotes_2(time_stamps_without_between_set_space, spatial_error)
 
-    lbs.custom_segmented_regression(time_stamps_without_between_set_space, spatial_error, minimum_targets=15, plot=False)
+    # lbs.custom_segmented_regression(time_stamps_without_between_set_space, spatial_error, minimum_targets=15, plot=False)
 
 
 
