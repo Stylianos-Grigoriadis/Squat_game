@@ -17,8 +17,9 @@ def FFT(var,fs):
 
     f = freqs[mask]
     a = pSpec[mask]
-    plt.plot(f,a)
-    plt.show()
+    # plt.plot(f,a)
+    # plt.xlim(0,5)
+    # plt.show()
     sumA=[0]
     for i in range(1,len(a)):
         sumA.append(a[i]+sumA[i-1])

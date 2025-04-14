@@ -115,6 +115,62 @@ def DFA_NONAN(data, scales, order=1, plot=True):
     return scales, fluctuation, alpha
 
 
+def Ent_Samp(data, m, r):
+    """
+    function SE = Ent_Samp20200723(data,m,r)
+    SE = Ent_Samp20200723(data,m,R) Returns the sample entropy value.
+    inputs - data, single column time seres
+            - m, length of vectors to be compared
+            - r, radius for accepting matches (as a proportion of the
+              standard deviation)
+
+    output - SE, sample entropy
+    Remarks
+    - This code finds the sample entropy of a data series using the method
+      described by - Richman, J.S., Moorman, J.R., 2000. "Physiological
+      time-series analysis using approximate entropy and sample entropy."
+      Am. J. Physiol. Heart Circ. Physiol. 278, H2039–H2049.
+    - m is generally recommendation as 2
+    - R is generally recommendation as 0.2
+    May 2016 - Modified by John McCamley, unonbcf@unomaha.edu
+             - This is a faster version of the previous code.
+    May 2019 - Modified by Will Denton
+             - Added code to check version number in relation to a server
+               and to automatically update the code.
+    Jul 2020 - Modified by Ben Senderling, bmchnonan@unomaha.edu
+             - Removed the code that automatically checks for updates and
+               keeps a version history.
+    Define r as R times the standard deviation
+    """
+    R = r * np.std(data)
+    N = len(data)
+
+    data = np.array(data)
+
+    dij = np.zeros((N - m, m + 1))
+    dj = np.zeros((N - m, 1))
+    dj1 = np.zeros((N - m, 1))
+    Bm = np.zeros((N - m, 1))
+    Am = np.zeros((N - m, 1))
+
+    for i in range(N - m):
+        for k in range(m + 1):
+            dij[:, k] = np.abs(data[k:N - m + k] - data[i + k])
+        dj = np.max(dij[:, 0:m], axis=1)
+        dj1 = np.max(dij, axis=1)
+        d = np.where(dj <= R)
+        d1 = np.where(dj1 <= R)
+        nm = d[0].shape[0] - 1  # subtract the self match
+        Bm[i] = nm / (N - m)
+        nm1 = d1[0].shape[0] - 1  # subtract the self match
+        Am[i] = nm1 / (N - m)
+
+    Bmr = np.sum(Bm) / (N - m)
+    Amr = np.sum(Am) / (N - m)
+
+    return -np.log(Amr / Bmr)
+
+
 def ratio_0_to_100(data_series):
     """ Takes a data series and converts it into values from 0 to 100"""
     data_series = np.array(data_series)
@@ -1455,3 +1511,25 @@ def big_list_to_5df_list(big_list):
         combined_df = pd.concat(list, ignore_index=True)
         df_5_list.append(combined_df)
     return df_5_list
+
+def temporal_structure_assessment_of_targets(list_with_all_df_separated_by_set):
+    df_5_list = big_list_to_5df_list(list_with_all_df_separated_by_set)
+    for df in df_5_list:
+        target_x = df['target_pos_x'].to_numpy()
+        target_y = df['target_pos_y'].to_numpy()
+        target_x_list = []
+        target_y_list = []
+        time_each_target = int(len(target_x)/30)
+        half_time_each_target = time_each_target//2
+        for i in range(half_time_each_target, len(target_x), time_each_target):
+            target_x_list.append(target_x[i])
+            target_y_list.append(target_y[i])
+        quality_assessment_of_temporal_structure_FFT_method(target_x_list, 'Target X')
+        quality_assessment_of_temporal_structure_FFT_method(target_y_list, 'Target Y')
+
+
+def assessment_of_power_spectrum_of_position_player(position_player_x, position_player_y):
+
+    power_90_x, power_95_x, power_99_x = lib.FFT(position_player_x, 40)
+    power_90_y, power_95_y, power_99_y = lib.FFT(position_player_y, 40)
+    return power_90_x, power_95_x, power_99_x, power_90_y, power_95_y, power_99_y

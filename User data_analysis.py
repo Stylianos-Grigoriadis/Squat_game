@@ -11,8 +11,7 @@ import piecewise_regression
 from scipy.stats import linregress
 from scipy.optimize import curve_fit
 
-
-
+import lib
 
 pd.set_option("display.max_rows", None)
 
@@ -85,6 +84,27 @@ list_power_99_set_3_y = []
 list_power_99_set_4_y = []
 list_power_99_set_5_y = []
 
+list_SaEn_x_set_1 = []
+list_SaEn_x_set_2 = []
+list_SaEn_x_set_3 = []
+list_SaEn_x_set_4 = []
+list_SaEn_x_set_5 = []
+list_SaEn_y_set_1 = []
+list_SaEn_y_set_2 = []
+list_SaEn_y_set_3 = []
+list_SaEn_y_set_4 = []
+list_SaEn_y_set_5 = []
+
+list_DFA_x_set_1 = []
+list_DFA_x_set_2 = []
+list_DFA_x_set_3 = []
+list_DFA_x_set_4 = []
+list_DFA_x_set_5 = []
+list_DFA_y_set_1 = []
+list_DFA_y_set_2 = []
+list_DFA_y_set_3 = []
+list_DFA_y_set_4 = []
+list_DFA_y_set_5 = []
 
 
 
@@ -120,54 +140,151 @@ for file in files:
 
     # Extract the data during game
     data = lbs.values_during_game(data)
+    print(data.columns)
 
 
 
     # Create a list with 5 sublists which contain 30 dataframes, each dataframe contains all data of each target
     list_with_all_df_separated_by_set = lbs.return_the_df_of_each_target_separated_by_set(data, old_data)
 
-    # Create 5 dataframes of one for each set
+
+
+    # Assessment of each set temporal structure based on the power spectrum analysis
+    # lbs.temporal_structure_assessment_of_targets(list_with_all_df_separated_by_set)
+
+
+    # Seperation of the x and y position of the player for each set
     df_5_list = lbs.big_list_to_5df_list(list_with_all_df_separated_by_set)
-    list_filtered_target_x = []
-    list_filtered_target_y = []
-    for df in df_5_list:
+    position_player_x_set_1 = df_5_list[0]['player_pos_x'].to_numpy()
+    position_player_y_set_1 = df_5_list[0]['player_pos_y'].to_numpy()
+    position_player_x_set_2 = df_5_list[1]['player_pos_x'].to_numpy()
+    position_player_y_set_2 = df_5_list[1]['player_pos_y'].to_numpy()
+    position_player_x_set_3 = df_5_list[2]['player_pos_x'].to_numpy()
+    position_player_y_set_3 = df_5_list[2]['player_pos_y'].to_numpy()
+    position_player_x_set_4 = df_5_list[3]['player_pos_x'].to_numpy()
+    position_player_y_set_4 = df_5_list[3]['player_pos_y'].to_numpy()
+    position_player_x_set_5 = df_5_list[4]['player_pos_x'].to_numpy()
+    position_player_y_set_5 = df_5_list[4]['player_pos_y'].to_numpy()
 
-        # plt.plot(df['player_pos_x'], label='player')
-        # plt.plot(df['target_pos_x'], label='target')
-        # plt.show()
-        # plt.plot(df['player_pos_y'], label='player')
-        # plt.plot(df['target_pos_y'], label='target')
-        # plt.show()
-        target_x = df['target_pos_x'].to_numpy()
-        target_y = df['target_pos_y'].to_numpy()
-        target_x_list = []
-        target_y_list = []
-        print(len(target_x))
-        time_each_target = int(len(target_x)/30)
-        half_time_each_target = time_each_target//2
+    # Assessment of power spectrum of position_player
+    # power_90_set_1_x, power_95_set_1_x, power_99_set_1_x = lib.FFT(position_player_x_set_1, 40)
+    # power_90_set_1_y, power_95_set_1_y, power_99_set_1_y = lib.FFT(position_player_y_set_1, 40)
+    # power_90_set_2_x, power_95_set_2_x, power_99_set_2_x = lib.FFT(position_player_x_set_2, 40)
+    # power_90_set_2_y, power_95_set_2_y, power_99_set_2_y = lib.FFT(position_player_y_set_2, 40)
+    # power_90_set_3_x, power_95_set_3_x, power_99_set_3_x = lib.FFT(position_player_x_set_3, 40)
+    # power_90_set_3_y, power_95_set_3_y, power_99_set_3_y = lib.FFT(position_player_y_set_3, 40)
+    # power_90_set_4_x, power_95_set_4_x, power_99_set_4_x = lib.FFT(position_player_x_set_4, 40)
+    # power_90_set_4_y, power_95_set_4_y, power_99_set_4_y = lib.FFT(position_player_y_set_4, 40)
+    # power_90_set_5_x, power_95_set_5_x, power_99_set_5_x = lib.FFT(position_player_x_set_5, 40)
+    # power_90_set_5_y, power_95_set_5_y, power_99_set_5_y = lib.FFT(position_player_y_set_5, 40)
+    #
+    # list_power_90_set_1_x.append(power_90_set_1_x)
+    # list_power_90_set_2_x.append(power_90_set_2_x)
+    # list_power_90_set_3_x.append(power_90_set_3_x)
+    # list_power_90_set_4_x.append(power_90_set_4_x)
+    # list_power_90_set_5_x.append(power_90_set_5_x)
+    # list_power_90_set_1_y.append(power_90_set_1_y)
+    # list_power_90_set_2_y.append(power_90_set_2_y)
+    # list_power_90_set_3_y.append(power_90_set_3_y)
+    # list_power_90_set_4_y.append(power_90_set_4_y)
+    # list_power_90_set_5_y.append(power_90_set_5_y)
+    # list_power_95_set_1_x.append(power_95_set_1_x)
+    # list_power_95_set_2_x.append(power_95_set_2_x)
+    # list_power_95_set_3_x.append(power_95_set_3_x)
+    # list_power_95_set_4_x.append(power_95_set_4_x)
+    # list_power_95_set_5_x.append(power_95_set_5_x)
+    # list_power_95_set_1_y.append(power_95_set_1_y)
+    # list_power_95_set_2_y.append(power_95_set_2_y)
+    # list_power_95_set_3_y.append(power_95_set_3_y)
+    # list_power_95_set_4_y.append(power_95_set_4_y)
+    # list_power_95_set_5_y.append(power_95_set_5_y)
+    # list_power_99_set_1_x.append(power_99_set_1_x)
+    # list_power_99_set_2_x.append(power_99_set_2_x)
+    # list_power_99_set_3_x.append(power_99_set_3_x)
+    # list_power_99_set_4_x.append(power_99_set_4_x)
+    # list_power_99_set_5_x.append(power_99_set_5_x)
+    # list_power_99_set_1_y.append(power_99_set_1_y)
+    # list_power_99_set_2_y.append(power_99_set_2_y)
+    # list_power_99_set_3_y.append(power_99_set_3_y)
+    # list_power_99_set_4_y.append(power_99_set_4_y)
+    # list_power_99_set_5_y.append(power_99_set_5_y)
 
-        print(time_each_target)
-        print(half_time_each_target)
-        for i in range(half_time_each_target, len(target_x), time_each_target):
-            target_x_list.append(target_x[i])
-            target_y_list.append(target_y[i])
-        lbs.quality_assessment_of_temporal_structure_FFT_method(target_x_list, 'Target X')
-        lbs.quality_assessment_of_temporal_structure_FFT_method(target_y_list, 'Target Y')
+    # Apply Butterworth low pass at 5Hz
+    position_player_x_set_1 = lib.Butterworth(40, 5, position_player_x_set_1)
+    position_player_y_set_1 = lib.Butterworth(40, 5, position_player_y_set_1)
+    position_player_x_set_2 = lib.Butterworth(40, 5, position_player_x_set_2)
+    position_player_y_set_2 = lib.Butterworth(40, 5, position_player_y_set_2)
+    position_player_x_set_3 = lib.Butterworth(40, 5, position_player_x_set_3)
+    position_player_y_set_3 = lib.Butterworth(40, 5, position_player_y_set_3)
+    position_player_x_set_4 = lib.Butterworth(40, 5, position_player_x_set_4)
+    position_player_y_set_4 = lib.Butterworth(40, 5, position_player_y_set_4)
+    position_player_x_set_5 = lib.Butterworth(40, 5, position_player_x_set_5)
+    position_player_y_set_5 = lib.Butterworth(40, 5, position_player_y_set_5)
 
-        list_filtered_target_x.append(target_x_list)
-        list_filtered_target_y.append(target_y_list)
+    # Calculation of SaEn per set per axis
+    SaEn_position_player_x_set_1 = lbs.Ent_Samp(position_player_x_set_1, 2, 0.2)
+    SaEn_position_player_x_set_2 = lbs.Ent_Samp(position_player_x_set_2, 2, 0.2)
+    SaEn_position_player_x_set_3 = lbs.Ent_Samp(position_player_x_set_3, 2, 0.2)
+    SaEn_position_player_x_set_4 = lbs.Ent_Samp(position_player_x_set_4, 2, 0.2)
+    SaEn_position_player_x_set_5 = lbs.Ent_Samp(position_player_x_set_5, 2, 0.2)
 
-        player_x = df['player_pos_x'].to_numpy()
-        player_y = df['player_pos_y'].to_numpy()
+    SaEn_position_player_y_set_1 = lbs.Ent_Samp(position_player_y_set_1, 2, 0.2)
+    SaEn_position_player_y_set_2 = lbs.Ent_Samp(position_player_y_set_2, 2, 0.2)
+    SaEn_position_player_y_set_3 = lbs.Ent_Samp(position_player_y_set_3, 2, 0.2)
+    SaEn_position_player_y_set_4 = lbs.Ent_Samp(position_player_y_set_4, 2, 0.2)
+    SaEn_position_player_y_set_5 = lbs.Ent_Samp(position_player_y_set_5, 2, 0.2)
 
-    flattened_target_x = np.concatenate(list_filtered_target_x)
-    flattened_target_y = np.concatenate(list_filtered_target_y)
-    print(len(flattened_target_x))
-    print(len(flattened_target_y))
+    list_SaEn_x_set_1.append(SaEn_position_player_x_set_1)
+    list_SaEn_x_set_2.append(SaEn_position_player_x_set_2)
+    list_SaEn_x_set_3.append(SaEn_position_player_x_set_3)
+    list_SaEn_x_set_4.append(SaEn_position_player_x_set_4)
+    list_SaEn_x_set_5.append(SaEn_position_player_x_set_5)
+    list_SaEn_y_set_1.append(SaEn_position_player_y_set_1)
+    list_SaEn_y_set_2.append(SaEn_position_player_y_set_2)
+    list_SaEn_y_set_3.append(SaEn_position_player_y_set_3)
+    list_SaEn_y_set_4.append(SaEn_position_player_y_set_4)
+    list_SaEn_y_set_5.append(SaEn_position_player_y_set_5)
 
-    # Check if our data are indeed pink, sine and white
-    lbs.quality_assessment_of_temporal_structure_FFT_method(flattened_target_x, 'Target X')
-    lbs.quality_assessment_of_temporal_structure_FFT_method(flattened_target_y, 'Target Y')
+
+
+    # Calculation of DFA per set per axis
+    scales_x_set_1 = np.arange(4, len(position_player_x_set_1)//4)
+    scales_x_set_2 = np.arange(4, len(position_player_x_set_2)//4)
+    scales_x_set_3 = np.arange(4, len(position_player_x_set_3)//4)
+    scales_x_set_4 = np.arange(4, len(position_player_x_set_4)//4)
+    scales_x_set_5 = np.arange(4, len(position_player_x_set_5)//4)
+    scales_y_set_1 = np.arange(4, len(position_player_y_set_1)//4)
+    scales_y_set_2 = np.arange(4, len(position_player_y_set_2)//4)
+    scales_y_set_3 = np.arange(4, len(position_player_y_set_3)//4)
+    scales_y_set_4 = np.arange(4, len(position_player_y_set_4)//4)
+    scales_y_set_5 = np.arange(4, len(position_player_y_set_5)//4)
+
+    _, _, DFA_x_set_1 = lbs.DFA_NONAN(position_player_x_set_1, scales_x_set_1, order=1, plot=False)
+    _, _, DFA_x_set_2 = lbs.DFA_NONAN(position_player_x_set_2, scales_x_set_2, order=1, plot=False)
+    _, _, DFA_x_set_3 = lbs.DFA_NONAN(position_player_x_set_3, scales_x_set_3, order=1, plot=False)
+    _, _, DFA_x_set_4 = lbs.DFA_NONAN(position_player_x_set_4, scales_x_set_4, order=1, plot=False)
+    _, _, DFA_x_set_5 = lbs.DFA_NONAN(position_player_x_set_5, scales_x_set_5, order=1, plot=False)
+    _, _, DFA_y_set_1 = lbs.DFA_NONAN(position_player_y_set_1, scales_y_set_1, order=1, plot=False)
+    _, _, DFA_y_set_2 = lbs.DFA_NONAN(position_player_y_set_2, scales_y_set_2, order=1, plot=False)
+    _, _, DFA_y_set_3 = lbs.DFA_NONAN(position_player_y_set_3, scales_y_set_3, order=1, plot=False)
+    _, _, DFA_y_set_4 = lbs.DFA_NONAN(position_player_y_set_4, scales_y_set_4, order=1, plot=False)
+    _, _, DFA_y_set_5 = lbs.DFA_NONAN(position_player_y_set_5, scales_y_set_5, order=1, plot=False)
+
+    list_DFA_x_set_1.append(DFA_x_set_1)
+    list_DFA_x_set_2.append(DFA_x_set_2)
+    list_DFA_x_set_3.append(DFA_x_set_3)
+    list_DFA_x_set_4.append(DFA_x_set_4)
+    list_DFA_x_set_5.append(DFA_x_set_5)
+    list_DFA_y_set_1.append(DFA_y_set_1)
+    list_DFA_y_set_2.append(DFA_y_set_2)
+    list_DFA_y_set_3.append(DFA_y_set_3)
+    list_DFA_y_set_4.append(DFA_y_set_4)
+    list_DFA_y_set_5.append(DFA_y_set_5)
+
+
+
+
+
 
 
 # Create a simple graph with all the columns you need to plot
@@ -334,7 +451,7 @@ for file in files:
 #
 #
 #
-# # Calculate slopes, error, Average Spatial error, and sd spatial error at 500 for everyone
+# Calculate slopes, error, Average Spatial error, and sd spatial error at 500 for everyone
 # dist = {'ID': list_ID,
 #         'Exact ID': list_exact_ID,
 #         'Simple Regression Slope': list_simple_slope,
@@ -358,6 +475,201 @@ for file in files:
 #         'Sd Spatial error set 4': list_spatial_error_set_4_sd,
 #         'Sd Spatial error set 5': list_spatial_error_set_5_sd,
 #         }
+
+dist_learning_analysis = {'ID': list_ID,
+                            'Exact ID': list_exact_ID,
+                            'SaEn_x_set_1': list_SaEn_x_set_1,
+                            'SaEn_x_set_2': list_SaEn_x_set_2,
+                            'SaEn_x_set_3': list_SaEn_x_set_3,
+                            'SaEn_x_set_4': list_SaEn_x_set_4,
+                            'SaEn_x_set_5': list_SaEn_x_set_5,
+                            'SaEn_y_set_1': list_SaEn_y_set_1,
+                            'SaEn_y_set_2': list_SaEn_y_set_2,
+                            'SaEn_y_set_3': list_SaEn_y_set_3,
+                            'SaEn_y_set_4': list_SaEn_y_set_4,
+                            'SaEn_y_set_5': list_SaEn_y_set_5,
+                            'DFA_x_set_1': list_DFA_x_set_1,
+                            'DFA_x_set_2': list_DFA_x_set_2,
+                            'DFA_x_set_3': list_DFA_x_set_3,
+                            'DFA_x_set_4': list_DFA_x_set_4,
+                            'DFA_x_set_5': list_DFA_x_set_5,
+                            'DFA_y_set_1': list_DFA_y_set_1,
+                            'DFA_y_set_2': list_DFA_y_set_2,
+                            'DFA_y_set_3': list_DFA_y_set_3,
+                            'DFA_y_set_4': list_DFA_y_set_4,
+                            'DFA_y_set_5': list_DFA_y_set_5,
+                          }
+
+
+
+
+# plt.plot(list_power_90_set_1_x,label='power_90_set_1_x')
+# plt.plot(list_power_90_set_2_x,label='power_90_set_2_x')
+# plt.plot(list_power_90_set_3_x,label='power_90_set_3_x')
+# plt.plot(list_power_90_set_4_x,label='power_90_set_4_x')
+# plt.plot(list_power_90_set_5_x,label='power_90_set_5_x')
+# plt.legend()
+# plt.show()
+#
+# plt.plot(list_power_90_set_1_y,label='power_90_set_1_y')
+# plt.plot(list_power_90_set_2_y,label='power_90_set_2_y')
+# plt.plot(list_power_90_set_3_y,label='power_90_set_3_y')
+# plt.plot(list_power_90_set_4_y,label='power_90_set_4_y')
+# plt.plot(list_power_90_set_5_y,label='power_90_set_5_y')
+# plt.legend()
+# plt.show()
+#
+# plt.plot(list_power_95_set_1_x,label='power_95_set_1_x')
+# plt.plot(list_power_95_set_2_x,label='power_95_set_2_x')
+# plt.plot(list_power_95_set_3_x,label='power_95_set_3_x')
+# plt.plot(list_power_95_set_4_x,label='power_95_set_4_x')
+# plt.plot(list_power_95_set_5_x,label='power_95_set_5_x')
+# plt.legend()
+# plt.show()
+#
+# plt.plot(list_power_95_set_1_y,label='power_95_set_1_y')
+# plt.plot(list_power_95_set_2_y,label='power_95_set_2_y')
+# plt.plot(list_power_95_set_3_y,label='power_95_set_3_y')
+# plt.plot(list_power_95_set_4_y,label='power_95_set_4_y')
+# plt.plot(list_power_95_set_5_y,label='power_95_set_5_y')
+# plt.legend()
+# plt.show()
+#
+# plt.plot(list_power_99_set_1_x,label='power_99_set_1_x')
+# plt.plot(list_power_99_set_2_x,label='power_99_set_2_x')
+# plt.plot(list_power_99_set_3_x,label='power_99_set_3_x')
+# plt.plot(list_power_99_set_4_x,label='power_99_set_4_x')
+# plt.plot(list_power_99_set_5_x,label='power_99_set_5_x')
+# plt.legend()
+# plt.show()
+#
+# plt.plot(list_power_99_set_1_y,label='power_99_set_1_y')
+# plt.plot(list_power_99_set_2_y,label='power_99_set_2_y')
+# plt.plot(list_power_99_set_3_y,label='power_99_set_3_y')
+# plt.plot(list_power_99_set_4_y,label='power_99_set_4_y')
+# plt.plot(list_power_99_set_5_y,label='power_99_set_5_y')
+# plt.legend()
+# plt.show()
+
+df_learning = pd.DataFrame(dist_learning_analysis)
+
+df_long = df_learning.melt(id_vars=['ID'],
+                  value_vars=['SaEn_x_set_1', 'SaEn_x_set_2',
+                              'SaEn_x_set_3', 'SaEn_x_set_4',
+                              'SaEn_x_set_5'],
+                  var_name='Set', value_name='SaEn')  # Ensure correct name
+
+# Rename set names for readability
+df_long['Set'] = df_long['Set'].str.replace('SaEn ', 'Set ')
+
+# Create boxplot
+custom_palette = {
+    "pink": "#FFC0CB",      # Soft pink
+    "static": "#4F4F4F",    # Dark gray
+    "white": "#D3D3D3"      # Light gray
+}
+plt.figure(figsize=(12, 6))
+sns.boxplot(x='Set', y='SaEn', hue='ID', data=df_long, palette=custom_palette, showfliers=False)  # Use correct column name
+
+# Customize plot
+plt.title('Comparison of SaEn_X Across Sets and ID Groups')
+plt.xlabel('Set')
+plt.ylabel('SaEn')
+plt.legend(title='ID')
+
+# Show plot
+plt.show()
+
+df_long = df_learning.melt(id_vars=['ID'],
+                  value_vars=['SaEn_y_set_1', 'SaEn_y_set_2',
+                              'SaEn_y_set_3', 'SaEn_y_set_4',
+                              'SaEn_y_set_5'],
+                  var_name='Set', value_name='SaEn')  # Ensure correct name
+
+# Rename set names for readability
+df_long['Set'] = df_long['Set'].str.replace('SaEn ', 'Set ')
+
+# Create boxplot
+custom_palette = {
+    "pink": "#FFC0CB",      # Soft pink
+    "static": "#4F4F4F",    # Dark gray
+    "white": "#D3D3D3"      # Light gray
+}
+plt.figure(figsize=(12, 6))
+sns.boxplot(x='Set', y='SaEn', hue='ID', data=df_long, palette=custom_palette, showfliers=False)  # Use correct column name
+
+# Customize plot
+plt.title('Comparison of SaEn_Y Across Sets and ID Groups')
+plt.xlabel('Set')
+plt.ylabel('SaEn')
+plt.legend(title='ID')
+
+# Show plot
+plt.show()
+
+df_long = df_learning.melt(id_vars=['ID'],
+                  value_vars=['DFA_x_set_1', 'DFA_x_set_2',
+                              'DFA_x_set_3', 'DFA_x_set_4',
+                              'DFA_x_set_5'],
+                  var_name='Set', value_name='DFA')  # Ensure correct name
+
+# Rename set names for readability
+df_long['Set'] = df_long['Set'].str.replace('DFA ', 'Set ')
+
+# Create boxplot
+custom_palette = {
+    "pink": "#FFC0CB",      # Soft pink
+    "static": "#4F4F4F",    # Dark gray
+    "white": "#D3D3D3"      # Light gray
+}
+plt.figure(figsize=(12, 6))
+sns.boxplot(x='Set', y='DFA', hue='ID', data=df_long, palette=custom_palette, showfliers=False)  # Use correct column name
+
+# Customize plot
+plt.title('Comparison of DFA_X Across Sets and ID Groups')
+plt.xlabel('Set')
+plt.ylabel('DFA')
+plt.legend(title='ID')
+
+# Show plot
+plt.show()
+
+
+df_long = df_learning.melt(id_vars=['ID'],
+                  value_vars=['DFA_y_set_1', 'DFA_y_set_2',
+                              'DFA_y_set_3', 'DFA_y_set_4',
+                              'DFA_y_set_5'],
+                  var_name='Set', value_name='DFA')  # Ensure correct name
+
+# Rename set names for readability
+df_long['Set'] = df_long['Set'].str.replace('DFA ', 'Set ')
+
+# Create boxplot
+custom_palette = {
+    "pink": "#FFC0CB",      # Soft pink
+    "static": "#4F4F4F",    # Dark gray
+    "white": "#D3D3D3"      # Light gray
+}
+plt.figure(figsize=(12, 6))
+sns.boxplot(x='Set', y='DFA', hue='ID', data=df_long, palette=custom_palette, showfliers=False)  # Use correct column name
+
+# Customize plot
+plt.title('Comparison of DFA_Y Across Sets and ID Groups')
+plt.xlabel('Set')
+plt.ylabel('DFA')
+plt.legend(title='ID')
+
+# Show plot
+plt.show()
+
+
+
+
+
+
+
+
+
 # df = pd.DataFrame(dist)
 # # directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Results'
 # # os.chdir(directory)
