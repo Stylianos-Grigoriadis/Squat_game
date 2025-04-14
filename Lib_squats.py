@@ -371,15 +371,15 @@ def quality_assessment_of_temporal_structure_FFT_method(signal, name):
     print(f'p_value = {p_value}')
 
     # Plot the log-log results
-    # plt.figure(figsize=(10,6))
-    # plt.scatter(positive_freqs_log, positive_magnitude_log, label='Log-Log Data', color='blue')
-    # plt.plot(positive_freqs_log, slope * positive_freqs_log + intercept, label=f'Fit: \nSlope = {slope:.2f}\nr = {r}\np = {p}', color='red')
-    # plt.title(f'{name}\nLog-Log Plot of FFT (Frequency vs Magnitude)')
-    # plt.xlabel('Log(Frequency) (Hz)')
-    # plt.ylabel('Log(Magnitude)')
-    # plt.legend()
-    # plt.grid()
-    # plt.show()
+    plt.figure(figsize=(10,6))
+    plt.scatter(positive_freqs_log, positive_magnitude_log, label='Log-Log Data', color='blue')
+    plt.plot(positive_freqs_log, slope * positive_freqs_log + intercept, label=f'Fit: \nSlope = {slope:.2f}\nr = {r}\np = {p}', color='red')
+    plt.title(f'{name}\nLog-Log Plot of FFT (Frequency vs Magnitude)')
+    plt.xlabel('Log(Frequency) (Hz)')
+    plt.ylabel('Log(Magnitude)')
+    plt.legend()
+    plt.grid()
+    plt.show()
 
     return slope, positive_freqs_log, positive_magnitude_log, intercept, name, r, p, positive_freqs, positive_magnitude
 
@@ -1447,5 +1447,11 @@ def asymptotes_2(time_stamps_without_between_set_space, spatial_error):
     plt.show()
 
 
-
-
+def big_list_to_5df_list(big_list):
+    """ This Function takes a list which have all data separated to 5 elements, and every element consists of sublists with n dataframes,
+    according to each target. It returns a list with those dfs as one for each of the 5 elements """
+    df_5_list = []
+    for list in big_list:
+        combined_df = pd.concat(list, ignore_index=True)
+        df_5_list.append(combined_df)
+    return df_5_list
