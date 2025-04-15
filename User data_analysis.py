@@ -106,6 +106,19 @@ list_DFA_y_set_3 = []
 list_DFA_y_set_4 = []
 list_DFA_y_set_5 = []
 
+list_SaEn_travel_distance_set_1 = []
+list_SaEn_travel_distance_set_2 = []
+list_SaEn_travel_distance_set_3 = []
+list_SaEn_travel_distance_set_4 = []
+list_SaEn_travel_distance_set_5 = []
+
+list_DFA_travel_distance_set_1 = []
+list_DFA_travel_distance_set_2 = []
+list_DFA_travel_distance_set_3 = []
+list_DFA_travel_distance_set_4 = []
+list_DFA_travel_distance_set_5 = []
+
+
 
 
 
@@ -148,23 +161,27 @@ for file in files:
     list_with_all_df_separated_by_set = lbs.return_the_df_of_each_target_separated_by_set(data, old_data)
 
 
+    # Create a simple graph with all the columns you need to plot
+    # lbs.simple_graph(list_with_all_df_separated_by_set, 'pitch', 'yaw', 'roll')
 
-    # Assessment of each set temporal structure based on the power spectrum analysis
-    # lbs.temporal_structure_assessment_of_targets(list_with_all_df_separated_by_set)
+    # Create a scatter with a slider for visualization of target position vs player position
+    # lbs.graph_creation_target_vs_player_with_data(list_with_all_df_separated_by_set)
+
 
 
     # Seperation of the x and y position of the player for each set
     df_5_list = lbs.big_list_to_5df_list(list_with_all_df_separated_by_set)
     position_player_x_set_1 = df_5_list[0]['player_pos_x'].to_numpy()
-    position_player_y_set_1 = df_5_list[0]['player_pos_y'].to_numpy()
     position_player_x_set_2 = df_5_list[1]['player_pos_x'].to_numpy()
-    position_player_y_set_2 = df_5_list[1]['player_pos_y'].to_numpy()
     position_player_x_set_3 = df_5_list[2]['player_pos_x'].to_numpy()
-    position_player_y_set_3 = df_5_list[2]['player_pos_y'].to_numpy()
     position_player_x_set_4 = df_5_list[3]['player_pos_x'].to_numpy()
-    position_player_y_set_4 = df_5_list[3]['player_pos_y'].to_numpy()
     position_player_x_set_5 = df_5_list[4]['player_pos_x'].to_numpy()
+    position_player_y_set_1 = df_5_list[0]['player_pos_y'].to_numpy()
+    position_player_y_set_2 = df_5_list[1]['player_pos_y'].to_numpy()
+    position_player_y_set_3 = df_5_list[2]['player_pos_y'].to_numpy()
+    position_player_y_set_4 = df_5_list[3]['player_pos_y'].to_numpy()
     position_player_y_set_5 = df_5_list[4]['player_pos_y'].to_numpy()
+
 
     # Assessment of power spectrum of position_player
     # power_90_set_1_x, power_95_set_1_x, power_99_set_1_x = lib.FFT(position_player_x_set_1, 40)
@@ -210,16 +227,24 @@ for file in files:
     # list_power_99_set_5_y.append(power_99_set_5_y)
 
     # Apply Butterworth low pass at 5Hz
-    position_player_x_set_1 = lib.Butterworth(40, 5, position_player_x_set_1)
-    position_player_y_set_1 = lib.Butterworth(40, 5, position_player_y_set_1)
-    position_player_x_set_2 = lib.Butterworth(40, 5, position_player_x_set_2)
-    position_player_y_set_2 = lib.Butterworth(40, 5, position_player_y_set_2)
-    position_player_x_set_3 = lib.Butterworth(40, 5, position_player_x_set_3)
-    position_player_y_set_3 = lib.Butterworth(40, 5, position_player_y_set_3)
-    position_player_x_set_4 = lib.Butterworth(40, 5, position_player_x_set_4)
-    position_player_y_set_4 = lib.Butterworth(40, 5, position_player_y_set_4)
-    position_player_x_set_5 = lib.Butterworth(40, 5, position_player_x_set_5)
-    position_player_y_set_5 = lib.Butterworth(40, 5, position_player_y_set_5)
+    # position_player_x_set_1 = lib.Butterworth(40, 5, position_player_x_set_1)
+    # position_player_x_set_2 = lib.Butterworth(40, 5, position_player_x_set_2)
+    # position_player_x_set_3 = lib.Butterworth(40, 5, position_player_x_set_3)
+    # position_player_x_set_4 = lib.Butterworth(40, 5, position_player_x_set_4)
+    # position_player_x_set_5 = lib.Butterworth(40, 5, position_player_x_set_5)
+    # position_player_y_set_1 = lib.Butterworth(40, 5, position_player_y_set_1)
+    # position_player_y_set_2 = lib.Butterworth(40, 5, position_player_y_set_2)
+    # position_player_y_set_3 = lib.Butterworth(40, 5, position_player_y_set_3)
+    # position_player_y_set_4 = lib.Butterworth(40, 5, position_player_y_set_4)
+    # position_player_y_set_5 = lib.Butterworth(40, 5, position_player_y_set_5)
+
+    # Calculate the travel distance for each set
+    travel_distance_set_1 = lbs.travel_distance(position_player_x_set_1, position_player_y_set_1)
+    travel_distance_set_2 = lbs.travel_distance(position_player_x_set_2, position_player_y_set_2)
+    travel_distance_set_3 = lbs.travel_distance(position_player_x_set_3, position_player_y_set_3)
+    travel_distance_set_4 = lbs.travel_distance(position_player_x_set_4, position_player_y_set_4)
+    travel_distance_set_5 = lbs.travel_distance(position_player_x_set_5, position_player_y_set_5)
+
 
     # Calculation of SaEn per set per axis
     SaEn_position_player_x_set_1 = lbs.Ent_Samp(position_player_x_set_1, 2, 0.2)
@@ -227,7 +252,6 @@ for file in files:
     SaEn_position_player_x_set_3 = lbs.Ent_Samp(position_player_x_set_3, 2, 0.2)
     SaEn_position_player_x_set_4 = lbs.Ent_Samp(position_player_x_set_4, 2, 0.2)
     SaEn_position_player_x_set_5 = lbs.Ent_Samp(position_player_x_set_5, 2, 0.2)
-
     SaEn_position_player_y_set_1 = lbs.Ent_Samp(position_player_y_set_1, 2, 0.2)
     SaEn_position_player_y_set_2 = lbs.Ent_Samp(position_player_y_set_2, 2, 0.2)
     SaEn_position_player_y_set_3 = lbs.Ent_Samp(position_player_y_set_3, 2, 0.2)
@@ -245,7 +269,18 @@ for file in files:
     list_SaEn_y_set_4.append(SaEn_position_player_y_set_4)
     list_SaEn_y_set_5.append(SaEn_position_player_y_set_5)
 
+    # Calculation of SaEn per set of travel distance
+    SaEn_travel_distance_set_1 = lbs.Ent_Samp(travel_distance_set_1, 2, 0.2)
+    SaEn_travel_distance_set_2 = lbs.Ent_Samp(travel_distance_set_2, 2, 0.2)
+    SaEn_travel_distance_set_3 = lbs.Ent_Samp(travel_distance_set_3, 2, 0.2)
+    SaEn_travel_distance_set_4 = lbs.Ent_Samp(travel_distance_set_4, 2, 0.2)
+    SaEn_travel_distance_set_5 = lbs.Ent_Samp(travel_distance_set_5, 2, 0.2)
 
+    list_SaEn_travel_distance_set_1.append(SaEn_travel_distance_set_1)
+    list_SaEn_travel_distance_set_2.append(SaEn_travel_distance_set_2)
+    list_SaEn_travel_distance_set_3.append(SaEn_travel_distance_set_3)
+    list_SaEn_travel_distance_set_4.append(SaEn_travel_distance_set_4)
+    list_SaEn_travel_distance_set_5.append(SaEn_travel_distance_set_5)
 
     # Calculation of DFA per set per axis
     scales_x_set_1 = np.arange(4, len(position_player_x_set_1)//4)
@@ -281,31 +316,39 @@ for file in files:
     list_DFA_y_set_4.append(DFA_y_set_4)
     list_DFA_y_set_5.append(DFA_y_set_5)
 
+    # Calculation of DFA of travel distance
+    scales_set_1 = np.arange(4, len(travel_distance_set_1)//4)
+    scales_set_2 = np.arange(4, len(travel_distance_set_2)//4)
+    scales_set_3 = np.arange(4, len(travel_distance_set_3)//4)
+    scales_set_4 = np.arange(4, len(travel_distance_set_4)//4)
+    scales_set_5 = np.arange(4, len(travel_distance_set_5)//4)
+
+    _, _, DFA_set_1 = lbs.DFA_NONAN(travel_distance_set_1, scales_set_1, order=1, plot=False)
+    _, _, DFA_set_2 = lbs.DFA_NONAN(travel_distance_set_2, scales_set_2, order=1, plot=False)
+    _, _, DFA_set_3 = lbs.DFA_NONAN(travel_distance_set_3, scales_set_3, order=1, plot=False)
+    _, _, DFA_set_4 = lbs.DFA_NONAN(travel_distance_set_4, scales_set_4, order=1, plot=False)
+    _, _, DFA_set_5 = lbs.DFA_NONAN(travel_distance_set_5, scales_set_5, order=1, plot=False)
+
+    list_DFA_travel_distance_set_1.append(DFA_set_1)
+    list_DFA_travel_distance_set_2.append(DFA_set_2)
+    list_DFA_travel_distance_set_3.append(DFA_set_3)
+    list_DFA_travel_distance_set_4.append(DFA_set_4)
+    list_DFA_travel_distance_set_5.append(DFA_set_5)
 
 
-
-
-
-
-# Create a simple graph with all the columns you need to plot
-    # lbs.simple_graph(list_with_all_df_separated_by_set, 'pitch', 'yaw', 'roll')
-
-    # Create a scatter with a slider for visualization of target position vs player position
-    # lbs.graph_creation_target_vs_player_with_data(list_with_all_df_separated_by_set)
-######################################################################
     # Calculate and show the spatial error for each target
-    # spatial_error, list_time_stamp_of_min_spatial_error_separated_by_set = lbs.spatial_error_best_window(list_with_all_df_separated_by_set, plot=False, time_window=500)
-    #
-    # spatial_error_set_1_average = np.mean(spatial_error[0])
-    # spatial_error_set_2_average = np.mean(spatial_error[1])
-    # spatial_error_set_3_average = np.mean(spatial_error[2])
-    # spatial_error_set_4_average = np.mean(spatial_error[3])
-    # spatial_error_set_5_average = np.mean(spatial_error[4])
-    # spatial_error_set_1_sd = np.std(spatial_error[0])
-    # spatial_error_set_2_sd = np.std(spatial_error[1])
-    # spatial_error_set_3_sd = np.std(spatial_error[2])
-    # spatial_error_set_4_sd = np.std(spatial_error[3])
-    # spatial_error_set_5_sd = np.std(spatial_error[4])
+    spatial_error, list_time_stamp_of_min_spatial_error_separated_by_set = lbs.spatial_error_best_window(list_with_all_df_separated_by_set, plot=False, time_window=500)
+
+    spatial_error_set_1_average = np.mean(spatial_error[0])
+    spatial_error_set_2_average = np.mean(spatial_error[1])
+    spatial_error_set_3_average = np.mean(spatial_error[2])
+    spatial_error_set_4_average = np.mean(spatial_error[3])
+    spatial_error_set_5_average = np.mean(spatial_error[4])
+    spatial_error_set_1_sd = np.std(spatial_error[0])
+    spatial_error_set_2_sd = np.std(spatial_error[1])
+    spatial_error_set_3_sd = np.std(spatial_error[2])
+    spatial_error_set_4_sd = np.std(spatial_error[3])
+    spatial_error_set_5_sd = np.std(spatial_error[4])
     #
     #
     # # Flatten the list with the spatial errors
@@ -488,6 +531,11 @@ dist_learning_analysis = {'ID': list_ID,
                             'SaEn_y_set_3': list_SaEn_y_set_3,
                             'SaEn_y_set_4': list_SaEn_y_set_4,
                             'SaEn_y_set_5': list_SaEn_y_set_5,
+                            'SaEn_travel_distance_set_1': list_SaEn_travel_distance_set_1,
+                            'SaEn_travel_distance_set_2': list_SaEn_travel_distance_set_2,
+                            'SaEn_travel_distance_set_3': list_SaEn_travel_distance_set_3,
+                            'SaEn_travel_distance_set_4': list_SaEn_travel_distance_set_4,
+                            'SaEn_travel_distance_set_5': list_SaEn_travel_distance_set_5,
                             'DFA_x_set_1': list_DFA_x_set_1,
                             'DFA_x_set_2': list_DFA_x_set_2,
                             'DFA_x_set_3': list_DFA_x_set_3,
@@ -498,173 +546,184 @@ dist_learning_analysis = {'ID': list_ID,
                             'DFA_y_set_3': list_DFA_y_set_3,
                             'DFA_y_set_4': list_DFA_y_set_4,
                             'DFA_y_set_5': list_DFA_y_set_5,
+                            'DFA_travel_distance_set_1': list_DFA_travel_distance_set_1,
+                            'DFA_travel_distance_set_2': list_DFA_travel_distance_set_2,
+                            'DFA_travel_distance_set_3': list_DFA_travel_distance_set_3,
+                            'DFA_travel_distance_set_4': list_DFA_travel_distance_set_4,
+                            'DFA_travel_distance_set_5': list_DFA_travel_distance_set_5,
                           }
 
 
 
-
-# plt.plot(list_power_90_set_1_x,label='power_90_set_1_x')
-# plt.plot(list_power_90_set_2_x,label='power_90_set_2_x')
-# plt.plot(list_power_90_set_3_x,label='power_90_set_3_x')
-# plt.plot(list_power_90_set_4_x,label='power_90_set_4_x')
-# plt.plot(list_power_90_set_5_x,label='power_90_set_5_x')
-# plt.legend()
-# plt.show()
-#
-# plt.plot(list_power_90_set_1_y,label='power_90_set_1_y')
-# plt.plot(list_power_90_set_2_y,label='power_90_set_2_y')
-# plt.plot(list_power_90_set_3_y,label='power_90_set_3_y')
-# plt.plot(list_power_90_set_4_y,label='power_90_set_4_y')
-# plt.plot(list_power_90_set_5_y,label='power_90_set_5_y')
-# plt.legend()
-# plt.show()
-#
-# plt.plot(list_power_95_set_1_x,label='power_95_set_1_x')
-# plt.plot(list_power_95_set_2_x,label='power_95_set_2_x')
-# plt.plot(list_power_95_set_3_x,label='power_95_set_3_x')
-# plt.plot(list_power_95_set_4_x,label='power_95_set_4_x')
-# plt.plot(list_power_95_set_5_x,label='power_95_set_5_x')
-# plt.legend()
-# plt.show()
-#
-# plt.plot(list_power_95_set_1_y,label='power_95_set_1_y')
-# plt.plot(list_power_95_set_2_y,label='power_95_set_2_y')
-# plt.plot(list_power_95_set_3_y,label='power_95_set_3_y')
-# plt.plot(list_power_95_set_4_y,label='power_95_set_4_y')
-# plt.plot(list_power_95_set_5_y,label='power_95_set_5_y')
-# plt.legend()
-# plt.show()
-#
-# plt.plot(list_power_99_set_1_x,label='power_99_set_1_x')
-# plt.plot(list_power_99_set_2_x,label='power_99_set_2_x')
-# plt.plot(list_power_99_set_3_x,label='power_99_set_3_x')
-# plt.plot(list_power_99_set_4_x,label='power_99_set_4_x')
-# plt.plot(list_power_99_set_5_x,label='power_99_set_5_x')
-# plt.legend()
-# plt.show()
-#
-# plt.plot(list_power_99_set_1_y,label='power_99_set_1_y')
-# plt.plot(list_power_99_set_2_y,label='power_99_set_2_y')
-# plt.plot(list_power_99_set_3_y,label='power_99_set_3_y')
-# plt.plot(list_power_99_set_4_y,label='power_99_set_4_y')
-# plt.plot(list_power_99_set_5_y,label='power_99_set_5_y')
-# plt.legend()
-# plt.show()
-
 df_learning = pd.DataFrame(dist_learning_analysis)
+# directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Results'
+# os.chdir(directory)
+# df_learning.to_excel('Results of Non-linear analysis.xlsx')
 
-df_long = df_learning.melt(id_vars=['ID'],
-                  value_vars=['SaEn_x_set_1', 'SaEn_x_set_2',
-                              'SaEn_x_set_3', 'SaEn_x_set_4',
-                              'SaEn_x_set_5'],
-                  var_name='Set', value_name='SaEn')  # Ensure correct name
-
-# Rename set names for readability
-df_long['Set'] = df_long['Set'].str.replace('SaEn ', 'Set ')
-
-# Create boxplot
-custom_palette = {
-    "pink": "#FFC0CB",      # Soft pink
-    "static": "#4F4F4F",    # Dark gray
-    "white": "#D3D3D3"      # Light gray
-}
-plt.figure(figsize=(12, 6))
-sns.boxplot(x='Set', y='SaEn', hue='ID', data=df_long, palette=custom_palette, showfliers=False)  # Use correct column name
-
-# Customize plot
-plt.title('Comparison of SaEn_X Across Sets and ID Groups')
-plt.xlabel('Set')
-plt.ylabel('SaEn')
-plt.legend(title='ID')
-
-# Show plot
-plt.show()
-
-df_long = df_learning.melt(id_vars=['ID'],
-                  value_vars=['SaEn_y_set_1', 'SaEn_y_set_2',
-                              'SaEn_y_set_3', 'SaEn_y_set_4',
-                              'SaEn_y_set_5'],
-                  var_name='Set', value_name='SaEn')  # Ensure correct name
-
-# Rename set names for readability
-df_long['Set'] = df_long['Set'].str.replace('SaEn ', 'Set ')
-
-# Create boxplot
-custom_palette = {
-    "pink": "#FFC0CB",      # Soft pink
-    "static": "#4F4F4F",    # Dark gray
-    "white": "#D3D3D3"      # Light gray
-}
-plt.figure(figsize=(12, 6))
-sns.boxplot(x='Set', y='SaEn', hue='ID', data=df_long, palette=custom_palette, showfliers=False)  # Use correct column name
-
-# Customize plot
-plt.title('Comparison of SaEn_Y Across Sets and ID Groups')
-plt.xlabel('Set')
-plt.ylabel('SaEn')
-plt.legend(title='ID')
-
-# Show plot
-plt.show()
-
-df_long = df_learning.melt(id_vars=['ID'],
-                  value_vars=['DFA_x_set_1', 'DFA_x_set_2',
-                              'DFA_x_set_3', 'DFA_x_set_4',
-                              'DFA_x_set_5'],
-                  var_name='Set', value_name='DFA')  # Ensure correct name
-
-# Rename set names for readability
-df_long['Set'] = df_long['Set'].str.replace('DFA ', 'Set ')
-
-# Create boxplot
-custom_palette = {
-    "pink": "#FFC0CB",      # Soft pink
-    "static": "#4F4F4F",    # Dark gray
-    "white": "#D3D3D3"      # Light gray
-}
-plt.figure(figsize=(12, 6))
-sns.boxplot(x='Set', y='DFA', hue='ID', data=df_long, palette=custom_palette, showfliers=False)  # Use correct column name
-
-# Customize plot
-plt.title('Comparison of DFA_X Across Sets and ID Groups')
-plt.xlabel('Set')
-plt.ylabel('DFA')
-plt.legend(title='ID')
-
-# Show plot
-plt.show()
-
-
-df_long = df_learning.melt(id_vars=['ID'],
-                  value_vars=['DFA_y_set_1', 'DFA_y_set_2',
-                              'DFA_y_set_3', 'DFA_y_set_4',
-                              'DFA_y_set_5'],
-                  var_name='Set', value_name='DFA')  # Ensure correct name
-
-# Rename set names for readability
-df_long['Set'] = df_long['Set'].str.replace('DFA ', 'Set ')
-
-# Create boxplot
-custom_palette = {
-    "pink": "#FFC0CB",      # Soft pink
-    "static": "#4F4F4F",    # Dark gray
-    "white": "#D3D3D3"      # Light gray
-}
-plt.figure(figsize=(12, 6))
-sns.boxplot(x='Set', y='DFA', hue='ID', data=df_long, palette=custom_palette, showfliers=False)  # Use correct column name
-
-# Customize plot
-plt.title('Comparison of DFA_Y Across Sets and ID Groups')
-plt.xlabel('Set')
-plt.ylabel('DFA')
-plt.legend(title='ID')
-
-# Show plot
-plt.show()
-
-
-
-
+# df_long = df_learning.melt(id_vars=['ID'],
+#                   value_vars=['SaEn_x_set_1', 'SaEn_x_set_2',
+#                               'SaEn_x_set_3', 'SaEn_x_set_4',
+#                               'SaEn_x_set_5'],
+#                   var_name='Set', value_name='SaEn')  # Ensure correct name
+#
+# # Rename set names for readability
+# df_long['Set'] = df_long['Set'].str.replace('SaEn ', 'Set ')
+#
+# # Create boxplot
+# custom_palette = {
+#     "pink": "#FFC0CB",      # Soft pink
+#     "static": "#4F4F4F",    # Dark gray
+#     "white": "#D3D3D3"      # Light gray
+# }
+# plt.figure(figsize=(12, 6))
+# sns.boxplot(x='Set', y='SaEn', hue='ID', data=df_long, palette=custom_palette, showfliers=False)  # Use correct column name
+#
+# # Customize plot
+# plt.title('Comparison of SaEn_X Across Sets and ID Groups')
+# plt.xlabel('Set')
+# plt.ylabel('SaEn')
+# plt.legend(title='ID')
+#
+# # Show plot
+# plt.show()
+#
+# df_long = df_learning.melt(id_vars=['ID'],
+#                   value_vars=['SaEn_y_set_1', 'SaEn_y_set_2',
+#                               'SaEn_y_set_3', 'SaEn_y_set_4',
+#                               'SaEn_y_set_5'],
+#                   var_name='Set', value_name='SaEn')  # Ensure correct name
+#
+# # Rename set names for readability
+# df_long['Set'] = df_long['Set'].str.replace('SaEn ', 'Set ')
+#
+# # Create boxplot
+# custom_palette = {
+#     "pink": "#FFC0CB",      # Soft pink
+#     "static": "#4F4F4F",    # Dark gray
+#     "white": "#D3D3D3"      # Light gray
+# }
+# plt.figure(figsize=(12, 6))
+# sns.boxplot(x='Set', y='SaEn', hue='ID', data=df_long, palette=custom_palette, showfliers=False)  # Use correct column name
+#
+# # Customize plot
+# plt.title('Comparison of SaEn_Y Across Sets and ID Groups')
+# plt.xlabel('Set')
+# plt.ylabel('SaEn')
+# plt.legend(title='ID')
+#
+# # Show plot
+# plt.show()
+#
+# df_long = df_learning.melt(id_vars=['ID'],
+#                   value_vars=['DFA_x_set_1', 'DFA_x_set_2',
+#                               'DFA_x_set_3', 'DFA_x_set_4',
+#                               'DFA_x_set_5'],
+#                   var_name='Set', value_name='DFA')  # Ensure correct name
+#
+# # Rename set names for readability
+# df_long['Set'] = df_long['Set'].str.replace('DFA ', 'Set ')
+#
+# # Create boxplot
+# custom_palette = {
+#     "pink": "#FFC0CB",      # Soft pink
+#     "static": "#4F4F4F",    # Dark gray
+#     "white": "#D3D3D3"      # Light gray
+# }
+# plt.figure(figsize=(12, 6))
+# sns.boxplot(x='Set', y='DFA', hue='ID', data=df_long, palette=custom_palette, showfliers=False)  # Use correct column name
+#
+# # Customize plot
+# plt.title('Comparison of DFA_X Across Sets and ID Groups')
+# plt.xlabel('Set')
+# plt.ylabel('DFA')
+# plt.legend(title='ID')
+#
+# # Show plot
+# plt.show()
+#
+#
+# df_long = df_learning.melt(id_vars=['ID'],
+#                   value_vars=['DFA_y_set_1', 'DFA_y_set_2',
+#                               'DFA_y_set_3', 'DFA_y_set_4',
+#                               'DFA_y_set_5'],
+#                   var_name='Set', value_name='DFA')  # Ensure correct name
+#
+# # Rename set names for readability
+# df_long['Set'] = df_long['Set'].str.replace('DFA ', 'Set ')
+#
+# # Create boxplot
+# custom_palette = {
+#     "pink": "#FFC0CB",      # Soft pink
+#     "static": "#4F4F4F",    # Dark gray
+#     "white": "#D3D3D3"      # Light gray
+# }
+# plt.figure(figsize=(12, 6))
+# sns.boxplot(x='Set', y='DFA', hue='ID', data=df_long, palette=custom_palette, showfliers=False)  # Use correct column name
+#
+# # Customize plot
+# plt.title('Comparison of DFA_Y Across Sets and ID Groups')
+# plt.xlabel('Set')
+# plt.ylabel('DFA')
+# plt.legend(title='ID')
+#
+# # Show plot
+# plt.show()
+#
+#
+#
+# df_long = df_learning.melt(id_vars=['ID'],
+#                   value_vars=['SaEn_travel_distance_set_1', 'SaEn_travel_distance_set_2',
+#                               'SaEn_travel_distance_set_3', 'SaEn_travel_distance_set_4',
+#                               'SaEn_travel_distance_set_5'],
+#                   var_name='Set', value_name='SaEn')  # Ensure correct name
+#
+# # Rename set names for readability
+# df_long['Set'] = df_long['Set'].str.replace('SaEn ', 'Set ')
+#
+# # Create boxplot
+# custom_palette = {
+#     "pink": "#FFC0CB",      # Soft pink
+#     "static": "#4F4F4F",    # Dark gray
+#     "white": "#D3D3D3"      # Light gray
+# }
+# plt.figure(figsize=(12, 6))
+# sns.boxplot(x='Set', y='SaEn', hue='ID', data=df_long, palette=custom_palette, showfliers=False)  # Use correct column name
+#
+# # Customize plot
+# plt.title('Comparison of SaEn of TD Across Sets and ID Groups')
+# plt.xlabel('Set')
+# plt.ylabel('SaEn')
+# plt.legend(title='ID')
+#
+# # Show plot
+# plt.show()
+#
+# df_long = df_learning.melt(id_vars=['ID'],
+#                   value_vars=['DFA_travel_distance_set_1', 'DFA_travel_distance_set_2',
+#                               'DFA_travel_distance_set_3', 'DFA_travel_distance_set_4',
+#                               'DFA_travel_distance_set_5'],
+#                   var_name='Set', value_name='DFA')  # Ensure correct name
+#
+# # Rename set names for readability
+# df_long['Set'] = df_long['Set'].str.replace('DFA ', 'Set ')
+#
+# # Create boxplot
+# custom_palette = {
+#     "pink": "#FFC0CB",      # Soft pink
+#     "static": "#4F4F4F",    # Dark gray
+#     "white": "#D3D3D3"      # Light gray
+# }
+# plt.figure(figsize=(12, 6))
+# sns.boxplot(x='Set', y='DFA', hue='ID', data=df_long, palette=custom_palette, showfliers=False)  # Use correct column name
+#
+# # Customize plot
+# plt.title('Comparison of DFA of TD Across Sets and ID Groups')
+# plt.xlabel('Set')
+# plt.ylabel('DFA')
+# plt.legend(title='ID')
+#
+# # Show plot
+# plt.show()
 
 
 

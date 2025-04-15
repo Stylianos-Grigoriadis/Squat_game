@@ -1533,3 +1533,12 @@ def assessment_of_power_spectrum_of_position_player(position_player_x, position_
     power_90_x, power_95_x, power_99_x = lib.FFT(position_player_x, 40)
     power_90_y, power_95_y, power_99_y = lib.FFT(position_player_y, 40)
     return power_90_x, power_95_x, power_99_x, power_90_y, power_95_y, power_99_y
+
+
+def travel_distance(position_x, position_y):
+    travel_distance = []
+    for i in range(1, len(position_x)):
+        step_distance = np.sqrt((position_x[i] - position_x[i-1])**2 + (position_y[i] - position_y[i-1])**2)
+        travel_distance.append(step_distance)
+    travel_distance = np.array(travel_distance)
+    return travel_distance
