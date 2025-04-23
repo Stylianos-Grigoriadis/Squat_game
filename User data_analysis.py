@@ -247,93 +247,93 @@ for file in files:
 
 
     # Calculation of SaEn per set per axis
-    SaEn_position_player_x_set_1 = lbs.Ent_Samp(position_player_x_set_1, 2, 0.2)
-    SaEn_position_player_x_set_2 = lbs.Ent_Samp(position_player_x_set_2, 2, 0.2)
-    SaEn_position_player_x_set_3 = lbs.Ent_Samp(position_player_x_set_3, 2, 0.2)
-    SaEn_position_player_x_set_4 = lbs.Ent_Samp(position_player_x_set_4, 2, 0.2)
-    SaEn_position_player_x_set_5 = lbs.Ent_Samp(position_player_x_set_5, 2, 0.2)
-    SaEn_position_player_y_set_1 = lbs.Ent_Samp(position_player_y_set_1, 2, 0.2)
-    SaEn_position_player_y_set_2 = lbs.Ent_Samp(position_player_y_set_2, 2, 0.2)
-    SaEn_position_player_y_set_3 = lbs.Ent_Samp(position_player_y_set_3, 2, 0.2)
-    SaEn_position_player_y_set_4 = lbs.Ent_Samp(position_player_y_set_4, 2, 0.2)
-    SaEn_position_player_y_set_5 = lbs.Ent_Samp(position_player_y_set_5, 2, 0.2)
-
-    list_SaEn_x_set_1.append(SaEn_position_player_x_set_1)
-    list_SaEn_x_set_2.append(SaEn_position_player_x_set_2)
-    list_SaEn_x_set_3.append(SaEn_position_player_x_set_3)
-    list_SaEn_x_set_4.append(SaEn_position_player_x_set_4)
-    list_SaEn_x_set_5.append(SaEn_position_player_x_set_5)
-    list_SaEn_y_set_1.append(SaEn_position_player_y_set_1)
-    list_SaEn_y_set_2.append(SaEn_position_player_y_set_2)
-    list_SaEn_y_set_3.append(SaEn_position_player_y_set_3)
-    list_SaEn_y_set_4.append(SaEn_position_player_y_set_4)
-    list_SaEn_y_set_5.append(SaEn_position_player_y_set_5)
-
-    # Calculation of SaEn per set of travel distance
-    SaEn_travel_distance_set_1 = lbs.Ent_Samp(travel_distance_set_1, 2, 0.2)
-    SaEn_travel_distance_set_2 = lbs.Ent_Samp(travel_distance_set_2, 2, 0.2)
-    SaEn_travel_distance_set_3 = lbs.Ent_Samp(travel_distance_set_3, 2, 0.2)
-    SaEn_travel_distance_set_4 = lbs.Ent_Samp(travel_distance_set_4, 2, 0.2)
-    SaEn_travel_distance_set_5 = lbs.Ent_Samp(travel_distance_set_5, 2, 0.2)
-
-    list_SaEn_travel_distance_set_1.append(SaEn_travel_distance_set_1)
-    list_SaEn_travel_distance_set_2.append(SaEn_travel_distance_set_2)
-    list_SaEn_travel_distance_set_3.append(SaEn_travel_distance_set_3)
-    list_SaEn_travel_distance_set_4.append(SaEn_travel_distance_set_4)
-    list_SaEn_travel_distance_set_5.append(SaEn_travel_distance_set_5)
-
-    # Calculation of DFA per set per axis
-    scales_x_set_1 = np.arange(4, len(position_player_x_set_1)//4)
-    scales_x_set_2 = np.arange(4, len(position_player_x_set_2)//4)
-    scales_x_set_3 = np.arange(4, len(position_player_x_set_3)//4)
-    scales_x_set_4 = np.arange(4, len(position_player_x_set_4)//4)
-    scales_x_set_5 = np.arange(4, len(position_player_x_set_5)//4)
-    scales_y_set_1 = np.arange(4, len(position_player_y_set_1)//4)
-    scales_y_set_2 = np.arange(4, len(position_player_y_set_2)//4)
-    scales_y_set_3 = np.arange(4, len(position_player_y_set_3)//4)
-    scales_y_set_4 = np.arange(4, len(position_player_y_set_4)//4)
-    scales_y_set_5 = np.arange(4, len(position_player_y_set_5)//4)
-
-    _, _, DFA_x_set_1 = lbs.DFA_NONAN(position_player_x_set_1, scales_x_set_1, order=1, plot=False)
-    _, _, DFA_x_set_2 = lbs.DFA_NONAN(position_player_x_set_2, scales_x_set_2, order=1, plot=False)
-    _, _, DFA_x_set_3 = lbs.DFA_NONAN(position_player_x_set_3, scales_x_set_3, order=1, plot=False)
-    _, _, DFA_x_set_4 = lbs.DFA_NONAN(position_player_x_set_4, scales_x_set_4, order=1, plot=False)
-    _, _, DFA_x_set_5 = lbs.DFA_NONAN(position_player_x_set_5, scales_x_set_5, order=1, plot=False)
-    _, _, DFA_y_set_1 = lbs.DFA_NONAN(position_player_y_set_1, scales_y_set_1, order=1, plot=False)
-    _, _, DFA_y_set_2 = lbs.DFA_NONAN(position_player_y_set_2, scales_y_set_2, order=1, plot=False)
-    _, _, DFA_y_set_3 = lbs.DFA_NONAN(position_player_y_set_3, scales_y_set_3, order=1, plot=False)
-    _, _, DFA_y_set_4 = lbs.DFA_NONAN(position_player_y_set_4, scales_y_set_4, order=1, plot=False)
-    _, _, DFA_y_set_5 = lbs.DFA_NONAN(position_player_y_set_5, scales_y_set_5, order=1, plot=False)
-
-    list_DFA_x_set_1.append(DFA_x_set_1)
-    list_DFA_x_set_2.append(DFA_x_set_2)
-    list_DFA_x_set_3.append(DFA_x_set_3)
-    list_DFA_x_set_4.append(DFA_x_set_4)
-    list_DFA_x_set_5.append(DFA_x_set_5)
-    list_DFA_y_set_1.append(DFA_y_set_1)
-    list_DFA_y_set_2.append(DFA_y_set_2)
-    list_DFA_y_set_3.append(DFA_y_set_3)
-    list_DFA_y_set_4.append(DFA_y_set_4)
-    list_DFA_y_set_5.append(DFA_y_set_5)
-
-    # Calculation of DFA of travel distance
-    scales_set_1 = np.arange(4, len(travel_distance_set_1)//4)
-    scales_set_2 = np.arange(4, len(travel_distance_set_2)//4)
-    scales_set_3 = np.arange(4, len(travel_distance_set_3)//4)
-    scales_set_4 = np.arange(4, len(travel_distance_set_4)//4)
-    scales_set_5 = np.arange(4, len(travel_distance_set_5)//4)
-
-    _, _, DFA_set_1 = lbs.DFA_NONAN(travel_distance_set_1, scales_set_1, order=1, plot=False)
-    _, _, DFA_set_2 = lbs.DFA_NONAN(travel_distance_set_2, scales_set_2, order=1, plot=False)
-    _, _, DFA_set_3 = lbs.DFA_NONAN(travel_distance_set_3, scales_set_3, order=1, plot=False)
-    _, _, DFA_set_4 = lbs.DFA_NONAN(travel_distance_set_4, scales_set_4, order=1, plot=False)
-    _, _, DFA_set_5 = lbs.DFA_NONAN(travel_distance_set_5, scales_set_5, order=1, plot=False)
-
-    list_DFA_travel_distance_set_1.append(DFA_set_1)
-    list_DFA_travel_distance_set_2.append(DFA_set_2)
-    list_DFA_travel_distance_set_3.append(DFA_set_3)
-    list_DFA_travel_distance_set_4.append(DFA_set_4)
-    list_DFA_travel_distance_set_5.append(DFA_set_5)
+    # SaEn_position_player_x_set_1 = lbs.Ent_Samp(position_player_x_set_1, 2, 0.2)
+    # SaEn_position_player_x_set_2 = lbs.Ent_Samp(position_player_x_set_2, 2, 0.2)
+    # SaEn_position_player_x_set_3 = lbs.Ent_Samp(position_player_x_set_3, 2, 0.2)
+    # SaEn_position_player_x_set_4 = lbs.Ent_Samp(position_player_x_set_4, 2, 0.2)
+    # SaEn_position_player_x_set_5 = lbs.Ent_Samp(position_player_x_set_5, 2, 0.2)
+    # SaEn_position_player_y_set_1 = lbs.Ent_Samp(position_player_y_set_1, 2, 0.2)
+    # SaEn_position_player_y_set_2 = lbs.Ent_Samp(position_player_y_set_2, 2, 0.2)
+    # SaEn_position_player_y_set_3 = lbs.Ent_Samp(position_player_y_set_3, 2, 0.2)
+    # SaEn_position_player_y_set_4 = lbs.Ent_Samp(position_player_y_set_4, 2, 0.2)
+    # SaEn_position_player_y_set_5 = lbs.Ent_Samp(position_player_y_set_5, 2, 0.2)
+    #
+    # list_SaEn_x_set_1.append(SaEn_position_player_x_set_1)
+    # list_SaEn_x_set_2.append(SaEn_position_player_x_set_2)
+    # list_SaEn_x_set_3.append(SaEn_position_player_x_set_3)
+    # list_SaEn_x_set_4.append(SaEn_position_player_x_set_4)
+    # list_SaEn_x_set_5.append(SaEn_position_player_x_set_5)
+    # list_SaEn_y_set_1.append(SaEn_position_player_y_set_1)
+    # list_SaEn_y_set_2.append(SaEn_position_player_y_set_2)
+    # list_SaEn_y_set_3.append(SaEn_position_player_y_set_3)
+    # list_SaEn_y_set_4.append(SaEn_position_player_y_set_4)
+    # list_SaEn_y_set_5.append(SaEn_position_player_y_set_5)
+    #
+    # # Calculation of SaEn per set of travel distance
+    # SaEn_travel_distance_set_1 = lbs.Ent_Samp(travel_distance_set_1, 2, 0.2)
+    # SaEn_travel_distance_set_2 = lbs.Ent_Samp(travel_distance_set_2, 2, 0.2)
+    # SaEn_travel_distance_set_3 = lbs.Ent_Samp(travel_distance_set_3, 2, 0.2)
+    # SaEn_travel_distance_set_4 = lbs.Ent_Samp(travel_distance_set_4, 2, 0.2)
+    # SaEn_travel_distance_set_5 = lbs.Ent_Samp(travel_distance_set_5, 2, 0.2)
+    #
+    # list_SaEn_travel_distance_set_1.append(SaEn_travel_distance_set_1)
+    # list_SaEn_travel_distance_set_2.append(SaEn_travel_distance_set_2)
+    # list_SaEn_travel_distance_set_3.append(SaEn_travel_distance_set_3)
+    # list_SaEn_travel_distance_set_4.append(SaEn_travel_distance_set_4)
+    # list_SaEn_travel_distance_set_5.append(SaEn_travel_distance_set_5)
+    #
+    # # Calculation of DFA per set per axis
+    # scales_x_set_1 = np.arange(4, len(position_player_x_set_1)//4)
+    # scales_x_set_2 = np.arange(4, len(position_player_x_set_2)//4)
+    # scales_x_set_3 = np.arange(4, len(position_player_x_set_3)//4)
+    # scales_x_set_4 = np.arange(4, len(position_player_x_set_4)//4)
+    # scales_x_set_5 = np.arange(4, len(position_player_x_set_5)//4)
+    # scales_y_set_1 = np.arange(4, len(position_player_y_set_1)//4)
+    # scales_y_set_2 = np.arange(4, len(position_player_y_set_2)//4)
+    # scales_y_set_3 = np.arange(4, len(position_player_y_set_3)//4)
+    # scales_y_set_4 = np.arange(4, len(position_player_y_set_4)//4)
+    # scales_y_set_5 = np.arange(4, len(position_player_y_set_5)//4)
+    #
+    # _, _, DFA_x_set_1 = lbs.DFA_NONAN(position_player_x_set_1, scales_x_set_1, order=1, plot=False)
+    # _, _, DFA_x_set_2 = lbs.DFA_NONAN(position_player_x_set_2, scales_x_set_2, order=1, plot=False)
+    # _, _, DFA_x_set_3 = lbs.DFA_NONAN(position_player_x_set_3, scales_x_set_3, order=1, plot=False)
+    # _, _, DFA_x_set_4 = lbs.DFA_NONAN(position_player_x_set_4, scales_x_set_4, order=1, plot=False)
+    # _, _, DFA_x_set_5 = lbs.DFA_NONAN(position_player_x_set_5, scales_x_set_5, order=1, plot=False)
+    # _, _, DFA_y_set_1 = lbs.DFA_NONAN(position_player_y_set_1, scales_y_set_1, order=1, plot=False)
+    # _, _, DFA_y_set_2 = lbs.DFA_NONAN(position_player_y_set_2, scales_y_set_2, order=1, plot=False)
+    # _, _, DFA_y_set_3 = lbs.DFA_NONAN(position_player_y_set_3, scales_y_set_3, order=1, plot=False)
+    # _, _, DFA_y_set_4 = lbs.DFA_NONAN(position_player_y_set_4, scales_y_set_4, order=1, plot=False)
+    # _, _, DFA_y_set_5 = lbs.DFA_NONAN(position_player_y_set_5, scales_y_set_5, order=1, plot=False)
+    #
+    # list_DFA_x_set_1.append(DFA_x_set_1)
+    # list_DFA_x_set_2.append(DFA_x_set_2)
+    # list_DFA_x_set_3.append(DFA_x_set_3)
+    # list_DFA_x_set_4.append(DFA_x_set_4)
+    # list_DFA_x_set_5.append(DFA_x_set_5)
+    # list_DFA_y_set_1.append(DFA_y_set_1)
+    # list_DFA_y_set_2.append(DFA_y_set_2)
+    # list_DFA_y_set_3.append(DFA_y_set_3)
+    # list_DFA_y_set_4.append(DFA_y_set_4)
+    # list_DFA_y_set_5.append(DFA_y_set_5)
+    #
+    # # Calculation of DFA of travel distance
+    # scales_set_1 = np.arange(4, len(travel_distance_set_1)//4)
+    # scales_set_2 = np.arange(4, len(travel_distance_set_2)//4)
+    # scales_set_3 = np.arange(4, len(travel_distance_set_3)//4)
+    # scales_set_4 = np.arange(4, len(travel_distance_set_4)//4)
+    # scales_set_5 = np.arange(4, len(travel_distance_set_5)//4)
+    #
+    # _, _, DFA_set_1 = lbs.DFA_NONAN(travel_distance_set_1, scales_set_1, order=1, plot=False)
+    # _, _, DFA_set_2 = lbs.DFA_NONAN(travel_distance_set_2, scales_set_2, order=1, plot=False)
+    # _, _, DFA_set_3 = lbs.DFA_NONAN(travel_distance_set_3, scales_set_3, order=1, plot=False)
+    # _, _, DFA_set_4 = lbs.DFA_NONAN(travel_distance_set_4, scales_set_4, order=1, plot=False)
+    # _, _, DFA_set_5 = lbs.DFA_NONAN(travel_distance_set_5, scales_set_5, order=1, plot=False)
+    #
+    # list_DFA_travel_distance_set_1.append(DFA_set_1)
+    # list_DFA_travel_distance_set_2.append(DFA_set_2)
+    # list_DFA_travel_distance_set_3.append(DFA_set_3)
+    # list_DFA_travel_distance_set_4.append(DFA_set_4)
+    # list_DFA_travel_distance_set_5.append(DFA_set_5)
 
 
     # Calculate and show the spatial error for each target
@@ -481,84 +481,88 @@ for file in files:
 #     sd_spatial_error = np.std(spatial_error)
 #     list_sd_spatial_error.append(sd_spatial_error)
 #
-#     list_spatial_error_set_1_average.append(spatial_error_set_1_average)
-#     list_spatial_error_set_2_average.append(spatial_error_set_2_average)
-#     list_spatial_error_set_3_average.append(spatial_error_set_3_average)
-#     list_spatial_error_set_4_average.append(spatial_error_set_4_average)
-#     list_spatial_error_set_5_average.append(spatial_error_set_5_average)
-#     list_spatial_error_set_1_sd.append(spatial_error_set_1_sd)
-#     list_spatial_error_set_2_sd.append(spatial_error_set_2_sd)
-#     list_spatial_error_set_3_sd.append(spatial_error_set_3_sd)
-#     list_spatial_error_set_4_sd.append(spatial_error_set_4_sd)
-#     list_spatial_error_set_5_sd.append(spatial_error_set_5_sd)
-#
+    list_spatial_error_set_1_average.append(spatial_error_set_1_average)
+    list_spatial_error_set_2_average.append(spatial_error_set_2_average)
+    list_spatial_error_set_3_average.append(spatial_error_set_3_average)
+    list_spatial_error_set_4_average.append(spatial_error_set_4_average)
+    list_spatial_error_set_5_average.append(spatial_error_set_5_average)
+    list_spatial_error_set_1_sd.append(spatial_error_set_1_sd)
+    list_spatial_error_set_2_sd.append(spatial_error_set_2_sd)
+    list_spatial_error_set_3_sd.append(spatial_error_set_3_sd)
+    list_spatial_error_set_4_sd.append(spatial_error_set_4_sd)
+    list_spatial_error_set_5_sd.append(spatial_error_set_5_sd)
+
 #
 #
 # Calculate slopes, error, Average Spatial error, and sd spatial error at 500 for everyone
-# dist = {'ID': list_ID,
-#         'Exact ID': list_exact_ID,
-#         'Simple Regression Slope': list_simple_slope,
-#         'Simple Regression Intercept': list_simple_intercept,
-#         'Simple Regression RMSE': list_simple_rmse,
-#         'Segmented Regression Slope before': list_segmented_slope_before,
-#         'Segmented Regression Intercept before': list_segmented_intercept_before,
-#         'Segmented Regression Slope after': list_segmented_slope_after,
-#         'Segmented Regression Intercept after': list_segmented_intercept_after,
-#         'Segmented Regression RMSE': list_segmented_rmse,
-#         'Average Spatial Error all sets': list_average_spatial_error,
-#         'Sd Spatial Error all sets': list_sd_spatial_error,
-#         'Average Spatial error set 1': list_spatial_error_set_1_average,
-#         'Average Spatial error set 2': list_spatial_error_set_2_average,
-#         'Average Spatial error set 3': list_spatial_error_set_3_average,
-#         'Average Spatial error set 4': list_spatial_error_set_4_average,
-#         'Average Spatial error set 5': list_spatial_error_set_5_average,
-#         'Sd Spatial error set 1': list_spatial_error_set_1_sd,
-#         'Sd Spatial error set 2': list_spatial_error_set_2_sd,
-#         'Sd Spatial error set 3': list_spatial_error_set_3_sd,
-#         'Sd Spatial error set 4': list_spatial_error_set_4_sd,
-#         'Sd Spatial error set 5': list_spatial_error_set_5_sd,
-#         }
+dist = {'ID': list_ID,
+        'Exact ID': list_exact_ID,
+        # 'Simple Regression Slope': list_simple_slope,
+        # 'Simple Regression Intercept': list_simple_intercept,
+        # 'Simple Regression RMSE': list_simple_rmse,
+        # 'Segmented Regression Slope before': list_segmented_slope_before,
+        # 'Segmented Regression Intercept before': list_segmented_intercept_before,
+        # 'Segmented Regression Slope after': list_segmented_slope_after,
+        # 'Segmented Regression Intercept after': list_segmented_intercept_after,
+        # 'Segmented Regression RMSE': list_segmented_rmse,
+        # 'Average Spatial Error all sets': list_average_spatial_error,
+        # 'Sd Spatial Error all sets': list_sd_spatial_error,
+        'Average Spatial error set 1': list_spatial_error_set_1_average,
+        'Average Spatial error set 2': list_spatial_error_set_2_average,
+        'Average Spatial error set 3': list_spatial_error_set_3_average,
+        'Average Spatial error set 4': list_spatial_error_set_4_average,
+        'Average Spatial error set 5': list_spatial_error_set_5_average,
+        'Sd Spatial error set 1': list_spatial_error_set_1_sd,
+        'Sd Spatial error set 2': list_spatial_error_set_2_sd,
+        'Sd Spatial error set 3': list_spatial_error_set_3_sd,
+        'Sd Spatial error set 4': list_spatial_error_set_4_sd,
+        'Sd Spatial error set 5': list_spatial_error_set_5_sd,
+        }
 
-dist_learning_analysis = {'ID': list_ID,
-                            'Exact ID': list_exact_ID,
-                            'SaEn_x_set_1': list_SaEn_x_set_1,
-                            'SaEn_x_set_2': list_SaEn_x_set_2,
-                            'SaEn_x_set_3': list_SaEn_x_set_3,
-                            'SaEn_x_set_4': list_SaEn_x_set_4,
-                            'SaEn_x_set_5': list_SaEn_x_set_5,
-                            'SaEn_y_set_1': list_SaEn_y_set_1,
-                            'SaEn_y_set_2': list_SaEn_y_set_2,
-                            'SaEn_y_set_3': list_SaEn_y_set_3,
-                            'SaEn_y_set_4': list_SaEn_y_set_4,
-                            'SaEn_y_set_5': list_SaEn_y_set_5,
-                            'SaEn_travel_distance_set_1': list_SaEn_travel_distance_set_1,
-                            'SaEn_travel_distance_set_2': list_SaEn_travel_distance_set_2,
-                            'SaEn_travel_distance_set_3': list_SaEn_travel_distance_set_3,
-                            'SaEn_travel_distance_set_4': list_SaEn_travel_distance_set_4,
-                            'SaEn_travel_distance_set_5': list_SaEn_travel_distance_set_5,
-                            'DFA_x_set_1': list_DFA_x_set_1,
-                            'DFA_x_set_2': list_DFA_x_set_2,
-                            'DFA_x_set_3': list_DFA_x_set_3,
-                            'DFA_x_set_4': list_DFA_x_set_4,
-                            'DFA_x_set_5': list_DFA_x_set_5,
-                            'DFA_y_set_1': list_DFA_y_set_1,
-                            'DFA_y_set_2': list_DFA_y_set_2,
-                            'DFA_y_set_3': list_DFA_y_set_3,
-                            'DFA_y_set_4': list_DFA_y_set_4,
-                            'DFA_y_set_5': list_DFA_y_set_5,
-                            'DFA_travel_distance_set_1': list_DFA_travel_distance_set_1,
-                            'DFA_travel_distance_set_2': list_DFA_travel_distance_set_2,
-                            'DFA_travel_distance_set_3': list_DFA_travel_distance_set_3,
-                            'DFA_travel_distance_set_4': list_DFA_travel_distance_set_4,
-                            'DFA_travel_distance_set_5': list_DFA_travel_distance_set_5,
-                          }
+# dist_learning_analysis = {'ID': list_ID,
+#                             'Exact ID': list_exact_ID,
+#                             'SaEn_x_set_1': list_SaEn_x_set_1,
+#                             'SaEn_x_set_2': list_SaEn_x_set_2,
+#                             'SaEn_x_set_3': list_SaEn_x_set_3,
+#                             'SaEn_x_set_4': list_SaEn_x_set_4,
+#                             'SaEn_x_set_5': list_SaEn_x_set_5,
+#                             'SaEn_y_set_1': list_SaEn_y_set_1,
+#                             'SaEn_y_set_2': list_SaEn_y_set_2,
+#                             'SaEn_y_set_3': list_SaEn_y_set_3,
+#                             'SaEn_y_set_4': list_SaEn_y_set_4,
+#                             'SaEn_y_set_5': list_SaEn_y_set_5,
+#                             'SaEn_travel_distance_set_1': list_SaEn_travel_distance_set_1,
+#                             'SaEn_travel_distance_set_2': list_SaEn_travel_distance_set_2,
+#                             'SaEn_travel_distance_set_3': list_SaEn_travel_distance_set_3,
+#                             'SaEn_travel_distance_set_4': list_SaEn_travel_distance_set_4,
+#                             'SaEn_travel_distance_set_5': list_SaEn_travel_distance_set_5,
+#                             'DFA_x_set_1': list_DFA_x_set_1,
+#                             'DFA_x_set_2': list_DFA_x_set_2,
+#                             'DFA_x_set_3': list_DFA_x_set_3,
+#                             'DFA_x_set_4': list_DFA_x_set_4,
+#                             'DFA_x_set_5': list_DFA_x_set_5,
+#                             'DFA_y_set_1': list_DFA_y_set_1,
+#                             'DFA_y_set_2': list_DFA_y_set_2,
+#                             'DFA_y_set_3': list_DFA_y_set_3,
+#                             'DFA_y_set_4': list_DFA_y_set_4,
+#                             'DFA_y_set_5': list_DFA_y_set_5,
+#                             'DFA_travel_distance_set_1': list_DFA_travel_distance_set_1,
+#                             'DFA_travel_distance_set_2': list_DFA_travel_distance_set_2,
+#                             'DFA_travel_distance_set_3': list_DFA_travel_distance_set_3,
+#                             'DFA_travel_distance_set_4': list_DFA_travel_distance_set_4,
+#                             'DFA_travel_distance_set_5': list_DFA_travel_distance_set_5,
+#                           }
 
 
 
-df_learning = pd.DataFrame(dist_learning_analysis)
-# directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Results'
-# os.chdir(directory)
-# df_learning.to_excel('Results of Non-linear analysis.xlsx')
+df_learning = pd.DataFrame(dist)
+
+
+directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Results'
+os.chdir(directory)
+df_learning.to_excel('Results spatial error.xlsx')
+for column in df_learning.columns:
+    print(df_learning[column])
 
 # df_long = df_learning.melt(id_vars=['ID'],
 #                   value_vars=['SaEn_x_set_1', 'SaEn_x_set_2',

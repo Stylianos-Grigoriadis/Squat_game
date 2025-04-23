@@ -14,7 +14,7 @@ from scipy.optimize import curve_fit
 plt.rcParams['font.family'] = 'serif'
 plt.rcParams['font.size'] = 16
 
-spatial_error = False
+spatial_error = True
 if spatial_error:
 
     directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Results'
