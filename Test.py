@@ -9,6 +9,9 @@ import pwlf
 from scipy.stats import pearsonr
 from scipy import stats
 from matplotlib.ticker import FormatStrFormatter
+from matplotlib import font_manager
+import matplotlib.image as mpimg
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 
 
 plt.rcParams['font.family'] = 'serif'
@@ -57,14 +60,17 @@ def create_white_noise(number_of_data_points):
         print(i)
         slope, positive_freqs_log, positive_magnitude_log, intercept, r, p = quality_assessment_of_temporal_structure_FFT_method(data)
         print(round(slope,1))
-        if round(np.abs(slope), 1) == 0:
+        if round(np.abs(slope), 2) == 0:
             white = True
             print('Hello')
 
     return data
 
 
-
+# This is if I want to spice things up
+os.chdir(r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Figures')
+img = mpimg.imread('target.png')
+imagebox = OffsetImage(img, zoom=0.04)
 
 
 number_of_data_points = 30
@@ -80,65 +86,90 @@ y_white_slope, y_white_positive_freqs_log, y_white_positive_magnitude_log, y_whi
 x_pink_slope, x_pink_positive_freqs_log, x_pink_positive_magnitude_log, x_pink_intercept, x_pink_r, x_pink_p = quality_assessment_of_temporal_structure_FFT_method(x_data_pink)
 y_pink_slope, y_pink_positive_freqs_log, y_pink_positive_magnitude_log, y_pink_intercept, y_pink_r, y_pink_p = quality_assessment_of_temporal_structure_FFT_method(y_data_pink)
 
+x_data_sine = lbs.Perc(x_data_sine, 1920, 0)
+y_data_sine = lbs.Perc(y_data_sine, 1080, 0)
+x_data_pink = lbs.Perc(x_data_pink, 1920, 0)
+y_data_pink = lbs.Perc(y_data_pink, 1080, 0)
+x_data_white = lbs.Perc(x_data_white, 1920, 0)
+y_data_white = lbs.Perc(y_data_white, 1080, 0)
+
 
 
 
 fig, axes = plt.subplots(2, 3, figsize=(15, 5))  # Adjust figsize as needed
 
+font = font_manager.FontProperties(family='serif', size=12, weight='bold')
 
 
-axes[0,0].scatter(x_sine_positive_freqs_log, x_sine_positive_magnitude_log, label='X axis', c='#2F2F2F', lw=3)
-axes[0,0].scatter(y_sine_positive_freqs_log, y_sine_positive_magnitude_log, label='Y axis', c='#6F6F6F')
+axes[0,0].scatter(x_sine_positive_freqs_log, x_sine_positive_magnitude_log, label='X axis', c='#2F2F2F')
+axes[0,0].scatter(y_sine_positive_freqs_log, y_sine_positive_magnitude_log, label='Y axis', edgecolors='#2F2F2F', facecolors='white', marker='o')
 axes[0,0].plot(x_sine_positive_freqs_log, x_sine_slope * x_sine_positive_freqs_log + x_sine_intercept, label=f'Slope = {x_sine_slope:.1f}', c='#2F2F2F', lw=3)
-axes[0,0].plot(y_sine_positive_freqs_log, y_sine_slope * y_sine_positive_freqs_log + y_sine_intercept, label=f'Slope = {y_sine_slope:.1f}', c='#6F6F6F')
+axes[0,0].plot(y_sine_positive_freqs_log, y_sine_slope * y_sine_positive_freqs_log + y_sine_intercept, label=f'Slope = {y_sine_slope:.1f}', c='#2F2F2F', linestyle='--')
 axes[0,0].set_title("Repeated Targets")
-axes[0,0].set_xlabel("Log(Frequency) (Hz)")
-axes[0,0].set_ylabel("Log(Magnitude)")
-axes[0,0].legend(frameon=False)
+axes[0,0].set_xlabel("Log(Frequency)")
+axes[0,0].set_ylabel("Log(Magnitude)\n")
+axes[0,0].legend(frameon=False, prop=font)
+axes[0,0].xaxis.set_major_formatter(FormatStrFormatter('%.1f'))
 axes[0,0].yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
 
 
-axes[0,1].scatter(x_pink_positive_freqs_log, x_pink_positive_magnitude_log, label='X axis', c='#FF8FA3', lw=3)
-axes[0,1].scatter(y_pink_positive_freqs_log, y_pink_positive_magnitude_log, label='Y axis', c='#FFE4EC')
+axes[0,1].scatter(x_pink_positive_freqs_log, x_pink_positive_magnitude_log, label='X axis', c='#FF8FA3')
+axes[0,1].scatter(y_pink_positive_freqs_log, y_pink_positive_magnitude_log, label='Y axis', edgecolors='#FF8FA3', facecolors='white', marker='o')
 axes[0,1].plot(x_pink_positive_freqs_log, x_pink_slope * x_pink_positive_freqs_log + x_pink_intercept, label=f'Slope = {x_pink_slope:.1f}', c='#FF8FA3', lw=3)
-axes[0,1].plot(y_pink_positive_freqs_log, y_pink_slope * y_pink_positive_freqs_log + y_pink_intercept, label=f'Slope = {y_pink_slope:.1f}', c='#FFE4EC')
-axes[0,1].set_title("Pink Noise Targetss")
-axes[0,1].set_xlabel("Log(Frequency) (Hz)")
-axes[0,1].legend(frameon=False)
+axes[0,1].plot(y_pink_positive_freqs_log, y_pink_slope * y_pink_positive_freqs_log + y_pink_intercept, label=f'Slope = {y_pink_slope:.1f}', c='#FF8FA3', linestyle='--')
+axes[0,1].set_title("Pink Noise Targets")
+axes[0,1].set_xlabel("Log(Frequency)")
+axes[0,1].legend(frameon=False, prop=font)
+axes[0,1].xaxis.set_major_formatter(FormatStrFormatter('%.1f'))
 axes[0,1].yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
 
 
-axes[0,2].scatter(x_white_positive_freqs_log, x_white_positive_magnitude_log, label='X axis', c='#B0B0B0', lw=3)
-axes[0,2].scatter(y_white_positive_freqs_log, y_white_positive_magnitude_log, label='Y axis', c='#E8E8E8')
+axes[0,2].scatter(x_white_positive_freqs_log, x_white_positive_magnitude_log, label='X axis', c='#B0B0B0')
+axes[0,2].scatter(y_white_positive_freqs_log, y_white_positive_magnitude_log, label='Y axis', edgecolors='#B0B0B0', facecolors='white', marker='o')
 axes[0,2].plot(x_white_positive_freqs_log, x_white_slope * x_white_positive_freqs_log + x_white_intercept, label=f'Slope = {np.abs(x_white_slope):.1f}', c='#B0B0B0', lw=3)
-axes[0,2].plot(y_white_positive_freqs_log, y_white_slope * y_white_positive_freqs_log + y_white_intercept, label=f'Slope = {np.abs(y_white_slope):.1f}', c='#E8E8E8')
-axes[0,2].set_title("White Noise Targetss")
-axes[0,2].set_xlabel("Log(Frequency) (Hz)")
-axes[0,2].legend(frameon=False)
-axes[0, 2].yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
+axes[0,2].plot(y_white_positive_freqs_log, y_white_slope * y_white_positive_freqs_log + y_white_intercept, label=f'Slope = {np.abs(y_white_slope):.1f}', c='#B0B0B0', linestyle='--')
+axes[0,2].set_title("White Noise Targets")
+axes[0,2].set_xlabel("Log(Frequency)")
+axes[0,2].legend(frameon=False, prop=font)
+axes[0,2].xaxis.set_major_formatter(FormatStrFormatter('%.1f'))
+axes[0,2].yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
 
 
 
-axes[1,0].scatter(x_data_sine, y_data_sine, c='#4F4F4F', s=100, marker='x')
+for (x, y) in zip(x_data_sine, y_data_sine):
+    ab = AnnotationBbox(imagebox, (x, y), frameon=False)
+    axes[1,0].add_artist(ab)
+# axes[1,0].scatter(x_data_sine, y_data_sine, c='#2F2F2F', s=100, marker='x')
 axes[1,0].set_xlabel("X coordinates")
 axes[1,0].set_ylabel("Y coordinates")
+axes[1,0].set_xlim(-80, 2000)
+axes[1,0].set_ylim(-80, 1160)
 
-axes[1,1].scatter(x_data_pink, y_data_pink, c='#FFC0CB', s=100, marker='x')
+for (x, y) in zip(x_data_pink, y_data_pink):
+    ab = AnnotationBbox(imagebox, (x, y), frameon=False)
+    axes[1,1].add_artist(ab)
+# axes[1,1].scatter(x_data_pink, y_data_pink, c='#FF8FA3', s=100, marker='x')
 axes[1,1].set_xlabel("X coordinates")
+axes[1,1].set_xlim(-80, 2000)
+axes[1,1].set_ylim(-80, 1160)
 
-axes[1,2].scatter(x_data_white, y_data_white, c='#D3D3D3', s=100, marker='x')
+for (x, y) in zip(x_data_white, y_data_white):
+    ab = AnnotationBbox(imagebox, (x, y), frameon=False)
+    axes[1,2].add_artist(ab)
+# axes[1,2].scatter(x_data_white, y_data_white, c='#D3D3D3', s=100, marker='x')
 axes[1,2].set_xlabel("X coordinates")
+axes[1,2].set_xlim(-80, 2000)
+axes[1,2].set_ylim(-80, 1160)
 
 # Optional: Adjust layout
 plt.subplots_adjust(
-    left=0.05,     # space from left edge of figure
-    bottom=0.07,    # space from bottom edge
-    right=0.99,    # space from right edge
+    left=0.08,     # space from left edge of figure
+    bottom=0.08,    # space from bottom edge
+    right=0.98,    # space from right edge
     top=0.95,       # space from top edge
-    wspace=0.15,    # width (horizontal) space between subplots
+    wspace=0.17,    # width (horizontal) space between subplots
     hspace=0.3     # height (vertical) space between subplots
 )
-plt.legend()
 plt.show()
 
 # Colors
