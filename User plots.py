@@ -14,7 +14,7 @@ from scipy.optimize import curve_fit
 plt.rcParams['font.family'] = 'serif'
 plt.rcParams['font.size'] = 16
 
-spatial_error = False
+spatial_error = True
 if spatial_error:
 
     directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Results'
@@ -54,94 +54,11 @@ if spatial_error:
     plt.ylabel('Average Spatial Error')
     plt.xlabel('')
     plt.legend()
-    plt.ylim(0,400)
+    plt.ylim(15,400)
 
     # Show plot
     plt.show()
 
-    # # Plot Slopes
-    # df_melted_Slope = df.melt(id_vars=['ID'], value_vars=[
-    #     'Simple Regression Slope',
-    #     'Segmented Regression Slope before',
-    #     'Segmented Regression Slope after'
-    # ], var_name='Regression Type', value_name='Value')
-    #
-    # # Set up the plotting style (optional)
-    # sns.set(style="whitegrid")
-    #
-    # # Create the boxplot with 3 major columns (regression types) and hues (ID)
-    # plt.figure(figsize=(14, 8))
-    # sns.boxplot(x='Regression Type', y='Value', hue='ID', data=df_melted_Slope, showfliers=False)
-    # plt.title('Slope by ID')
-    # plt.xticks(rotation=35, ha='right')  # Rotate the x-axis labels for better readability
-    # plt.legend(title='ID')
-    # plt.gca().set_xlabel('')  # Remove the "Regression Type" label without leaving space
-    # plt.tight_layout()
-    # plt.show()
-    #
-    #
-    #
-    # # Plot intercepts
-    # df_melted_intercept = df.melt(id_vars=['ID'], value_vars=[
-    #     'Simple Regression Intercept',
-    #     'Segmented Regression Intercept before',
-    #     'Segmented Regression Intercept after'
-    # ], var_name='Regression Type', value_name='Value')
-    #
-    # # Set up the plotting style (optional)
-    # sns.set(style="whitegrid")
-    #
-    # # Create the boxplot with 3 major columns (regression types) and hues (ID)
-    # plt.figure(figsize=(14, 8))
-    # sns.boxplot(x='Regression Type', y='Value', hue='ID', data=df_melted_intercept, showfliers=False)
-    # plt.title('Intercept by ID')
-    # plt.xticks(rotation=35, ha='right')  # Rotate the x-axis labels for better readability
-    # plt.legend(title='ID')
-    # plt.gca().set_xlabel('')  # Remove the "Regression Type" label without leaving space
-    # plt.tight_layout()
-    # plt.show()
-    #
-    #
-    #
-    # # Plot RMSE
-    # df_melted_rmse = df.melt(id_vars=['ID'], value_vars=[
-    #     'Simple Regression RMSE',
-    #     'Segmented Regression RMSE'
-    # ], var_name='Regression Type', value_name='Value')
-    #
-    # # Set up the plotting style (optional)
-    # sns.set(style="whitegrid")
-    #
-    # # Create the boxplot with 3 major columns (regression types) and hues (ID)
-    # plt.figure(figsize=(14, 8))
-    # sns.boxplot(x='Regression Type', y='Value', hue='ID', data=df_melted_rmse, showfliers=False)
-    # plt.title('RMSE by ID')
-    # plt.xticks(rotation=35, ha='right')  # Rotate the x-axis labels for better readability
-    # plt.legend(title='ID')
-    # plt.gca().set_xlabel('')  # Remove the "Regression Type" label without leaving space
-    # plt.tight_layout()
-    # plt.show()
-    #
-    #
-    # # Plot Average Spatial Error
-    # plt.figure(figsize=(10, 6))
-    # colors = ['lightblue', 'lightgreen', 'lightcoral']  # Adjust colors as needed
-    # sns.boxplot(data=df, x='ID', y='Average Spatial Error all sets', hue='ID', palette=colors, legend=False)
-    # plt.title('Average Spatial Error by ID')
-    # plt.xlabel('ID')
-    # plt.ylabel('Average Spatial Error')
-    # plt.show()
-    #
-    #
-    #
-    # # Plot Sd Spatial Error
-    # plt.figure(figsize=(10, 6))
-    # colors = ['lightblue', 'lightgreen', 'lightcoral']  # Adjust colors as needed
-    # sns.boxplot(data=df, x='ID', y='Sd Spatial Error all sets', palette=colors)
-    # plt.title('Sd Spatial Error by ID')
-    # plt.xlabel('ID')
-    # plt.ylabel('Sd Spatial Error')
-    # plt.show()
 
 else:
     directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Results'
