@@ -14,7 +14,7 @@ from scipy.optimize import curve_fit
 plt.rcParams['font.family'] = 'serif'
 plt.rcParams['font.size'] = 16
 
-spatial_error = True
+spatial_error = False
 if spatial_error:
 
     directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Results'
@@ -36,13 +36,13 @@ if spatial_error:
     # Rename set names for readability
     df_long['Set'] = df_long['Set'].str.replace('Average Spatial error set ', 'Set ')
 
-    df_long['ID'] = pd.Categorical(df_long['ID'], categories=["static", "pink", "white"], ordered=True)
+    df_long['ID'] = pd.Categorical(df_long['ID'], categories=["Repeated", "Pink Noise", "White Noise"], ordered=True)
 
     # Custom color palette
     custom_palette = {
-        "static": "#4F4F4F",    # Dark gray (first)
-        "pink": "#FFC0CB",      # Soft pink (second)
-        "white": "#D3D3D3"      # Light gray (third)
+        "Repeated": "#4F4F4F",    # Dark gray (first)
+        "Pink Noise": "#FFC0CB",      # Soft pink (second)
+        "White Noise": "#D3D3D3"      # Light gray (third)
     }
 
     # Create the boxplot with the correct order
@@ -149,117 +149,7 @@ else:
     df_learning = pd.read_excel(r'Results of Non-linear analysis.xlsx')
 
     print(df_learning.columns)
-    # df_long = df_learning.melt(id_vars=['ID'],
-    #                            value_vars=['SaEn_x_set_1', 'SaEn_x_set_2',
-    #                                        'SaEn_x_set_3', 'SaEn_x_set_4',
-    #                                        'SaEn_x_set_5'],
-    #                            var_name='Set', value_name='SaEn')  # Ensure correct name
-    #
-    # # Rename set names for readability
-    # df_long['Set'] = df_long['Set'].str.replace('SaEn ', 'Set ')
-    # df_long['ID'] = pd.Categorical(df_long['ID'], categories=["static", "pink", "white"], ordered=True)
-    #
-    # # Create boxplot
-    # custom_palette = {
-    #     "static": "#4F4F4F",  # Dark gray (first)
-    #     "pink": "#FFC0CB",  # Soft pink (second)
-    #     "white": "#D3D3D3"  # Light gray (third)
-    # }
-    # plt.figure(figsize=(12, 6))
-    # sns.boxplot(x='Set', y='SaEn', hue='ID', data=df_long, palette=custom_palette, showfliers=False)  # Use correct column name
-    #
-    # # Customize plot
-    # plt.title('Comparison of SaEn_X Across Sets and ID Groups')
-    # plt.xlabel('Set')
-    # plt.ylabel('Sample Entropy')
-    # plt.legend()
-    #
-    # # Show plot
-    # plt.show()
-    #
-    # df_long = df_learning.melt(id_vars=['ID'],
-    #                            value_vars=['SaEn_y_set_1', 'SaEn_y_set_2',
-    #                                        'SaEn_y_set_3', 'SaEn_y_set_4',
-    #                                        'SaEn_y_set_5'],
-    #                            var_name='Set', value_name='SaEn')  # Ensure correct name
-    #
-    # # Rename set names for readability
-    # df_long['Set'] = df_long['Set'].str.replace('SaEn ', 'Set ')
-    #
-    # # Create boxplot
-    # custom_palette = {
-    #     "pink": "#FFC0CB",  # Soft pink
-    #     "static": "#4F4F4F",  # Dark gray
-    #     "white": "#D3D3D3"  # Light gray
-    # }
-    # plt.figure(figsize=(12, 6))
-    # sns.boxplot(x='Set', y='SaEn', hue='ID', data=df_long, palette=custom_palette,
-    #             showfliers=False)  # Use correct column name
-    #
-    # # Customize plot
-    # plt.title('Comparison of SaEn_Y Across Sets and ID Groups')
-    # plt.xlabel('Set')
-    # plt.ylabel('SaEn')
-    # plt.legend(title='ID')
-    #
-    # # Show plot
-    # plt.show()
-    #
-    # df_long = df_learning.melt(id_vars=['ID'],
-    #                            value_vars=['DFA_x_set_1', 'DFA_x_set_2',
-    #                                        'DFA_x_set_3', 'DFA_x_set_4',
-    #                                        'DFA_x_set_5'],
-    #                            var_name='Set', value_name='DFA')  # Ensure correct name
-    #
-    # # Rename set names for readability
-    # df_long['Set'] = df_long['Set'].str.replace('DFA ', 'Set ')
-    #
-    # # Create boxplot
-    # custom_palette = {
-    #     "pink": "#FFC0CB",  # Soft pink
-    #     "static": "#4F4F4F",  # Dark gray
-    #     "white": "#D3D3D3"  # Light gray
-    # }
-    # plt.figure(figsize=(12, 6))
-    # sns.boxplot(x='Set', y='DFA', hue='ID', data=df_long, palette=custom_palette,
-    #             showfliers=False)  # Use correct column name
-    #
-    # # Customize plot
-    # plt.title('Comparison of DFA_X Across Sets and ID Groups')
-    # plt.xlabel('Set')
-    # plt.ylabel('DFA')
-    # plt.legend(title='ID')
-    #
-    # # Show plot
-    # plt.show()
-    #
-    # df_long = df_learning.melt(id_vars=['ID'],
-    #                            value_vars=['DFA_y_set_1', 'DFA_y_set_2',
-    #                                        'DFA_y_set_3', 'DFA_y_set_4',
-    #                                        'DFA_y_set_5'],
-    #                            var_name='Set', value_name='DFA')  # Ensure correct name
-    #
-    # # Rename set names for readability
-    # df_long['Set'] = df_long['Set'].str.replace('DFA ', 'Set ')
-    #
-    # # Create boxplot
-    # custom_palette = {
-    #     "pink": "#FFC0CB",  # Soft pink
-    #     "static": "#4F4F4F",  # Dark gray
-    #     "white": "#D3D3D3"  # Light gray
-    # }
-    # plt.figure(figsize=(12, 6))
-    # sns.boxplot(x='Set', y='DFA', hue='ID', data=df_long, palette=custom_palette,
-    #             showfliers=False)  # Use correct column name
-    #
-    # # Customize plot
-    # plt.title('Comparison of DFA_Y Across Sets and ID Groups')
-    # plt.xlabel('Set')
-    # plt.ylabel('DFA')
-    # plt.legend(title='ID')
-    #
-    # # Show plot
-    # plt.show()
+
 
     df_long = df_learning.melt(id_vars=['ID'],
                                value_vars=['SaEn_travel_distance_set_1', 'SaEn_travel_distance_set_2',
@@ -269,13 +159,13 @@ else:
 
     # Rename set names for readability
     df_long['Set'] = df_long['Set'].str.replace('Sample Entropy ', 'Set ')
-    df_long['ID'] = pd.Categorical(df_long['ID'], categories=["static", "pink", "white"], ordered=True)
+    df_long['ID'] = pd.Categorical(df_long['ID'], categories=["Repeated", "Pink Noise", "White Noise"], ordered=True)
 
     # Create boxplot
     custom_palette = {
-        "static": "#4F4F4F",  # Dark gray (first)
-        "pink": "#FFC0CB",  # Soft pink (second)
-        "white": "#D3D3D3"  # Light gray (third)
+        "Repeated": "#4F4F4F",  # Dark gray (first)
+        "Pink Noise": "#FFC0CB",  # Soft pink (second)
+        "White Noise": "#D3D3D3"  # Light gray (third)
     }
     plt.figure(figsize=(12, 6))
     sns.boxplot(x='Set', y='Sample Entropy', hue='ID', data=df_long, palette=custom_palette, showfliers=False)
@@ -302,13 +192,13 @@ else:
 
     # Rename set names for readability
     df_long['Set'] = df_long['Set'].str.replace('DFA ', 'Set ')
-    df_long['ID'] = pd.Categorical(df_long['ID'], categories=["static", "pink", "white"], ordered=True)
+    df_long['ID'] = pd.Categorical(df_long['ID'], categories=["Repeated", "Pink Noise", "White Noise"], ordered=True)
 
     # Create boxplot
     custom_palette = {
-        "static": "#4F4F4F",  # Dark gray (first)
-        "pink": "#FFC0CB",  # Soft pink (second)
-        "white": "#D3D3D3"  # Light gray (third)
+        "Repeated": "#4F4F4F",  # Dark gray (first)
+        "Pink Noise": "#FFC0CB",  # Soft pink (second)
+        "White Noise": "#D3D3D3"  # Light gray (third)
     }
     plt.figure(figsize=(12, 6))
     sns.boxplot(x='Set', y='DFA', hue='ID', data=df_long, palette=custom_palette,
