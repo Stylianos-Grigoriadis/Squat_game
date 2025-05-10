@@ -170,6 +170,18 @@ def Ent_Samp(data, m, r):
 
     return -np.log(Amr / Bmr)
 
+def Perc(signal , upper_lim, lower_lim):
+    """This function takes a signal as a np.array and turns it as values from upper_lim to lower_lim"""
+    if np.min(signal) < 0:
+        signal = signal - np.min(signal)
+    signal = 100 * signal / np.max(signal)
+    min_val = signal.min()
+    max_val = signal.max()
+    signal = (signal - min_val) / (max_val - min_val)
+    new_range = upper_lim - lower_lim
+    signal = signal * new_range + lower_lim
+    return signal
+
 
 def ratio_0_to_100(data_series):
     """ Takes a data series and converts it into values from 0 to 100"""
