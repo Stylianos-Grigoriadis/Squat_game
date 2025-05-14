@@ -119,6 +119,9 @@ list_DFA_travel_distance_set_3 = []
 list_DFA_travel_distance_set_4 = []
 list_DFA_travel_distance_set_5 = []
 
+list_average_time_of_target_appearance = []
+list_sd_time_of_target_appearance = []
+
 
 
 
@@ -161,6 +164,25 @@ for file in files:
     # Create a list with 5 sublists which contain 30 dataframes, each dataframe contains all data of each target
     list_with_all_df_separated_by_set = lbs.return_the_df_of_each_target_separated_by_set(data, old_data)
 
+    # Calculation of the time of target appearance
+
+    time_of_target_appearance = []
+    for i in range(len(list_with_all_df_separated_by_set)):
+        for j in range(len(list_with_all_df_separated_by_set[0])):
+            first_appearance = list_with_all_df_separated_by_set[0][0]['timestamp'].iloc[0]
+            last_appearance = list_with_all_df_separated_by_set[0][0]['timestamp'].iloc[-1]
+            difference = last_appearance - first_appearance
+            # make it seconds
+            difference = difference / 1000
+            time_of_target_appearance.append(difference)
+
+    list_average_time_of_target_appearance.append(np.mean(time_of_target_appearance))
+    list_sd_time_of_target_appearance.append(np.std(time_of_target_appearance))
+    # print(list_with_all_df_separated_by_set[0][0]['timestamp'].iloc[-1])
+    # print(list_with_all_df_separated_by_set[0][0]['timestamp'].iloc[0])
+    #
+    # print(list_with_all_df_separated_by_set[0][0][['timestamp', 'target_pos_x', 'target_pos_y']])
+    # print(list_with_all_df_separated_by_set[0][1][['timestamp', 'target_pos_x', 'target_pos_y']])
 
     # Create a simple graph with all the columns you need to plot
     # lbs.simple_graph(list_with_all_df_separated_by_set, 'pitch', 'yaw', 'roll')
@@ -171,17 +193,17 @@ for file in files:
 
 
     # Seperation of the x and y position of the player for each set
-    df_5_list = lbs.big_list_to_5df_list(list_with_all_df_separated_by_set)
-    position_player_x_set_1 = df_5_list[0]['player_pos_x'].to_numpy()
-    position_player_x_set_2 = df_5_list[1]['player_pos_x'].to_numpy()
-    position_player_x_set_3 = df_5_list[2]['player_pos_x'].to_numpy()
-    position_player_x_set_4 = df_5_list[3]['player_pos_x'].to_numpy()
-    position_player_x_set_5 = df_5_list[4]['player_pos_x'].to_numpy()
-    position_player_y_set_1 = df_5_list[0]['player_pos_y'].to_numpy()
-    position_player_y_set_2 = df_5_list[1]['player_pos_y'].to_numpy()
-    position_player_y_set_3 = df_5_list[2]['player_pos_y'].to_numpy()
-    position_player_y_set_4 = df_5_list[3]['player_pos_y'].to_numpy()
-    position_player_y_set_5 = df_5_list[4]['player_pos_y'].to_numpy()
+    # df_5_list = lbs.big_list_to_5df_list(list_with_all_df_separated_by_set)
+    # position_player_x_set_1 = df_5_list[0]['player_pos_x'].to_numpy()
+    # position_player_x_set_2 = df_5_list[1]['player_pos_x'].to_numpy()
+    # position_player_x_set_3 = df_5_list[2]['player_pos_x'].to_numpy()
+    # position_player_x_set_4 = df_5_list[3]['player_pos_x'].to_numpy()
+    # position_player_x_set_5 = df_5_list[4]['player_pos_x'].to_numpy()
+    # position_player_y_set_1 = df_5_list[0]['player_pos_y'].to_numpy()
+    # position_player_y_set_2 = df_5_list[1]['player_pos_y'].to_numpy()
+    # position_player_y_set_3 = df_5_list[2]['player_pos_y'].to_numpy()
+    # position_player_y_set_4 = df_5_list[3]['player_pos_y'].to_numpy()
+    # position_player_y_set_5 = df_5_list[4]['player_pos_y'].to_numpy()
 
 
 
@@ -241,11 +263,11 @@ for file in files:
     # position_player_y_set_5 = lib.Butterworth(40, 5, position_player_y_set_5)
 
     # Calculate the travel distance for each set
-    travel_distance_set_1 = lbs.travel_distance(position_player_x_set_1, position_player_y_set_1)
-    travel_distance_set_2 = lbs.travel_distance(position_player_x_set_2, position_player_y_set_2)
-    travel_distance_set_3 = lbs.travel_distance(position_player_x_set_3, position_player_y_set_3)
-    travel_distance_set_4 = lbs.travel_distance(position_player_x_set_4, position_player_y_set_4)
-    travel_distance_set_5 = lbs.travel_distance(position_player_x_set_5, position_player_y_set_5)
+    # travel_distance_set_1 = lbs.travel_distance(position_player_x_set_1, position_player_y_set_1)
+    # travel_distance_set_2 = lbs.travel_distance(position_player_x_set_2, position_player_y_set_2)
+    # travel_distance_set_3 = lbs.travel_distance(position_player_x_set_3, position_player_y_set_3)
+    # travel_distance_set_4 = lbs.travel_distance(position_player_x_set_4, position_player_y_set_4)
+    # travel_distance_set_5 = lbs.travel_distance(position_player_x_set_5, position_player_y_set_5)
 
 
     # Calculation of SaEn per set per axis
@@ -339,47 +361,47 @@ for file in files:
 
 
     # Calculate and show the spatial error for each target
-    spatial_error, list_time_stamp_of_min_spatial_error_separated_by_set = lbs.spatial_error_best_window(list_with_all_df_separated_by_set, plot=False, time_window=500)
-
-    spatial_error_set_1_average = np.mean(spatial_error[0])
-    spatial_error_set_2_average = np.mean(spatial_error[1])
-    spatial_error_set_3_average = np.mean(spatial_error[2])
-    spatial_error_set_4_average = np.mean(spatial_error[3])
-    spatial_error_set_5_average = np.mean(spatial_error[4])
-    spatial_error_set_1_sd = np.std(spatial_error[0])
-    spatial_error_set_2_sd = np.std(spatial_error[1])
-    spatial_error_set_3_sd = np.std(spatial_error[2])
-    spatial_error_set_4_sd = np.std(spatial_error[3])
-    spatial_error_set_5_sd = np.std(spatial_error[4])
-
-
-    list_spatial_error_set_1_average.append(spatial_error_set_1_average)
-    list_spatial_error_set_2_average.append(spatial_error_set_2_average)
-    list_spatial_error_set_3_average.append(spatial_error_set_3_average)
-    list_spatial_error_set_4_average.append(spatial_error_set_4_average)
-    list_spatial_error_set_5_average.append(spatial_error_set_5_average)
-    list_spatial_error_set_1_sd.append(spatial_error_set_1_sd)
-    list_spatial_error_set_2_sd.append(spatial_error_set_2_sd)
-    list_spatial_error_set_3_sd.append(spatial_error_set_3_sd)
-    list_spatial_error_set_4_sd.append(spatial_error_set_4_sd)
-    list_spatial_error_set_5_sd.append(spatial_error_set_5_sd)
+    # spatial_error, list_time_stamp_of_min_spatial_error_separated_by_set = lbs.spatial_error_best_window(list_with_all_df_separated_by_set, plot=False, time_window=500)
+    #
+    # spatial_error_set_1_average = np.mean(spatial_error[0])
+    # spatial_error_set_2_average = np.mean(spatial_error[1])
+    # spatial_error_set_3_average = np.mean(spatial_error[2])
+    # spatial_error_set_4_average = np.mean(spatial_error[3])
+    # spatial_error_set_5_average = np.mean(spatial_error[4])
+    # spatial_error_set_1_sd = np.std(spatial_error[0])
+    # spatial_error_set_2_sd = np.std(spatial_error[1])
+    # spatial_error_set_3_sd = np.std(spatial_error[2])
+    # spatial_error_set_4_sd = np.std(spatial_error[3])
+    # spatial_error_set_5_sd = np.std(spatial_error[4])
+    #
+    #
+    # list_spatial_error_set_1_average.append(spatial_error_set_1_average)
+    # list_spatial_error_set_2_average.append(spatial_error_set_2_average)
+    # list_spatial_error_set_3_average.append(spatial_error_set_3_average)
+    # list_spatial_error_set_4_average.append(spatial_error_set_4_average)
+    # list_spatial_error_set_5_average.append(spatial_error_set_5_average)
+    # list_spatial_error_set_1_sd.append(spatial_error_set_1_sd)
+    # list_spatial_error_set_2_sd.append(spatial_error_set_2_sd)
+    # list_spatial_error_set_3_sd.append(spatial_error_set_3_sd)
+    # list_spatial_error_set_4_sd.append(spatial_error_set_4_sd)
+    # list_spatial_error_set_5_sd.append(spatial_error_set_5_sd)
 
 #
 #
 # Calculate slopes, error, Average Spatial error, and sd spatial error at 500 for everyone
-dist = {'ID': list_ID,
-        'Exact ID': list_exact_ID,
-        'Average Spatial error set 1': list_spatial_error_set_1_average,
-        'Average Spatial error set 2': list_spatial_error_set_2_average,
-        'Average Spatial error set 3': list_spatial_error_set_3_average,
-        'Average Spatial error set 4': list_spatial_error_set_4_average,
-        'Average Spatial error set 5': list_spatial_error_set_5_average,
-        'Sd Spatial error set 1': list_spatial_error_set_1_sd,
-        'Sd Spatial error set 2': list_spatial_error_set_2_sd,
-        'Sd Spatial error set 3': list_spatial_error_set_3_sd,
-        'Sd Spatial error set 4': list_spatial_error_set_4_sd,
-        'Sd Spatial error set 5': list_spatial_error_set_5_sd,
-        }
+# dist = {'ID': list_ID,
+#         'Exact ID': list_exact_ID,
+#         'Average Spatial error set 1': list_spatial_error_set_1_average,
+#         'Average Spatial error set 2': list_spatial_error_set_2_average,
+#         'Average Spatial error set 3': list_spatial_error_set_3_average,
+#         'Average Spatial error set 4': list_spatial_error_set_4_average,
+#         'Average Spatial error set 5': list_spatial_error_set_5_average,
+#         'Sd Spatial error set 1': list_spatial_error_set_1_sd,
+#         'Sd Spatial error set 2': list_spatial_error_set_2_sd,
+#         'Sd Spatial error set 3': list_spatial_error_set_3_sd,
+#         'Sd Spatial error set 4': list_spatial_error_set_4_sd,
+#         'Sd Spatial error set 5': list_spatial_error_set_5_sd,
+#         }
 
 # dist_learning_analysis = {'ID': list_ID,
 #                             'Exact ID': list_exact_ID,
@@ -414,14 +436,18 @@ dist = {'ID': list_ID,
 #                             'DFA_travel_distance_set_4': list_DFA_travel_distance_set_4,
 #                             'DFA_travel_distance_set_5': list_DFA_travel_distance_set_5,
 #                           }
+dist_time = {'ID': list_ID,
+             'Exact ID': list_exact_ID,
+             'Average Time Target': list_average_time_of_target_appearance,
+             'Sd Time Target': list_sd_time_of_target_appearance
+             }
 
 
-
-df_learning = pd.DataFrame(dist)
-
+# df_learning = pd.DataFrame(dist)
+df_time_of_appearance = pd.DataFrame(dist_time)
 
 directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Results'
 os.chdir(directory)
-df_learning.to_excel('Results spatial error.xlsx')
-for column in df_learning.columns:
-    print(df_learning[column])
+df_time_of_appearance.to_excel('Results time of target appearance.xlsx')
+# for column in df_learning.columns:
+#     print(df_learning[column])
