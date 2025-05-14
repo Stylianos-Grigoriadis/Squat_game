@@ -1524,6 +1524,7 @@ def big_list_to_5df_list(big_list):
         df_5_list.append(combined_df)
     return df_5_list
 
+
 def temporal_structure_assessment_of_targets(list_with_all_df_separated_by_set):
     df_5_list = big_list_to_5df_list(list_with_all_df_separated_by_set)
     for df in df_5_list:
