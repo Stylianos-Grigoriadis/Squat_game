@@ -16,16 +16,16 @@ from matplotlib.lines import Line2D
 plt.rcParams['font.family'] = 'serif'
 plt.rcParams['font.size'] = 16
 
-spatial_error = True
+spatial_error = False
 if spatial_error:
 
     directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Results'
     os.chdir(directory)
     df = pd.read_excel(r'Results after exclusion of outliers.xlsx')
     # First, filter the DataFrame for each group
-    df_pink = df[df['ID'] == 'Pink Noise']
-    df_repeated = df[df['ID'] == 'Repeated']
-    df_white = df[df['ID'] == 'White Noise']
+    df_pink = df[df['ID'] == 'Structured']
+    df_repeated = df[df['ID'] == 'Non-variable']
+    df_white = df[df['ID'] == 'Non-structured']
 
     # Then, calculate means for each set and assign to variables
 
@@ -93,30 +93,30 @@ if spatial_error:
     # Rename set names for readability
     df_long['Set'] = df_long['Set'].str.replace('Average Spatial error set ', 'Set ')
 
-    df_long['ID'] = pd.Categorical(df_long['ID'], categories=["Repeated", "Pink Noise", "White Noise"], ordered=True)
+    df_long['ID'] = pd.Categorical(df_long['ID'], categories=["Non-variable", "Structured", "Non-structured"], ordered=True)
 
     # Custom color palette
     custom_palette = {
-        "Repeated": "#4F4F4F",    # Dark gray (first)
-        "Pink Noise": "#FFC0CB",      # Soft pink (second)
-        "White Noise": "#D3D3D3"      # Light gray (third)
+        "Non-variable": "#4F4F4F",    # Dark gray (first)
+        "Structured": "#FFC0CB",      # Soft pink (second)
+        "Non-structured": "#D3D3D3"      # Light gray (third)
     }
 
-    offsets = {"Repeated": -0.266, "Pink Noise": 0, "White Noise": 0.266}
+    offsets = {"Non-variable": -0.266, "Structured": 0, "Non-structured": 0.266}
 
     # Create the boxplot with the correct order
     plt.figure(figsize=(12, 6))
     sns.boxplot(x='Set', y='Average Spatial Error', hue='ID', data=df_long, palette=custom_palette, showfliers=False)
 
     # Overlay regression lines
-    plt.plot(time - 1 + offsets['Pink Noise'], fit_pink, color="#FFC0CB", label='Pink Noise Trend', linewidth=3, zorder=10)
-    plt.plot(time - 1 + offsets['Pink Noise'], fit_pink, color="k", linewidth=5, zorder=9)
+    plt.plot(time - 1 + offsets['Structured'], fit_pink, color="#FFC0CB", label='Structured Trend', linewidth=3, zorder=10)
+    plt.plot(time - 1 + offsets['Structured'], fit_pink, color="k", linewidth=5, zorder=9)
 
-    plt.plot(time - 1 + offsets['Repeated'], fit_repeated, color="#4F4F4F", label='Repeated Trend', linewidth=3, zorder=10)
-    plt.plot(time - 1 + offsets['Repeated'], fit_repeated, color="k", linewidth=5, zorder=9)
+    plt.plot(time - 1 + offsets['Non-variable'], fit_repeated, color="#4F4F4F", label='Non-variable Trend', linewidth=3, zorder=10)
+    plt.plot(time - 1 + offsets['Non-variable'], fit_repeated, color="k", linewidth=5, zorder=9)
 
-    plt.plot(time - 1 + offsets['White Noise'], fit_white, color="#D3D3D3", label='White Noise Trend', linewidth=3, zorder=10)
-    plt.plot(time - 1 + offsets['White Noise'], fit_white, color="k", linewidth=5, zorder=9)
+    plt.plot(time - 1 + offsets['Non-structured'], fit_white, color="#D3D3D3", label='Non-structured Trend', linewidth=3, zorder=10)
+    plt.plot(time - 1 + offsets['Non-structured'], fit_white, color="k", linewidth=5, zorder=9)
 
 
 
@@ -130,7 +130,7 @@ if spatial_error:
     handles, labels = plt.gca().get_legend_handles_labels()
 
     # Create custom order
-    custom_labels = ["Pink Noise", "Pink Noise Trend", "Repeated", "Repeated Trend", "White Noise", "White Noise Trend"]
+    custom_labels = ["Non-variable", "Non-variable Trend", "Structured", "Structured Trend",  "Non-structured", "Non-structured Trend"]
 
     # Reorder handles based on your custom label order
     ordered_handles = [handles[labels.index(label)] for label in custom_labels]
@@ -162,13 +162,13 @@ else:
 
     # Rename set names for readability
     df_long['Set'] = df_long['Set'].str.replace('Sample Entropy ', 'Set ')
-    df_long['ID'] = pd.Categorical(df_long['ID'], categories=["Repeated", "Pink Noise", "White Noise"], ordered=True)
+    df_long['ID'] = pd.Categorical(df_long['ID'], categories=["Non-variable", "Structured", "Non-structured"], ordered=True)
 
     # Create boxplot
     custom_palette = {
-        "Repeated": "#4F4F4F",  # Dark gray (first)
-        "Pink Noise": "#FFC0CB",  # Soft pink (second)
-        "White Noise": "#D3D3D3"  # Light gray (third)
+        "Non-variable": "#4F4F4F",  # Dark gray (first)
+        "Structured": "#FFC0CB",  # Soft pink (second)
+        "Non-structured": "#D3D3D3"  # Light gray (third)
     }
     plt.figure(figsize=(12, 6))
     sns.boxplot(x='Set', y='Sample Entropy', hue='ID', data=df_long, palette=custom_palette, showfliers=False)
@@ -195,13 +195,13 @@ else:
 
     # Rename set names for readability
     df_long['Set'] = df_long['Set'].str.replace('DFA ', 'Set ')
-    df_long['ID'] = pd.Categorical(df_long['ID'], categories=["Repeated", "Pink Noise", "White Noise"], ordered=True)
+    df_long['ID'] = pd.Categorical(df_long['ID'], categories=["Non-variable", "Structured", "Non-structured"], ordered=True)
 
     # Create boxplot
     custom_palette = {
-        "Repeated": "#4F4F4F",  # Dark gray (first)
-        "Pink Noise": "#FFC0CB",  # Soft pink (second)
-        "White Noise": "#D3D3D3"  # Light gray (third)
+        "Non-variable": "#4F4F4F",  # Dark gray (first)
+        "Structured": "#FFC0CB",  # Soft pink (second)
+        "Non-structured": "#D3D3D3"  # Light gray (third)
     }
     plt.figure(figsize=(12, 6))
     sns.boxplot(x='Set', y='DFA', hue='ID', data=df_long, palette=custom_palette,
