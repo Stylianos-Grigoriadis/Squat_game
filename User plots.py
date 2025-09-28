@@ -16,7 +16,7 @@ from matplotlib.lines import Line2D
 plt.rcParams['font.family'] = 'serif'
 plt.rcParams['font.size'] = 16
 
-spatial_error = False
+spatial_error = True
 if spatial_error:
 
     directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Results'
@@ -145,6 +145,21 @@ if spatial_error:
     plt.tight_layout()
     plt.show()
 
+    Sets = range(1, 6)
+    plt.plot(Sets, list_Repeated_average_Spatial_error, label='Repeated', c='#4F4F4F', lw=3)
+    plt.plot(Sets, list_Pink_Noise_average_Spatial_error, label='Pink', c='#FFC0CB', lw=3)
+    plt.plot(Sets, list_White_Noise_average_Spatial_error, label='White', c='#D3D3D3', lw=3)
+    plt.legend()
+    plt.xticks(Sets)
+    plt.xlabel('Set')
+    plt.ylabel('Average Spatial Error')
+
+    plt.show()
+
+
+
+
+
 
 else:
     directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Results'
@@ -218,6 +233,13 @@ else:
 
     # Show plot
     plt.show()
+
+
+
+
+
+
+
 
 
 
