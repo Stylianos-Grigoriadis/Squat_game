@@ -15,8 +15,53 @@ from matplotlib.lines import Line2D
 
 plt.rcParams['font.family'] = 'serif'
 plt.rcParams['font.size'] = 16
+N = 100
+time = np.linspace(0, 60, N)
+pink = lbs.pink_noise_signal_creation_using_cn(N)
+pink = lbs.ratio_0_to_100(pink)
 
-spatial_error = True
+white = lbs.white_noise_signal_creation_using_FFT_method(N)
+# white = lbs.ratio_0_to_100(white)
+
+sine = lbs.sine_wave_signal_creation(N, 5)
+color_list = ["#FFC0CB", "#D3D3D3", "#4F4F4F"]
+name_list = ["Pink Noise", "White Noise", "Sine Wave"]
+signal_list = [pink, white, sine]
+
+for i in range(3):
+    print(i)
+    fig, ax = plt.subplots(figsize=(8, 4), facecolor='lavenderblush')
+    ax.set_facecolor('lavenderblush')
+    ax.plot(time, signal_list[i], color='k', lw=7)
+    ax.plot(time, signal_list[i], color=color_list[i], lw=4)
+    # ax.set_title(name_list[i])
+    # ax.set_xlabel("Time [s]")
+    # ax.set_ylabel("Amplitude")
+    ax.set_xticklabels([])
+    ax.set_yticklabels([])
+    ax.grid(True)
+    plt.show()
+
+# plt.figure(figsize=(8, 4))
+# plt.plot(time, white, color='k', lw=7)
+# plt.plot(time, white, color='white', lw=4)
+# plt.title("White Noise (1/f)")
+# plt.xlabel("Time [s]")
+# plt.ylabel("Amplitude")
+# plt.grid(True)
+# plt.show()
+#
+# plt.figure(figsize=(8, 4))
+# plt.plot(time, pink, color='k', lw=7)
+# plt.plot(time, pink, color='#FFC0CB', lw=4)
+# plt.title("Pink Noise (1/f)")
+# plt.xlabel("Time [s]")
+# plt.ylabel("Amplitude")
+# plt.grid(True)
+# plt.show()
+
+
+spatial_error = None
 if spatial_error:
 
     directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Results'

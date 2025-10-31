@@ -1555,3 +1555,94 @@ def travel_distance(position_x, position_y):
         travel_distance.append(step_distance)
     travel_distance = np.array(travel_distance)
     return travel_distance
+
+def quality_assessment_of_temporal_structure_FFT_method_2(signal):
+    # Apply FFT
+    fft_output = np.fft.fft(signal)  # FFT of the signal
+    fft_magnitude = np.abs(fft_output)  # Magnitude of the FFT
+
+    # Calculate frequency bins
+    frequencies = np.fft.fftfreq(len(signal), d=1/0.01)  # Frequency bins
+
+    # Keep only the positive frequencies
+    positive_freqs = frequencies[1:len(frequencies) // 2]  # Skip the zero frequency
+    positive_magnitude = fft_magnitude[1:len(frequencies) // 2]  # Skip the zero frequency
+
+    #  Figure of Frequincies vs Magnitude
+    # plt.figure(figsize=(10,6))
+    # plt.plot(positive_freqs, positive_magnitude)
+    # plt.title(f'{name}\nFFT of Sine Wave')
+    # plt.xlabel('Frequency (Hz)')
+    # plt.ylabel('Magnitude')
+    # plt.grid()
+    # plt.show()
+
+    positive_freqs_log = np.log10(positive_freqs[positive_freqs > 0])
+    positive_magnitude_log = np.log10(positive_magnitude[positive_freqs > 0])
+
+    r, p = pearsonr(positive_freqs_log, positive_magnitude_log)
+
+    # Perform linear regression (best fit) to assess the slope
+    slope, intercept, r_value, p_value, std_err = stats.linregress(positive_freqs_log, positive_magnitude_log)
+    # print(f'r_value = {r_value}')
+    # print(f'p_value = {p_value}')
+
+    # Plot the log-log results
+    # plt.figure(figsize=(10,6))
+    # plt.scatter(positive_freqs_log, positive_magnitude_log, label='Log-Log Data', color='blue')
+    # plt.plot(positive_freqs_log, slope * positive_freqs_log + intercept, label=f'Fit: \nSlope = {slope:.2f}\nr = {r}\np = {p}', color='red')
+    # plt.title(f'{name}\nLog-Log Plot of FFT (Frequency vs Magnitude)')
+    # plt.xlabel('Log(Frequency) (Hz)')
+    # plt.ylabel('Log(Magnitude)')
+    # plt.legend()
+    # plt.grid()
+    # plt.show()
+
+    return slope, positive_freqs_log, positive_magnitude_log, intercept, r, p, positive_freqs, positive_magnitude
+
+
+def white_noise_signal_creation_using_FFT_method(N):
+    white = False
+    iterations = 0
+    while white == False:
+
+        white_noise = np.random.rand(N)
+        white_noise = ratio_0_to_100(white_noise)
+        slope, positive_freqs_log, positive_magnitude_log, intercept, r, p, positive_freqs, positive_magnitude = quality_assessment_of_temporal_structure_FFT_method_2(white_noise)
+
+        if (round(np.abs(slope), 2) == 0) and (np.all(white_noise >= 0)) and (np.all(white_noise <= 100)):
+            #
+            # Figure of Frequincies vs Magnitude
+            # plt.figure(figsize=(10,6))
+            # plt.plot(positive_freqs, positive_magnitude)
+            # plt.title(f'{name}\nFFT of Sine Wave')
+            # plt.xlabel('Frequency (Hz)')
+            # plt.ylabel('Magnitude')
+            # plt.grid()
+            # plt.show()
+
+            # plt.figure(figsize=(10, 6))
+            # plt.scatter(positive_freqs_log, positive_magnitude_log, label='Log-Log Data', color='blue')
+            # plt.plot(positive_freqs_log, slope * positive_freqs_log + intercept,
+            #          label=f'Fit: \nSlope = {slope:.2f}\nr = {r}\np = {p}', color='red')
+            # plt.title(f'White Noise\nLog-Log Plot of FFT (Frequency vs Magnitude)')
+            # plt.xlabel('Log(Frequency) (Hz)')
+            # plt.ylabel('Log(Magnitude)')
+            # plt.legend()
+            # plt.grid()
+            # plt.show()
+            white = True
+        else:
+            # print('Not valid pink noise signal')
+            iterations += 1
+            # print(iterations)
+
+    return white_noise
+
+def sine_wave_signal_creation(N, Number_of_periods):
+    frequency = Number_of_periods * 2
+    t = np.linspace(0, 1, N)
+    sine_wave = np.sin(np.pi * frequency * t)
+    sine_wave = ratio_0_to_100(sine_wave)
+
+    return sine_wave
