@@ -7,6 +7,7 @@ import numpy as np
 from numpy.fft import fft, fftfreq
 import colorednoise as cn
 import math
+from scipy.signal import butter, filtfilt
 
 def FFT(var,fs):
     dt = 1 / fs
@@ -385,3 +386,46 @@ def DFA_NONAN(data, scales, order=1, plot=True):
 
     # Return the scales used, fluctuation functions and the alpha value
     return scales, fluctuation, alpha
+
+def resample_signal(signal, fs_in, fs_out, anti_aliasing=False, filter_order=4, cutoff_factor=0.4):
+    """
+    Downsample a signal by integer factor fs_in/fs_out using decimation,
+    with optional anti-alias low-pass filtering.
+
+    Parameters
+    ----------
+    signal : np.ndarray
+        Input signal sampled at fs_in.
+    fs_in : float
+        Original sampling frequency (Hz).
+    fs_out : float
+        Target sampling frequency (Hz).
+    anti_aliasing : bool
+        Whether to apply low-pass filtering before decimation.
+    filter_order : int
+        Order of Butterworth filter.
+    cutoff_factor : float
+        Cutoff as fraction of fs_out (default 0.4).
+
+    Returns
+    -------
+    signal_ds : np.ndarray
+        Downsampled signal.
+    """
+
+    if fs_in % fs_out != 0:
+        raise ValueError("fs_out must divide fs_in exactly for integer decimation.")
+
+    step = int(fs_in / fs_out)
+
+    # --- Anti-alias filtering ---
+    if anti_aliasing:
+        cutoff = cutoff_factor * fs_out
+        nyq = fs_in / 2.0
+        b, a = butter(filter_order, cutoff / nyq, btype='low')
+        signal = filtfilt(b, a, signal)
+
+    # --- Decimation ---
+    signal_ds = signal[::step]
+
+    return signal_ds

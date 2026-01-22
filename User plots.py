@@ -61,7 +61,7 @@ plt.rcParams['font.size'] = 16
 # plt.show()
 
 
-spatial_error = True
+spatial_error = False
 if spatial_error:
 
     directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Results'
@@ -274,7 +274,7 @@ else:
     plt.xlabel('')
     plt.ylabel('α exponent')
     plt.legend()
-    plt.ylim(0.43, 0.93)
+    plt.ylim(0.4, 1.1)
 
     # Show plot
     plt.show()
