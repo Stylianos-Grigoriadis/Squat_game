@@ -21,142 +21,186 @@ participants_before_change = ['pink1', 'pink10', 'pink11', 'pink12', 'pink13', '
 directory_path = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Data\Valid Data'
 files = glob.glob(os.path.join(directory_path, "*"))
 
-sample_freq = [40, 20, 10]
-for freq in sample_freq:
 
 
-    list_ID = []
-    list_exact_ID = []
 
-    list_DFA_travel_distance_set_1 = []
-    list_DFA_travel_distance_set_2 = []
-    list_DFA_travel_distance_set_3 = []
-    list_DFA_travel_distance_set_4 = []
-    list_DFA_travel_distance_set_5 = []
+list_ID = []
+list_exact_ID = []
+
+list_weight_L_set_1_99 = []
+list_weight_L_set_2_99 = []
+list_weight_L_set_3_99 = []
+list_weight_L_set_4_99 = []
+list_weight_L_set_5_99 = []
+list_weight_R_set_1_99 = []
+list_weight_R_set_2_99 = []
+list_weight_R_set_3_99 = []
+list_weight_R_set_4_99 = []
+list_weight_R_set_5_99 = []
+list_pitch_set_1_99 = []
+list_pitch_set_2_99 = []
+list_pitch_set_3_99 = []
+list_pitch_set_4_99 = []
+list_pitch_set_5_99 = []
+list_roll_set_1_99 = []
+list_roll_set_2_99 = []
+list_roll_set_3_99 = []
+list_roll_set_4_99 = []
+list_roll_set_5_99 = []
+list_yaw_set_1_99 = []
+list_yaw_set_2_99 = []
+list_yaw_set_3_99 = []
+list_yaw_set_4_99 = []
+list_yaw_set_5_99 = []
 
 
-    for file in files:
-        os.chdir(file)
-        ID = os.path.basename(file)
-        list_exact_ID.append(ID)
-        print(ID)
-        if ID in participants_before_change:
-            old_data = True
-            print('Data taken before the fix')
+for file in files:
+    os.chdir(file)
+    ID = os.path.basename(file)
+    list_exact_ID.append(ID)
+    print(ID)
+    if ID in participants_before_change:
+        old_data = True
+        print('Data taken before the fix')
+    else:
+        old_data = False
+        print('Data taken after the fix')
+
+
+
+    if 'static' not in ID:
+        targets = pd.read_excel(rf'{ID}.xlsx')
+        data = pd.read_csv(rf'{ID}.txt')
+        if 'pink' in ID:
+            list_ID.append('pink')
         else:
-            old_data = False
-            print('Data taken after the fix')
+            list_ID.append('white')
+    else:
+        targets = pd.read_excel(rf'{ID[:6]}.xlsx')
+        data = pd.read_csv(rf'{ID}.txt')
+        list_ID.append('static')
+    # Extract the data during game
+    data = lbs.values_during_game(data)
+    print(data.columns)
 
 
 
-        if 'static' not in ID:
-            targets = pd.read_excel(rf'{ID}.xlsx')
-            data = pd.read_csv(rf'{ID}.txt')
-            if 'pink' in ID:
-                list_ID.append('pink')
-            else:
-                list_ID.append('white')
-        else:
-            targets = pd.read_excel(rf'{ID[:6]}.xlsx')
-            data = pd.read_csv(rf'{ID}.txt')
-            list_ID.append('static')
-        # Extract the data during game
-        data = lbs.values_during_game(data)
-        print(data.columns)
+    # Create a list with 5 sublists which contain 30 dataframes, each dataframe contains all data of each target
+    list_with_all_df_separated_by_set = lbs.return_the_df_of_each_target_separated_by_set(data, old_data)
+
+    # Seperation of the x and y position of the player for each set
+    df_5_list = lbs.big_list_to_5df_list(list_with_all_df_separated_by_set)
+    print(df_5_list[0].columns)
+    weight_L_set_1 = df_5_list[0]['left_plate'].to_numpy()
+    weight_L_set_2 = df_5_list[1]['left_plate'].to_numpy()
+    weight_L_set_3 = df_5_list[2]['left_plate'].to_numpy()
+    weight_L_set_4 = df_5_list[3]['left_plate'].to_numpy()
+    weight_L_set_5 = df_5_list[4]['left_plate'].to_numpy()
+    weight_R_set_1 = df_5_list[0]['right_plate'].to_numpy()
+    weight_R_set_2 = df_5_list[1]['right_plate'].to_numpy()
+    weight_R_set_3 = df_5_list[2]['right_plate'].to_numpy()
+    weight_R_set_4 = df_5_list[3]['right_plate'].to_numpy()
+    weight_R_set_5 = df_5_list[4]['right_plate'].to_numpy()
+    pitch_set_1 = df_5_list[0]['pitch'].to_numpy()
+    pitch_set_2 = df_5_list[1]['pitch'].to_numpy()
+    pitch_set_3 = df_5_list[2]['pitch'].to_numpy()
+    pitch_set_4 = df_5_list[3]['pitch'].to_numpy()
+    pitch_set_5 = df_5_list[4]['pitch'].to_numpy()
+    roll_set_1 = df_5_list[0]['roll'].to_numpy()
+    roll_set_2 = df_5_list[1]['roll'].to_numpy()
+    roll_set_3 = df_5_list[2]['roll'].to_numpy()
+    roll_set_4 = df_5_list[3]['roll'].to_numpy()
+    roll_set_5 = df_5_list[4]['roll'].to_numpy()
+    yaw_set_1 = df_5_list[0]['yaw'].to_numpy()
+    yaw_set_2 = df_5_list[1]['yaw'].to_numpy()
+    yaw_set_3 = df_5_list[2]['yaw'].to_numpy()
+    yaw_set_4 = df_5_list[3]['yaw'].to_numpy()
+    yaw_set_5 = df_5_list[4]['yaw'].to_numpy()
+    _, _, FFT_weight_L_set_1_99 = lib.FFT(weight_L_set_1, 40)
+    _, _, FFT_weight_L_set_2_99 = lib.FFT(weight_L_set_2, 40)
+    _, _, FFT_weight_L_set_3_99 = lib.FFT(weight_L_set_3, 40)
+    _, _, FFT_weight_L_set_4_99 = lib.FFT(weight_L_set_4, 40)
+    _, _, FFT_weight_L_set_5_99 = lib.FFT(weight_L_set_5, 40)
+    _, _, FFT_weight_R_set_1_99 = lib.FFT(weight_R_set_1, 40)
+    _, _, FFT_weight_R_set_2_99 = lib.FFT(weight_R_set_2, 40)
+    _, _, FFT_weight_R_set_3_99 = lib.FFT(weight_R_set_3, 40)
+    _, _, FFT_weight_R_set_4_99 = lib.FFT(weight_R_set_4, 40)
+    _, _, FFT_weight_R_set_5_99 = lib.FFT(weight_R_set_5, 40)
+    _, _, FFT_pitch_set_1_99 = lib.FFT(pitch_set_1, 40)
+    _, _, FFT_pitch_set_2_99 = lib.FFT(pitch_set_2, 40)
+    _, _, FFT_pitch_set_3_99 = lib.FFT(pitch_set_3, 40)
+    _, _, FFT_pitch_set_4_99 = lib.FFT(pitch_set_4, 40)
+    _, _, FFT_pitch_set_5_99 = lib.FFT(pitch_set_5, 40)
+    _, _, FFT_roll_set_1_99 = lib.FFT(roll_set_1, 40)
+    _, _, FFT_roll_set_2_99 = lib.FFT(roll_set_2, 40)
+    _, _, FFT_roll_set_3_99 = lib.FFT(roll_set_3, 40)
+    _, _, FFT_roll_set_4_99 = lib.FFT(roll_set_4, 40)
+    _, _, FFT_roll_set_5_99 = lib.FFT(roll_set_5, 40)
+    _, _, FFT_yaw_set_1_99 = lib.FFT(yaw_set_1, 40)
+    _, _, FFT_yaw_set_2_99 = lib.FFT(yaw_set_2, 40)
+    _, _, FFT_yaw_set_3_99 = lib.FFT(yaw_set_3, 40)
+    _, _, FFT_yaw_set_4_99 = lib.FFT(yaw_set_4, 40)
+    _, _, FFT_yaw_set_5_99 = lib.FFT(yaw_set_5, 40)
+
+    list_weight_L_set_1_99.append(FFT_weight_L_set_1_99)
+    list_weight_L_set_2_99.append(FFT_weight_L_set_2_99)
+    list_weight_L_set_3_99.append(FFT_weight_L_set_3_99)
+    list_weight_L_set_4_99.append(FFT_weight_L_set_4_99)
+    list_weight_L_set_5_99.append(FFT_weight_L_set_5_99)
+    list_weight_R_set_1_99.append(FFT_weight_R_set_1_99)
+    list_weight_R_set_2_99.append(FFT_weight_R_set_2_99)
+    list_weight_R_set_3_99.append(FFT_weight_R_set_3_99)
+    list_weight_R_set_4_99.append(FFT_weight_R_set_4_99)
+    list_weight_R_set_5_99.append(FFT_weight_R_set_5_99)
+    list_pitch_set_1_99.append(FFT_pitch_set_1_99)
+    list_pitch_set_2_99.append(FFT_pitch_set_2_99)
+    list_pitch_set_3_99.append(FFT_pitch_set_3_99)
+    list_pitch_set_4_99.append(FFT_pitch_set_4_99)
+    list_pitch_set_5_99.append(FFT_pitch_set_5_99)
+    list_roll_set_1_99.append(FFT_roll_set_1_99)
+    list_roll_set_2_99.append(FFT_roll_set_2_99)
+    list_roll_set_3_99.append(FFT_roll_set_3_99)
+    list_roll_set_4_99.append(FFT_roll_set_4_99)
+    list_roll_set_5_99.append(FFT_roll_set_5_99)
+    list_yaw_set_1_99.append(FFT_yaw_set_1_99)
+    list_yaw_set_2_99.append(FFT_yaw_set_2_99)
+    list_yaw_set_3_99.append(FFT_yaw_set_3_99)
+    list_yaw_set_4_99.append(FFT_yaw_set_4_99)
+    list_yaw_set_5_99.append(FFT_yaw_set_5_99)
+
+dist_learning_analysis = {'ID': list_ID,
+                            'Exact ID': list_exact_ID,
+                            'weight_L_set_1_99': list_weight_L_set_1_99,
+                            'weight_L_set_2_99': list_weight_L_set_2_99,
+                            'weight_L_set_3_99': list_weight_L_set_3_99,
+                            'weight_L_set_4_99': list_weight_L_set_4_99,
+                            'weight_L_set_5_99': list_weight_L_set_5_99,
+                            'weight_R_set_1_99': list_weight_R_set_1_99,
+                            'weight_R_set_2_99': list_weight_R_set_2_99,
+                            'weight_R_set_3_99': list_weight_R_set_3_99,
+                            'weight_R_set_4_99': list_weight_R_set_4_99,
+                            'weight_R_set_5_99': list_weight_R_set_5_99,
+                            'pitch_set_1_99': list_pitch_set_1_99,
+                            'pitch_set_2_99': list_pitch_set_2_99,
+                            'pitch_set_3_99': list_pitch_set_3_99,
+                            'pitch_set_4_99': list_pitch_set_4_99,
+                            'pitch_set_5_99': list_pitch_set_5_99,
+                            'roll_set_1_99': list_roll_set_1_99,
+                            'roll_set_2_99': list_roll_set_2_99,
+                            'roll_set_3_99': list_roll_set_3_99,
+                            'roll_set_4_99': list_roll_set_4_99,
+                            'roll_set_5_99': list_roll_set_5_99,
+                            'yaw_set_1_99': list_yaw_set_1_99,
+                            'yaw_set_2_99': list_yaw_set_2_99,
+                            'yaw_set_3_99': list_yaw_set_3_99,
+                            'yaw_set_4_99': list_yaw_set_4_99,
+                            'yaw_set_5_99': list_yaw_set_5_99,
+                          }
 
 
 
-        # Create a list with 5 sublists which contain 30 dataframes, each dataframe contains all data of each target
-        list_with_all_df_separated_by_set = lbs.return_the_df_of_each_target_separated_by_set(data, old_data)
+df_learning = pd.DataFrame(dist_learning_analysis)
 
-        # Seperation of the x and y position of the player for each set
-        df_5_list = lbs.big_list_to_5df_list(list_with_all_df_separated_by_set)
-        position_player_x_set_1 = df_5_list[0]['player_pos_x'].to_numpy()
-        position_player_x_set_2 = df_5_list[1]['player_pos_x'].to_numpy()
-        position_player_x_set_3 = df_5_list[2]['player_pos_x'].to_numpy()
-        position_player_x_set_4 = df_5_list[3]['player_pos_x'].to_numpy()
-        position_player_x_set_5 = df_5_list[4]['player_pos_x'].to_numpy()
-        position_player_y_set_1 = df_5_list[0]['player_pos_y'].to_numpy()
-        position_player_y_set_2 = df_5_list[1]['player_pos_y'].to_numpy()
-        position_player_y_set_3 = df_5_list[2]['player_pos_y'].to_numpy()
-        position_player_y_set_4 = df_5_list[3]['player_pos_y'].to_numpy()
-        position_player_y_set_5 = df_5_list[4]['player_pos_y'].to_numpy()
-
-        if freq == 40:
-            position_player_x_set_1 = position_player_x_set_1
-            position_player_x_set_2 = position_player_x_set_2
-            position_player_x_set_3 = position_player_x_set_3
-            position_player_x_set_4 = position_player_x_set_4
-            position_player_x_set_5 = position_player_x_set_5
-            position_player_y_set_1 = position_player_y_set_1
-            position_player_y_set_2 = position_player_y_set_2
-            position_player_y_set_3 = position_player_y_set_3
-            position_player_y_set_4 = position_player_y_set_4
-            position_player_y_set_5 = position_player_y_set_5
-        else:
-            position_player_x_set_1 = lib.resample_signal(position_player_x_set_1, 40, freq, anti_aliasing=True)
-            position_player_x_set_2 = lib.resample_signal(position_player_x_set_2, 40, freq, anti_aliasing=True)
-            position_player_x_set_3 = lib.resample_signal(position_player_x_set_3, 40, freq, anti_aliasing=True)
-            position_player_x_set_4 = lib.resample_signal(position_player_x_set_4, 40, freq, anti_aliasing=True)
-            position_player_x_set_5 = lib.resample_signal(position_player_x_set_5, 40, freq, anti_aliasing=True)
-            position_player_y_set_1 = lib.resample_signal(position_player_y_set_1, 40, freq, anti_aliasing=True)
-            position_player_y_set_2 = lib.resample_signal(position_player_y_set_2, 40, freq, anti_aliasing=True)
-            position_player_y_set_3 = lib.resample_signal(position_player_y_set_3, 40, freq, anti_aliasing=True)
-            position_player_y_set_4 = lib.resample_signal(position_player_y_set_4, 40, freq, anti_aliasing=True)
-            position_player_y_set_5 = lib.resample_signal(position_player_y_set_5, 40, freq, anti_aliasing=True)
-
-        # Apply Butterworth low pass at 5Hz
-        # position_player_x_set_1 = lib.Butterworth(40, 5, position_player_x_set_1)
-        # position_player_x_set_2 = lib.Butterworth(40, 5, position_player_x_set_2)
-        # position_player_x_set_3 = lib.Butterworth(40, 5, position_player_x_set_3)
-        # position_player_x_set_4 = lib.Butterworth(40, 5, position_player_x_set_4)
-        # position_player_x_set_5 = lib.Butterworth(40, 5, position_player_x_set_5)
-        # position_player_y_set_1 = lib.Butterworth(40, 5, position_player_y_set_1)
-        # position_player_y_set_2 = lib.Butterworth(40, 5, position_player_y_set_2)
-        # position_player_y_set_3 = lib.Butterworth(40, 5, position_player_y_set_3)
-        # position_player_y_set_4 = lib.Butterworth(40, 5, position_player_y_set_4)
-        # position_player_y_set_5 = lib.Butterworth(40, 5, position_player_y_set_5)
-
-        # Calculate the travel distance for each set
-        travel_distance_set_1 = lbs.travel_distance(position_player_x_set_1, position_player_y_set_1)
-        travel_distance_set_2 = lbs.travel_distance(position_player_x_set_2, position_player_y_set_2)
-        travel_distance_set_3 = lbs.travel_distance(position_player_x_set_3, position_player_y_set_3)
-        travel_distance_set_4 = lbs.travel_distance(position_player_x_set_4, position_player_y_set_4)
-        travel_distance_set_5 = lbs.travel_distance(position_player_x_set_5, position_player_y_set_5)
-
-        # Calculation of DFA of travel distance
-        scales_set_1 = np.arange(4, len(travel_distance_set_1)//4)
-        scales_set_2 = np.arange(4, len(travel_distance_set_2)//4)
-        scales_set_3 = np.arange(4, len(travel_distance_set_3)//4)
-        scales_set_4 = np.arange(4, len(travel_distance_set_4)//4)
-        scales_set_5 = np.arange(4, len(travel_distance_set_5)//4)
-
-        _, _, DFA_set_1 = lbs.DFA_NONAN(travel_distance_set_1, scales_set_1, order=1, plot=False)
-        _, _, DFA_set_2 = lbs.DFA_NONAN(travel_distance_set_2, scales_set_2, order=1, plot=False)
-        _, _, DFA_set_3 = lbs.DFA_NONAN(travel_distance_set_3, scales_set_3, order=1, plot=False)
-        _, _, DFA_set_4 = lbs.DFA_NONAN(travel_distance_set_4, scales_set_4, order=1, plot=False)
-        _, _, DFA_set_5 = lbs.DFA_NONAN(travel_distance_set_5, scales_set_5, order=1, plot=False)
-
-        list_DFA_travel_distance_set_1.append(DFA_set_1)
-        list_DFA_travel_distance_set_2.append(DFA_set_2)
-        list_DFA_travel_distance_set_3.append(DFA_set_3)
-        list_DFA_travel_distance_set_4.append(DFA_set_4)
-        list_DFA_travel_distance_set_5.append(DFA_set_5)
-
-
-    dist_learning_analysis = {'ID': list_ID,
-                                'Exact ID': list_exact_ID,
-                                'DFA_travel_distance_set_1': list_DFA_travel_distance_set_1,
-                                'DFA_travel_distance_set_2': list_DFA_travel_distance_set_2,
-                                'DFA_travel_distance_set_3': list_DFA_travel_distance_set_3,
-                                'DFA_travel_distance_set_4': list_DFA_travel_distance_set_4,
-                                'DFA_travel_distance_set_5': list_DFA_travel_distance_set_5,
-                              }
-
-
-
-    df_learning = pd.DataFrame(dist_learning_analysis)
-
-    directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Writting\Publication tryouts\Journal of Sports Sciences\Review 1'
-    os.chdir(directory)
-    df_learning.to_excel(rf'Results the old way fc {freq}.xlsx')
+directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Writting\Publication tryouts\Journal of Sports Sciences\Review 1'
+os.chdir(directory)
+df_learning.to_excel(rf'FFT_99.xlsx')

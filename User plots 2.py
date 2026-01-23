@@ -72,36 +72,63 @@ def plot_dfa_boxplots(df, data_points=True):
     plt.tight_layout()
     plt.show()
 
-def plot_dfa_by_freq_sets_groups(df, data_points=True):
-    """
-    For each sampling frequency (10, 20, 40), plot DFA boxplots across
-    Sets (1–5) with Group as hue.
+def plot_dfa_by_freq_sets_groups_wide(df, data_points=True):
 
-    Parameters
-    ----------
-    df : pandas.DataFrame
-        Must contain columns:
-        ['Set', 'Group', 'Freq', 'DFA_travel_distance']
-
-    data_points : bool
-        If True, overlay jittered datapoints
-    """
+    import seaborn as sns
+    import matplotlib.pyplot as plt
 
     sns.set_style("whitegrid")
     sns.set_context("talk")
 
-    freqs = sorted(df["Freq"].unique())
-    groups_order = ["Variable", "Non-variable", "Non-structured"]
+    # ===============================
+    # 🎨 COLORS
+    # ===============================
+    group_colors = {
+        "pink": "#FFC0CB",
+        "white": "#D3D3D3",
+        "static": "#4F4F4F",
+    }
 
-    fig, axes = plt.subplots(
-        1, len(freqs), figsize=(18, 6), sharey=True
+    # ===============================
+    # 🏷️ LABELS & ORDER
+    # ===============================
+    group_label_map = {
+        "static": "Non-variable",
+        "pink": "Structured",
+        "white": "Non-structured",
+    }
+
+    groups_order = ["static", "pink", "white"]
+
+    # -------------------------------
+    # Reshape wide → long
+    # -------------------------------
+    value_cols = [c for c in df.columns if c.startswith("DFA_travel_distance")]
+
+    df_long = df.melt(
+        id_vars=["ID", "Exact ID"],
+        value_vars=value_cols,
+        var_name="variable",
+        value_name="DFA_travel_distance"
     )
 
+    df_long["Set"] = df_long["variable"].str.extract(r"set_(\d)").astype(int)
+    df_long["Freq"] = df_long["variable"].str.extract(r"(\d+)$").astype(int)
+    df_long = df_long.rename(columns={"ID": "Group"})
+
+    freqs = sorted(df_long["Freq"].unique())
+    groups_order = [g for g in groups_order if g in df_long["Group"].unique()]
+    palette = {g: group_colors[g] for g in groups_order}
+
+    # -------------------------------
+    # Plotting
+    # -------------------------------
+    fig, axes = plt.subplots(1, len(freqs), figsize=(18, 6), sharey=True)
     if len(freqs) == 1:
         axes = [axes]
 
     for ax, freq in zip(axes, freqs):
-        df_f = df[df["Freq"] == freq]
+        df_f = df_long[df_long["Freq"] == freq]
 
         sns.boxplot(
             data=df_f,
@@ -109,6 +136,7 @@ def plot_dfa_by_freq_sets_groups(df, data_points=True):
             y="DFA_travel_distance",
             hue="Group",
             hue_order=groups_order,
+            palette=palette,
             dodge=True,
             width=0.7,
             showfliers=False,
@@ -122,6 +150,7 @@ def plot_dfa_by_freq_sets_groups(df, data_points=True):
                 y="DFA_travel_distance",
                 hue="Group",
                 hue_order=groups_order,
+                palette=palette,
                 dodge=True,
                 jitter=0.15,
                 alpha=0.6,
@@ -131,50 +160,32 @@ def plot_dfa_by_freq_sets_groups(df, data_points=True):
 
         ax.set_title(f"Sampling frequency = {freq} Hz")
         ax.set_xlabel("Set")
-        ax.set_ylabel("DFA travel distance")
-
-        # Remove duplicated legends per axis
+        ax.set_ylabel("α exponent")
         ax.legend_.remove()
 
-    # Single legend for whole figure
-    handles, labels = axes[0].get_legend_handles_labels()
+    # -------------------------------
+    # Single legend
+    # -------------------------------
+    handles, _ = axes[0].get_legend_handles_labels()
+    legend_labels = [group_label_map[g] for g in groups_order]
+
     fig.legend(
         handles[:len(groups_order)],
-        labels[:len(groups_order)],
+        legend_labels,
         title="Group",
         loc="lower center",
-        ncol=3,
+        ncol=len(groups_order),
         frameon=True
     )
 
     plt.tight_layout(rect=[0, 0.1, 1, 1])
+    plt.ylim(0.35, 1)
     plt.show()
 
 
 directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Writting\Publication tryouts\Journal of Sports Sciences\Review 1'
 os.chdir(directory)
-results = pd.read_excel(r'DFA in multiple sample frequencies (4-N4).xlsx')
+results = pd.read_excel(r'Results DFA 40 20 10.xlsx')
 print(results)
 
-plot_dfa_by_freq_sets_groups(results, data_points=True)
-
-
-# # Pivot to wide format
-# df_wide = (
-#     results
-#     .pivot_table(
-#         index=["ID", "Group"],
-#         columns=["Set", "Freq"],
-#         values="DFA_travel_distance"
-#     )
-# )
-#
-# # Flatten column names
-# df_wide.columns = [
-#     f"DFA_set{set_}_freq{freq}"
-#     for set_, freq in df_wide.columns
-# ]
-#
-# # Reset index to get ID and Group back as columns
-# df_wide = df_wide.reset_index()
-# df_wide.to_excel('DFA in multiple sample frequencies (4-N4) for spss.xlsx')
+plot_dfa_by_freq_sets_groups_wide(results, data_points=False)
