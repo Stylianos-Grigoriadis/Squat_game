@@ -144,7 +144,7 @@ def Butterworth(fs,fc,var):
     w = fc / (fs / 2)
 
 
-    b, a = signal.butter(2, w, 'low')
+    b, a = signal.butter(4, w, 'low')
     return signal.filtfilt(b, a, var)
 
 def Average(lst):
@@ -429,3 +429,159 @@ def resample_signal(signal, fs_in, fs_out, anti_aliasing=False, filter_order=4, 
     signal_ds = signal[::step]
 
     return signal_ds
+
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy.fft import fft, fftfreq
+
+
+# ===============================
+# Global scientific style
+# ===============================
+sns.set_theme(
+    style="whitegrid",
+    context="paper",
+    font_scale=1.2,
+    rc={
+        "axes.linewidth": 1,
+        "grid.linewidth": 0.6,
+        "grid.alpha": 0.4,
+        "legend.frameon": False
+    }
+)
+
+
+def compute_psd(var, fs):
+    dt = 1 / fs
+    freqs = fftfreq(len(var), dt)
+    mask = freqs > 0
+
+    Y = fft(var)
+    pSpec = 2 * ((np.abs(Y) / len(var)) ** 2)
+
+    # Protect log scale
+    pSpec[pSpec == 0] = np.finfo(float).eps
+
+    return freqs[mask], pSpec[mask]
+
+
+def plot_time_and_frequency(
+    x_raw, x_filt,
+    y_raw, y_filt,
+    fs,
+    fc=5
+):
+    BASE_FONT_SIZE = 16  # <-- change this once
+    FONT_FAMILY = "Arial"  # or "Times New Roman", "Helvetica", "DejaVu Sans"
+
+    plt.rcParams.update({
+
+        # Font family
+        "font.family": "sans-serif",
+        "font.sans-serif": [FONT_FAMILY],
+
+        # Base font size
+        "font.size": BASE_FONT_SIZE,
+
+        # Axes
+        "axes.titlesize": BASE_FONT_SIZE,
+        "axes.labelsize": BASE_FONT_SIZE,
+
+        # Ticks
+        "xtick.labelsize": BASE_FONT_SIZE,
+        "ytick.labelsize": BASE_FONT_SIZE,
+
+        # Legend
+        "legend.fontsize": BASE_FONT_SIZE,
+
+        # Figure
+        "figure.titlesize": BASE_FONT_SIZE,
+
+        # Line widths
+        "axes.linewidth": 1,
+        "lines.linewidth": 1.5,
+
+        # Grid
+        "grid.linewidth": 0.6,
+        "grid.alpha": 0.4,
+    })
+
+    # Optional seaborn style (does NOT override font sizes above)
+    sns.set_style("whitegrid")
+    time = np.linspace(0, len(x_raw) / fs, len(x_raw))
+
+    fx_r, px_r = compute_psd(x_raw, fs)
+    fx_f, px_f = compute_psd(x_filt, fs)
+
+    fy_r, py_r = compute_psd(y_raw, fs)
+    fy_f, py_f = compute_psd(y_filt, fs)
+
+    fig, axs = plt.subplots(
+        2, 2,
+        figsize=(7.5, 6.8),
+        constrained_layout=False
+    )
+
+    raw_color = "#2C3E50"      # dark blue-gray
+    filt_color = "#E67E22"     # muted orange
+    cutoff_color = "#7F8C8D"   # neutral gray
+
+    # ===== X time =====
+    l_raw, = axs[0, 0].plot(time, x_raw, color=raw_color, linewidth=3)
+    l_filt, = axs[0, 0].plot(time, x_filt, color=filt_color,
+                             linewidth=2.0, alpha=0.7)
+    axs[0, 0].set_title("X Position")
+    axs[0, 0].set_xlabel("Time (s)")
+    axs[0, 0].set_ylabel("Position")
+
+    # ===== Y time =====
+    axs[0, 1].plot(time, y_raw, color=raw_color, linewidth=3)
+    axs[0, 1].plot(time, y_filt, color=filt_color,
+                   linewidth=2.0, alpha=0.7)
+    axs[0, 1].set_title("Y Position")
+    axs[0, 1].set_xlabel("Time (s)")
+
+    # ===== X frequency =====
+    axs[1, 0].plot(fx_r, px_r, color=raw_color, linewidth=3)
+    axs[1, 0].plot(fx_f, px_f, color=filt_color,
+                   linewidth=2.0, alpha=0.7)
+    l_cut = axs[1, 0].axvline(fc, linestyle="--",
+                              color=cutoff_color,
+                              linewidth=2)
+    axs[1, 0].set_title("X Spectrum")
+    axs[1, 0].set_xlabel("Frequency (Hz)")
+    axs[1, 0].set_ylabel("Power")
+    axs[1, 0].set_xlim(0, fs / 2)
+    axs[1, 0].set_yscale("log")
+
+    # ===== Y frequency =====
+    axs[1, 1].plot(fy_r, py_r, color=raw_color, linewidth=3)
+    axs[1, 1].plot(fy_f, py_f, color=filt_color,
+                   linewidth=2.0, alpha=0.7)
+    axs[1, 1].axvline(fc, linestyle="--",
+                      color=cutoff_color,
+                      linewidth=2)
+    axs[1, 1].set_title("Y Spectrum")
+    axs[1, 1].set_xlabel("Frequency (Hz)")
+    axs[1, 1].set_xlim(0, fs / 2)
+    axs[1, 1].set_yscale("log")
+
+    # Clean spines
+    for ax in axs.flat:
+        sns.despine(ax=ax)
+
+    # ===============================
+    # Global legend (bottom, 3 columns)
+    # ===============================
+    fig.legend(
+        handles=[l_raw, l_filt, l_cut],
+        labels=["Raw", "Filtered", "Cutoff (5 Hz)"],
+        loc="lower center",
+        ncol=3,
+        frameon=False,
+        bbox_to_anchor=(0.5, 0)
+    )
+
+    plt.tight_layout(rect=[0, 0.05, 1, 1])
+    plt.show()

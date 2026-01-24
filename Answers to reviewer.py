@@ -91,6 +91,7 @@ for file in files:
     # Seperation of the x and y position of the player for each set
     df_5_list = lbs.big_list_to_5df_list(list_with_all_df_separated_by_set)
     print(df_5_list[0].columns)
+
     weight_L_set_1 = df_5_list[0]['left_plate'].to_numpy()
     weight_L_set_2 = df_5_list[1]['left_plate'].to_numpy()
     weight_L_set_3 = df_5_list[2]['left_plate'].to_numpy()

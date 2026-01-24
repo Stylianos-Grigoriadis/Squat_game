@@ -207,60 +207,72 @@ for file in files:
 
 
 
-    Assessment of power spectrum of position_player
-    power_90_set_1_x, power_95_set_1_x, power_99_set_1_x = lib.FFT(position_player_x_set_1, 40)
-    power_90_set_1_y, power_95_set_1_y, power_99_set_1_y = lib.FFT(position_player_y_set_1, 40)
-    power_90_set_2_x, power_95_set_2_x, power_99_set_2_x = lib.FFT(position_player_x_set_2, 40)
-    power_90_set_2_y, power_95_set_2_y, power_99_set_2_y = lib.FFT(position_player_y_set_2, 40)
-    power_90_set_3_x, power_95_set_3_x, power_99_set_3_x = lib.FFT(position_player_x_set_3, 40)
-    power_90_set_3_y, power_95_set_3_y, power_99_set_3_y = lib.FFT(position_player_y_set_3, 40)
-    power_90_set_4_x, power_95_set_4_x, power_99_set_4_x = lib.FFT(position_player_x_set_4, 40)
-    power_90_set_4_y, power_95_set_4_y, power_99_set_4_y = lib.FFT(position_player_y_set_4, 40)
-    power_90_set_5_x, power_95_set_5_x, power_99_set_5_x = lib.FFT(position_player_x_set_5, 40)
-    power_90_set_5_y, power_95_set_5_y, power_99_set_5_y = lib.FFT(position_player_y_set_5, 40)
-
-    list_power_90_set_1_x.append(power_90_set_1_x)
-    list_power_90_set_2_x.append(power_90_set_2_x)
-    list_power_90_set_3_x.append(power_90_set_3_x)
-    list_power_90_set_4_x.append(power_90_set_4_x)
-    list_power_90_set_5_x.append(power_90_set_5_x)
-    list_power_90_set_1_y.append(power_90_set_1_y)
-    list_power_90_set_2_y.append(power_90_set_2_y)
-    list_power_90_set_3_y.append(power_90_set_3_y)
-    list_power_90_set_4_y.append(power_90_set_4_y)
-    list_power_90_set_5_y.append(power_90_set_5_y)
-    list_power_95_set_1_x.append(power_95_set_1_x)
-    list_power_95_set_2_x.append(power_95_set_2_x)
-    list_power_95_set_3_x.append(power_95_set_3_x)
-    list_power_95_set_4_x.append(power_95_set_4_x)
-    list_power_95_set_5_x.append(power_95_set_5_x)
-    list_power_95_set_1_y.append(power_95_set_1_y)
-    list_power_95_set_2_y.append(power_95_set_2_y)
-    list_power_95_set_3_y.append(power_95_set_3_y)
-    list_power_95_set_4_y.append(power_95_set_4_y)
-    list_power_95_set_5_y.append(power_95_set_5_y)
-    list_power_99_set_1_x.append(power_99_set_1_x)
-    list_power_99_set_2_x.append(power_99_set_2_x)
-    list_power_99_set_3_x.append(power_99_set_3_x)
-    list_power_99_set_4_x.append(power_99_set_4_x)
-    list_power_99_set_5_x.append(power_99_set_5_x)
-    list_power_99_set_1_y.append(power_99_set_1_y)
-    list_power_99_set_2_y.append(power_99_set_2_y)
-    list_power_99_set_3_y.append(power_99_set_3_y)
-    list_power_99_set_4_y.append(power_99_set_4_y)
-    list_power_99_set_5_y.append(power_99_set_5_y)
+    # Assessment of power spectrum of position_player
+    # power_90_set_1_x, power_95_set_1_x, power_99_set_1_x = lib.FFT(position_player_x_set_1, 40)
+    # power_90_set_1_y, power_95_set_1_y, power_99_set_1_y = lib.FFT(position_player_y_set_1, 40)
+    # power_90_set_2_x, power_95_set_2_x, power_99_set_2_x = lib.FFT(position_player_x_set_2, 40)
+    # power_90_set_2_y, power_95_set_2_y, power_99_set_2_y = lib.FFT(position_player_y_set_2, 40)
+    # power_90_set_3_x, power_95_set_3_x, power_99_set_3_x = lib.FFT(position_player_x_set_3, 40)
+    # power_90_set_3_y, power_95_set_3_y, power_99_set_3_y = lib.FFT(position_player_y_set_3, 40)
+    # power_90_set_4_x, power_95_set_4_x, power_99_set_4_x = lib.FFT(position_player_x_set_4, 40)
+    # power_90_set_4_y, power_95_set_4_y, power_99_set_4_y = lib.FFT(position_player_y_set_4, 40)
+    # power_90_set_5_x, power_95_set_5_x, power_99_set_5_x = lib.FFT(position_player_x_set_5, 40)
+    # power_90_set_5_y, power_95_set_5_y, power_99_set_5_y = lib.FFT(position_player_y_set_5, 40)
+    #
+    # list_power_90_set_1_x.append(power_90_set_1_x)
+    # list_power_90_set_2_x.append(power_90_set_2_x)
+    # list_power_90_set_3_x.append(power_90_set_3_x)
+    # list_power_90_set_4_x.append(power_90_set_4_x)
+    # list_power_90_set_5_x.append(power_90_set_5_x)
+    # list_power_90_set_1_y.append(power_90_set_1_y)
+    # list_power_90_set_2_y.append(power_90_set_2_y)
+    # list_power_90_set_3_y.append(power_90_set_3_y)
+    # list_power_90_set_4_y.append(power_90_set_4_y)
+    # list_power_90_set_5_y.append(power_90_set_5_y)
+    # list_power_95_set_1_x.append(power_95_set_1_x)
+    # list_power_95_set_2_x.append(power_95_set_2_x)
+    # list_power_95_set_3_x.append(power_95_set_3_x)
+    # list_power_95_set_4_x.append(power_95_set_4_x)
+    # list_power_95_set_5_x.append(power_95_set_5_x)
+    # list_power_95_set_1_y.append(power_95_set_1_y)
+    # list_power_95_set_2_y.append(power_95_set_2_y)
+    # list_power_95_set_3_y.append(power_95_set_3_y)
+    # list_power_95_set_4_y.append(power_95_set_4_y)
+    # list_power_95_set_5_y.append(power_95_set_5_y)
+    # list_power_99_set_1_x.append(power_99_set_1_x)
+    # list_power_99_set_2_x.append(power_99_set_2_x)
+    # list_power_99_set_3_x.append(power_99_set_3_x)
+    # list_power_99_set_4_x.append(power_99_set_4_x)
+    # list_power_99_set_5_x.append(power_99_set_5_x)
+    # list_power_99_set_1_y.append(power_99_set_1_y)
+    # list_power_99_set_2_y.append(power_99_set_2_y)
+    # list_power_99_set_3_y.append(power_99_set_3_y)
+    # list_power_99_set_4_y.append(power_99_set_4_y)
+    # list_power_99_set_5_y.append(power_99_set_5_y)
 
     # Apply Butterworth low pass at 5Hz
-    position_player_x_set_1 = lib.Butterworth(40, 5, position_player_x_set_1)
-    position_player_x_set_2 = lib.Butterworth(40, 5, position_player_x_set_2)
-    position_player_x_set_3 = lib.Butterworth(40, 5, position_player_x_set_3)
-    position_player_x_set_4 = lib.Butterworth(40, 5, position_player_x_set_4)
-    position_player_x_set_5 = lib.Butterworth(40, 5, position_player_x_set_5)
-    position_player_y_set_1 = lib.Butterworth(40, 5, position_player_y_set_1)
-    position_player_y_set_2 = lib.Butterworth(40, 5, position_player_y_set_2)
-    position_player_y_set_3 = lib.Butterworth(40, 5, position_player_y_set_3)
-    position_player_y_set_4 = lib.Butterworth(40, 5, position_player_y_set_4)
-    position_player_y_set_5 = lib.Butterworth(40, 5, position_player_y_set_5)
+
+    position_player_x_set_1_filtered = lib.Butterworth(40, 5, position_player_x_set_1)
+    # position_player_x_set_2 = lib.Butterworth(40, 5, position_player_x_set_2)
+    # position_player_x_set_3 = lib.Butterworth(40, 5, position_player_x_set_3)
+    # position_player_x_set_4 = lib.Butterworth(40, 5, position_player_x_set_4)
+    # position_player_x_set_5 = lib.Butterworth(40, 5, position_player_x_set_5)
+    position_player_y_set_1_filtered = lib.Butterworth(40, 5, position_player_y_set_1)
+    # position_player_y_set_2 = lib.Butterworth(40, 5, position_player_y_set_2)
+    # position_player_y_set_3 = lib.Butterworth(40, 5, position_player_y_set_3)
+    # position_player_y_set_4 = lib.Butterworth(40, 5, position_player_y_set_4)
+    # position_player_y_set_5 = lib.Butterworth(40, 5, position_player_y_set_5)
+
+    lib.plot_time_and_frequency(
+        position_player_x_set_1,
+        position_player_x_set_1_filtered,
+        position_player_y_set_1,
+        position_player_y_set_1_filtered,
+        40
+    )
+
+
+
 
     # Calculate the travel distance for each set
     # travel_distance_set_1 = lbs.travel_distance(position_player_x_set_1, position_player_y_set_1)
@@ -436,18 +448,18 @@ for file in files:
 #                             'DFA_travel_distance_set_4': list_DFA_travel_distance_set_4,
 #                             'DFA_travel_distance_set_5': list_DFA_travel_distance_set_5,
 #                           }
-dist_time = {'ID': list_ID,
-             'Exact ID': list_exact_ID,
-             'Average Time Target': list_average_time_of_target_appearance,
-             'Sd Time Target': list_sd_time_of_target_appearance
-             }
-
-
-df_learning = pd.DataFrame(dist_learning_analysis)
-df_time_of_appearance = pd.DataFrame(dist_time)
-
-directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Results'
-os.chdir(directory)
-df_time_of_appearance.to_excel('Results time of target appearance.xlsx')
-# for column in df_learning.columns:
-#     print(df_learning[column])
+# dist_time = {'ID': list_ID,
+#              'Exact ID': list_exact_ID,
+#              'Average Time Target': list_average_time_of_target_appearance,
+#              'Sd Time Target': list_sd_time_of_target_appearance
+#              }
+#
+#
+# # df_learning = pd.DataFrame(dist_learning_analysis)
+# df_time_of_appearance = pd.DataFrame(dist_time)
+#
+# directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Results'
+# os.chdir(directory)
+# df_time_of_appearance.to_excel('Results time of target appearance.xlsx')
+# # for column in df_learning.columns:
+# #     print(df_learning[column])
