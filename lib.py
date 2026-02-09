@@ -466,15 +466,11 @@ def compute_psd(var, fs):
     return freqs[mask], pSpec[mask]
 
 
-def plot_time_and_frequency(
-    x_raw, x_filt,
-    y_raw, y_filt,
-    fs,
-    fc=5
-):
+def plot_time_and_frequency(x_raw, x_filt, y_raw, y_filt,fs, fc=5):
     BASE_FONT_SIZE = 16  # <-- change this once
     FONT_FAMILY = "Arial"  # or "Times New Roman", "Helvetica", "DejaVu Sans"
-
+    filt_style = linestyle = ":"
+    alpha_filt = 1
     plt.rcParams.update({
 
         # Font family
@@ -529,23 +525,20 @@ def plot_time_and_frequency(
 
     # ===== X time =====
     l_raw, = axs[0, 0].plot(time, x_raw, color=raw_color, linewidth=3)
-    l_filt, = axs[0, 0].plot(time, x_filt, color=filt_color,
-                             linewidth=2.0, alpha=0.7)
+    l_filt, = axs[0, 0].plot(time, x_filt, color=filt_color, linewidth=2.0, alpha=alpha_filt, linestyle=filt_style)
     axs[0, 0].set_title("X Position")
     axs[0, 0].set_xlabel("Time (s)")
     axs[0, 0].set_ylabel("Position")
 
     # ===== Y time =====
     axs[0, 1].plot(time, y_raw, color=raw_color, linewidth=3)
-    axs[0, 1].plot(time, y_filt, color=filt_color,
-                   linewidth=2.0, alpha=0.7)
+    axs[0, 1].plot(time, y_filt, color=filt_color,linewidth=2.0, alpha=alpha_filt, linestyle=filt_style)
     axs[0, 1].set_title("Y Position")
     axs[0, 1].set_xlabel("Time (s)")
 
     # ===== X frequency =====
     axs[1, 0].plot(fx_r, px_r, color=raw_color, linewidth=3)
-    axs[1, 0].plot(fx_f, px_f, color=filt_color,
-                   linewidth=2.0, alpha=0.7)
+    axs[1, 0].plot(fx_f, px_f, color=filt_color, linewidth=2.0, alpha=alpha_filt, linestyle=filt_style)
     l_cut = axs[1, 0].axvline(fc, linestyle="--",
                               color=cutoff_color,
                               linewidth=2)
@@ -557,8 +550,7 @@ def plot_time_and_frequency(
 
     # ===== Y frequency =====
     axs[1, 1].plot(fy_r, py_r, color=raw_color, linewidth=3)
-    axs[1, 1].plot(fy_f, py_f, color=filt_color,
-                   linewidth=2.0, alpha=0.7)
+    axs[1, 1].plot(fy_f, py_f, color=filt_color, linewidth=2.0, alpha=alpha_filt, linestyle=filt_style)
     axs[1, 1].axvline(fc, linestyle="--",
                       color=cutoff_color,
                       linewidth=2)

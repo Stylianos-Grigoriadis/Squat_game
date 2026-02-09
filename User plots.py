@@ -201,11 +201,6 @@ if spatial_error:
 
     plt.show()
 
-
-
-
-
-
 else:
     directory = r'C:\Users\Stylianos\OneDrive - Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης\My Files\PhD\Projects\Squat Game\Results'
     os.chdir(directory)
