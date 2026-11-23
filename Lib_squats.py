@@ -636,8 +636,8 @@ def return_the_df_of_each_target_separated_by_set(df, old_data):
             stop = list[i + 1] + 1
 
             timestamp = df['timestamp'][start:stop].to_numpy()
-            target_pos_x = df['target_pos_x'][start:stop].to_numpy()
-            target_pos_y = df['target_pos_y'][start:stop].to_numpy()
+            target_pos_x = df['target_pos_x'][start:stop].to_numpy(copy=True)
+            target_pos_y = df['target_pos_y'][start:stop].to_numpy(copy=True)
             player_pos_x = df['player_pos_x'][start:stop].to_numpy()
             player_pos_y = df['player_pos_y'][start:stop].to_numpy()
             left_plate = df['left_plate'][start:stop].to_numpy()
